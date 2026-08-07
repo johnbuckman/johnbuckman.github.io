@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decent Timer — John Buckman</title>
+<meta name="description" content="A counter-top kitchen timer app for iPad, built for both modern iPads and the original 32-bit iPad mini on iOS 9.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="./">John Buckman</a> &nbsp;/&nbsp; Decent Timer</nav>
+  <header class="masthead">
+    <h1>Decent Timer</h1>
+    <p class="lede">A large, glanceable counter-top timer app for iPad — two count-up and two count-down
+      timers on one screen, plus a full-screen clock/screensaver when idle.</p>
+  </header>
+  <div class="meta">
+    <a class="btn gh" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">Kitchen-timer-for-old-iPads on GitHub →</a>
+  </div>
+  <main class="prose">
+
+    <h2>What it is</h2>
+    <p>A kitchen counter-top timer for iPad: four timers on one screen (two count up, two count down), a
+      large always-on clock with the weekday, and a full-screen clock/screensaver for when it is idle.
+      Large numbers, large buttons, and the screen never sleeps.</p>
+
+    <h2>Two builds, one codebase</h2>
+    <p>Objective-C, programmatic UIKit (no storyboards). One source tree with two build targets; the
+      modern-only scene lifecycle is <code>#if</code>-guarded so the same files compile for both:</p>
+    <ul>
+      <li><strong>iOS 9 / 32-bit (armv7)</strong> — for the original iPad mini 1 (iPad2,5, iOS 9.3.5),
+        distributed by jailbreak sideload.</li>
+      <li><strong>Modern (arm64)</strong> — for any current iPad, plus Mac Catalyst; App Store or sideload
+        (AltStore / SideStore / SideStep).</li>
+    </ul>
+
+    <h2>Features</h2>
+    <ul>
+      <li>Live clock (<code>H:mm</code>) and weekday at the top, auto-shrinking to fit.</li>
+      <li>Four timers: two count up, two count down. A running count-up shows "Started at H:mm"; a
+        count-down shows "Started at H:mm, ETA H:mm", with the ETA recomputed each tick. Values read
+        <code>MM:SS</code>, rolling to <code>H:MM:SS</code> past an hour; grey when idle, white when
+        running, orange in overtime.</li>
+      <li>Set a duration two ways: the <code>–</code>/<code>+</code> buttons (press and hold to change
+        faster), or tap an un-started timer to open a full-screen keypad with smart parsing
+        ("1.5h" &rarr; 1:30:00, "90s" &rarr; 1:30).</li>
+      <li>Overtime counts negative, the background pulses, and it dings every 5 seconds until stopped.</li>
+      <li>Screensaver: tap the clock, or automatically after an hour idle (never while a timer is
+        running); shows the time, weekday, and a faint logo that drifts to avoid burn-in.</li>
+    </ul>
+
+    <h2>Screenshots</h2>
+    <div class="gallery">
+      <figure>
+        <img src="assets/kitchen-timer-main.png" alt="Decent Timer main screen: clock and 2x2 timer grid">
+        <figcaption>Main screen — clock and the four timers.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/kitchen-timer-screensaver.png" alt="Decent Timer full-screen clock screensaver">
+        <figcaption>Idle screensaver — full-screen clock.</figcaption>
+      </figure>
+    </div>
+
+    <h2>Repository</h2>
+    <p>Source: <a class="gh" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">github.com/johnbuckman/Kitchen-timer-for-old-iPads</a>.
+      Prebuilt installers are attached as GitHub releases: an arm64 sideload <code>.ipa</code> for modern
+      iPads, and an armv7 tarball for the jailbroken iOS 9 build.</p>
+
+  </main>
+  <footer class="foot">
+    <p><a href="./">← John Buckman</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>
