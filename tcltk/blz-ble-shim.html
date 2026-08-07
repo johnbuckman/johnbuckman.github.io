@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>blz_ble_shim — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; blz_ble_shim</nav>
+  <header class="masthead">
+    <h1>blz_ble_shim</h1>
+    <p class="lede">Runs AndroWish Bluetooth-LE Tcl apps unaltered on Linux/BlueZ, with a hardware-free DE1/Skale simulator for testing.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/blz_ble_shim">blz_ble_shim on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p><code>blz_ble_shim</code> runs AndroWish / Android Bluetooth-LE Tcl code unaltered on Linux/BlueZ. It installs an <a href="https://www.androwish.org/">AndroWish</a>-compatible <code>ble</code> command implemented on top of undroidwish's built-in <code>blz</code> (BlueZ) command. Programs written against AndroWish's <code>ble</code> API — for example the <a class="gh" href="https://github.com/decentespresso/de1app">Decent Espresso <code>de1app</code></a> — run on desktop/embedded Linux with no code changes, save one line:</p>
+<pre class="tcl"><code>package require blz_ble_shim</code></pre>
+<p>It ships with a simulator (<code>blz_sim</code>) backed by virtual DE1 + Skale devices, for developing and testing AndroWish BLE apps on any platform, including macOS, with no Bluetooth hardware.</p>
+<p>AndroWish (Android) provides a <code>ble</code> command. undroidwish on Linux instead provides <code>blz</code>, a different BlueZ-backed command. The two use the same concepts but different verbs and event shapes, so AndroWish BLE apps do not run as-is on Linux. This package presents the AndroWish <code>ble</code> surface and translates every call and event to and from <code>blz</code>.</p>
+<pre><code>your AndroWish app ──ble …──▶ blz_ble_shim ──blz …──▶ BlueZ (bluetoothd)
+        (unchanged)          (this package)          (undroidwish on Linux)</code></pre>
+<h2 id="how-it-works">How it works</h2>
+<p><code>blz</code> emits only three callbacks (scan, connection, notification) and its <code>read</code> / <code>write</code> are <strong>synchronous with no event</strong>. AndroWish apps, however, sequence on events <code>blz</code> never sends — the write-with-response ACK (<code>characteristic access=w</code>), the read-completion (<code>access=r</code>), the per-service discovery stream (<code>characteristic state=discovery</code>), and the notification-enable acknowledgement (<code>descriptor access=w</code>). The shim synthesizes those events, delivered asynchronously (via <code>after 0</code>) so ordering matches Android. It also:</p>
+<ul>
+<li>allocates one <code>blz</code> context per connection (plus one for scanning) and routes events to the right handle;</li>
+<li>resolves each scanned device's name from its raw advertising data (AD TLV types 0x08 / 0x09);</li>
+<li>turns <code>blz</code>'s pull-style discovery (<code>blz services</code> / <code>blz characteristics</code>) into AndroWish's push-style discovery events;</li>
+<li>fabricates the <code>sinstance</code> / <code>cinstance</code> integers AndroWish apps record and echo back.</li>
+</ul>
+<p>The install is guarded: it registers the global <code>ble</code> command only if no real <code>ble</code> already exists and <code>blz</code> is present. It also does <code>package provide ble 1.0</code>, so an app's own <code>package require ble</code> is satisfied. Everywhere else it stays inert: it does not override a real <code>ble</code> (Android, or macOS CoreBluetooth) and does not crash when <code>blz</code> is absent.</p>
+<h2 id="status">Status</h2>
+<ul>
+<li>The shim is built and verified against the real <code>blz</code> command contract.</li>
+<li><code>test/selftest_mock.tcl</code> — 32/32 pass under <code>tclsh8.6</code>: verifies write-ACK / read / discovery / CCCD synthesis, advertising-name parsing, event shapes, and ordering.</li>
+<li><code>test/test_shim_e2e.tcl</code> — 27/27 pass: the full app flow of scan → name-resolve → connect → discovery → enable/notify → write-ACK-gated writes → read → concurrent DE1 + Skale event routing → disconnect → UUID helpers.</li>
+<li>The real <code>blz</code> extension has been compiled from AndroWish source and driven by the shim end-to-end: <code>ble state</code> → <code>poweredOn</code>, UUID helpers, and the BlueZ error paths work. The unmodified <code>bledemo</code> BLE-debugger GUI runs live on Linux under native <code>wish8.6</code> + real <code>blz</code> + the shim.</li>
+<li>Remaining gap: no live scan/connect against a physical peripheral yet — that step needs Bluetooth hardware (e.g. a Raspberry Pi with a DE1 / Skale) or an emulated LE peripheral.</li>
+</ul>
+<p>undroidwish's downloadable prebuilt binaries do not bundle <code>blz</code>; it lives in the AndroWish source tree and must be compiled in (see below).</p>
+<h2 id="building--using">Building &amp; using</h2>
+<p>Pick either install form — both make <code>package require blz_ble_shim</code> work.</p>
+<p><strong>A. Installer</strong></p>
+<pre class="sh"><code>./install.sh            # -&gt; /usr/local/lib  (tclsh/wish/undroidwish; may need sudo)
+./install.sh --user     # -&gt; ~/Library/Tcl   (no sudo)
+./install.sh /my/libdir # -&gt; a directory of your choice</code></pre>
+<p><strong>B. By hand</strong> — copy <code>pkgIndex.tcl</code>, <code>blz_ble_shim.tcl</code>, and <code>blz_sim.tcl</code> into a <code>blz_ble_shim/</code> directory on Tcl's <code>auto_path</code>, or point <code>TCLLIBPATH</code> at wherever you put them. Cloning the repo and putting the clone on <code>auto_path</code> also works — the repo root is a valid package directory.</p>
+<p><strong>C. Single-file Tcl Module</strong> — copy <code>blz_ble_shim.tcl</code> renamed <code>blz_ble_shim-1.0.tm</code> to a directory on <code>tcl::tm::path</code>.</p>
+<p>Then, in your app:</p>
+<pre class="tcl"><code>package require blz_ble_shim</code></pre>
+<p>Override the BlueZ adapter with the environment variable <code>BLZ_ADAPTER=hciN</code> (default <code>hci0</code>).</p>
+<p><strong>Building the real <code>blz</code> (Linux).</strong> undroidwish's prebuilt binaries do not bundle <code>blz</code>; it must be compiled from the AndroWish source tree. <code>docs/BUILDING_BLZ.md</code> has a step-by-step recipe. The gotchas:</p>
+<ul>
+<li>Use AndroWish's vendored <code>blzlib</code> (from <code>undroid/blz/blzlib/</code>), not the upstream <code>infsoft-locaware/blzlib</code> — AndroWish patched it to add the Tcl event-loop hooks <code>blz_get_fd</code> / <code>blz_get_events</code> / <code>blz_handle_read</code>; upstream lacks them and fails at load with undefined symbols.</li>
+<li>Link <code>-lsystemd -lbluetooth</code> explicitly (blzlib calls <code>sd_bus_*</code> directly; the TEA build doesn't add them).</li>
+<li>Build deps: <code>tcl8.6-dev</code>, <code>libbluetooth-dev</code>, <code>libsystemd-dev</code>, <code>gcc</code>, <code>tk8.6</code>.</li>
+</ul>
+<h2 id="the-hardware-free-simulator">The hardware-free simulator</h2>
+<p>The companion <code>blz_sim</code> package is a simulated <code>blz</code> (matching the real command contract) backed by virtual DE1 and Skale peripherals. They advertise, complete discovery, ACK writes, react to writes (a <code>RequestedState</code> write drives a <code>StateInfo</code> notification), and stream weight notifications in the real 18-byte Atomax format. This allows development and testing on any platform, including macOS, where the real <code>blz</code> cannot run (it needs Linux sd-bus + BlueZ).</p>
+<pre class="tcl"><code>package require blz_sim          ;# simulated blz + virtual devices
+package require blz_ble_shim     ;# `ble` on top of the simulator</code></pre>
+<p>Run the bundled examples:</p>
+<pre class="sh"><code>tclsh examples/scan.tcl --sim               # list the virtual devices
+wish8.6 examples/run_bledemo_sim.tcl        # full GUI BLE debugger, no radio</code></pre>
+<p><code>examples/bledemo.tcl</code> is a LightBlue-style BLE debugger (scan → connect → browse services → read / subscribe / write). It is an unmodified AndroWish app, run as-is on the shim.</p>
+<p><strong>Limitations.</strong> <code>blz</code> (BlueZ) exposes a smaller surface than Android's GATT layer, so a few AndroWish features are approximated or unavailable — none of which affect typical central-role apps (DE1, scales, sensors):</p>
+<ul>
+<li><strong>Pairing / bonding</strong> — BlueZ pairs via its own agent; <code>pair</code> / <code>unpair</code> are no-ops (fine for Just-Works / unencrypted peripherals).</li>
+<li><strong>Arbitrary descriptor I/O</strong> — only the CCCD (notifications) is exposed.</li>
+<li><strong>Reliable-write transactions</strong> are passed through, not atomic.</li>
+<li><strong>MTU</strong> is reported as a fixed default (BlueZ negotiates it in-kernel anyway).</li>
+<li><strong>Duplicate-UUID disambiguation</strong> — <code>sinstance</code> / <code>cinstance</code> are constants (devices with unique UUIDs are unaffected).</li>
+</ul>
+<h2 id="repository">Repository</h2>
+<p>Source, installer, tests, examples, and the <code>blz</code> build recipe: <a class="gh" href="https://github.com/johnbuckman/blz_ble_shim">github.com/johnbuckman/blz_ble_shim</a>. Tcl/Tk (BSD-style) license.</p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>

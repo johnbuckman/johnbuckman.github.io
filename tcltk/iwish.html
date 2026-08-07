@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iWish — Tcl/Tk for iOS — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; iWish — Tcl/Tk for iOS</nav>
+  <header class="masthead">
+    <h1>iWish — Tcl/Tk for iOS</h1>
+    <p class="lede">A port of Tcl/Tk (AndroWish / undroidwish, full extension set) to 64-bit iOS and iPadOS.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/iwish">iwish on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p><strong>iWish</strong> is a port of <a href="https://www.androwish.org/">AndroWish</a>'s <strong>undroidwish</strong> — the batteries-included, SDL2-rendered Tcl/Tk <code>wish</code> — to <strong>iOS and iPadOS</strong> (with a Mac Catalyst build alongside).</p>
+<p>It runs a real Tcl 8.6 interpreter and the real Tk 8.6 widget set on an iPhone or iPad. Tk is drawn through AndroWish's <code>SdlTk</code> — an X11-on-SDL2 emulation layer — using the <strong>AGG</strong> anti-aliased renderer for graphics and <strong>FreeType</strong> for text, composited onto an SDL2 <strong>Metal</strong> surface. There is no WebView and no native-UIKit-widget bridge: it is the actual Tk canvas and widgets, running on the device.</p>
+<p>The whole stack — Tcl, Tk/SdlTk, SDL2, AGG, FreeType — is statically linked into a single <code>sdl2wish</code> binary, compiled for <code>arm64-apple-ios</code>.</p>
+<h2 id="status">Status</h2>
+<p><strong>0.2 — alpha.</strong> The runtime runs a large third-party Tk application end-to-end on a physical iPad: full GUI, the batteries-included extension set, a bundled demo menu, and hardware access over CoreBluetooth. APIs, the build layout, and the bundled extension set are still in flux.</p>
+<ul>
+<li>The core port renders a Tk GUI on the <strong>iOS Simulator</strong>, <strong>Mac Catalyst</strong>, and a <strong>physical iPad</strong>, all screenshot-verified.</li>
+<li>Built with <code>TCL_UTF_MAX=6</code> (UCS-4) so astral-plane characters and arrows render correctly. Stock builds (UTF_MAX=3) garble them; the UTF6 rebuild is verified by the full Tcl and Tk regression suites.</li>
+<li>A Tcl/Tk espresso application (Decent's <code>de1app</code>) has been booted on a physical iPad and connected to a DE1 espresso machine over CoreBluetooth, on-device rather than in the simulator.</li>
+<li>Published as <strong>v0.2-alpha</strong>, then <strong>v0.2.2</strong> with the AltStore/SideStore <code>.framework</code> packaging fix.</li>
+</ul>
+<h2 id="whats-included-batteries">What's included (batteries)</h2>
+<p>Every build (device and Catalyst) bundles the AndroWish extension set plus built-in demo apps; the bare runtime is not shipped separately.</p>
+<ul>
+<li><strong>~114–118 bundled packages</strong>, of which <strong>56–64 are native <code>arm64-apple-ios</code> dylibs</strong>, totaling roughly 80 MB.</li>
+<li>Included: tkimg (jpeg/png/tiff), <strong>tls</strong> (over LibreSSL), TclCurl, sqlite3, itcl, itk, thread, tdom, Tktable, tktreectrl, zint, Img, tkpath, tkvnc, <strong>BLT 2.4</strong>, <strong>TkBLT</strong> (scientific plotting — <code>blt::graph</code>/<code>barchart</code>/<code>vector</code>), <strong>Tix</strong>, <strong>vectcl</strong>, tksvg, and more.</li>
+<li>A <strong>File ▸ Demos</strong> menu in the console launches the bundled demo apps. Four are iWish-specific: <code>bltgraph</code> (live TkBLT plotting + PostScript export), <code>bledemo</code> (a LightBlue-style BLE debugger — scan, connect, browse services/characteristics, read/subscribe/write), <code>borgdemo</code> (the <code>borg</code> iOS device bridge), and <code>paint</code>. Extensions that can't exist on iOS (Windows-only, Linux/Android hardware, fork/exec, huge external native libs) appear greyed-out.</li>
+<li><strong>iOS-native shims</strong> re-implement AndroWish's device commands on Apple frameworks:
+<ul>
+<li><strong><code>borg</code></strong> → <code>UIScreen</code> brightness, device/screen info, URL opening, AVSpeech text-to-speech, a native toast, plus a <code>platform</code> subcommand (<code>ios</code> / <code>iossimulator</code> / <code>maccatalyst</code>) so Tcl can identify the run target at runtime.</li>
+<li><strong><code>ble</code></strong> → CoreBluetooth (scan / connect / read / write / notify), using the peripheral's CoreBluetooth UUID as its address since iOS hides the hardware MAC.</li>
+<li><strong><code>hardexit</code></strong> → a one-command dylib that calls <code>_exit()</code>. On iOS, Tcl's normal <code>exit</code> (which runs <code>Tcl_Finalize</code>) hangs and leaves a blank window; routing <code>exit</code> through <code>hardexit</code> gives a clean quit.</li>
+</ul></li>
+<li>Because iOS sandboxes <code>fork</code>/<code>exec</code>, <code>exec ls</code>/<code>cat</code>/<code>cp</code>/… can never work in a packaged app. iWish supplies pure-Tcl replacements (<code>ls cat head tail grep wc cp mv rm mkdir touch find echo</code> …) wired into <code>init.tcl</code> so they exist in every interpreter, not just the console. They never shadow a name a program already defines.</li>
+</ul>
+<h2 id="building--signing-high-level">Building &amp; signing (high level)</h2>
+<p>The repo is a <strong>recipe</strong> — build scripts, a set of patches against upstream, and the iOS-native glue code. It does not redistribute AndroWish, SDL2, or Tcl/Tk; you fetch those and apply the patches.</p>
+<p>Rough shape of a build:</p>
+<ol type="1">
+<li>Get an AndroWish checkout and a stock <strong>SDL 2.30.11</strong> source tree.</li>
+<li>Apply the iWish patches (<code>apply-patches.sh</code>).</li>
+<li>Build the foundation — FreeType, SDL2, AndroWish Tcl, sdl2tk and <code>sdl2wish</code> — all for <code>arm64-apple-ios</code>, at <code>TCL_UTF_MAX=6</code>.</li>
+<li>Build the loadable extension stack and stage the full battery set into the bundle's <code>lib-batteries/</code>.</li>
+<li>Compile the <code>src-ios/</code> shims (<code>borg</code> / <code>ble</code> / <code>hardexit</code>) to dylibs.</li>
+<li>Assemble the <code>.app</code>: the renamed <code>sdl2wish</code> binary, <code>lib/tcl8.6</code> + <code>lib/tk8.6</code>, <code>main.tcl</code> + payload, an <code>Info.plist</code> (landscape orientations, status bar hidden, <code>MinimumOSVersion 15.0</code>), and the <code>lib-batteries/</code>.</li>
+<li>Build the app icon (any image → opaque 1024×1024 → asset catalog via <code>actool</code>).</li>
+<li><strong>Wrap every native dylib in its own <code>.framework</code> bundle</strong> under <code>Frameworks/</code> (see Implementation notes) — required for AltStore/SideStore.</li>
+<li>Sign and install to a device.</li>
+</ol>
+<p>Signing uses a standard Apple Development certificate plus a provisioning profile that includes the target device's UDID. Distribution is via TestFlight / sideload / EU notarization — App Store policy 2.5.2 forbids interpreters that load downloaded code. (This page omits the project's private signing identities, team IDs, device UDIDs, and local paths.)</p>
+<h2 id="implementation-notes">Implementation notes</h2>
+<p>The port reconciles a threaded X11-style toolkit with UIKit's main-thread rules and pixel model. Fixes:</p>
+<ul>
+<li><p><strong>Keyboard input.</strong> SDL2's UIKit backend registers a GameController keyboard and then <em>skips</em> delivering normal key presses, expecting a handler that never fires for ordinary typing — so keys vanished. The fix disables the GameController keyboard path so keys flow through the standard press handlers. Related device fixes eliminated double-typed characters (hardware key + hidden text-field both firing) and made Shift produce shifted symbols (<code>Shift+=</code> → <code>+</code>) via an ANSI shift map gated on Shift, not CapsLock.</p></li>
+<li><p><strong>Mouse, drag, and cursor.</strong> On Catalyst and iPad the pointer arrives as an indirect (trackpad) touch, not a classic mouse. Fixes route it through the touch handlers, add drag-motion reporting, correct a button-release bug (the pressed bit is already cleared at release time, so releases were lost), and add a cursor driver that morphs the pointer into resize/move shapes — using AppKit's <code>NSCursor</code> via the Objective-C runtime on Catalyst, and a custom bezier double-arrow <code>UIPointerStyle</code> on the device.</p></li>
+<li><p><strong>Keyboard-caret crash (SIGABRT).</strong> undroidwish runs Tcl/Tk on a secondary thread. Tk's caret update eventually set a <code>UIView</code> frame off the main thread, and UIKit's safe-area recalculation throws when that happens off-main → abort. The fix bounces the frame update to the main thread and skips it when it's a no-op. A recurring lesson across the port: never <code>dispatch_sync</code> from the Tcl thread to the main queue (the main thread is busy in the SDL/Tk loop and not servicing the main queue → deadlock) — always <code>dispatch_async</code>.</p></li>
+<li><p><strong>Screen auto-size and fill.</strong> On the real device iWish adopts the native screen size automatically; the fixed-resolution pins are all Catalyst-only. Pinning SdlTk's virtual screen to the native size, using <code>SDL_RenderSetLogicalSize</code> to scale the present, and ignoring spurious window-resize events made the Tk surface fill the display and map input back correctly.</p></li>
+<li><p><strong>Colour correctness on Catalyst.</strong> The whole UI came up red/blue-swapped. <code>SDL_GetWindowPixelFormat</code> reported <code>ABGR8888</code>, but the actual Metal drawable is BGRA; SDL presented without converting. Forcing the surface and textures to <code>ARGB8888</code> (== BGRA) on Catalyst fixed every colour at the final present, and AGG adapts to match.</p></li>
+<li><p><strong>Catalyst beachball.</strong> SdlTk's event loop blocks forever on the main thread with <code>SDL_WaitEvent</code>, but on Catalyst AppKit owns the main run loop, so never returning to it reads as "not responding". The fix returns the main thread to AppKit and drives Tk from a per-frame <code>CADisplayLink</code> callback instead.</p></li>
+<li><p><strong>AltStore/SideStore packaging.</strong> iWish bundles ~64 native dylibs. AltStore/SideStore re-sign with <code>ldid</code>, which only re-signs the executable and nested <em>bundles</em> (<code>Frameworks/*.framework</code>, <code>PlugIns/*.appex</code>) — a loose <code>.dylib</code>, even inside <code>Frameworks/</code>, keeps its original signature and iOS rejects the install (<code>0xe8008001</code>). The fix wraps every dylib in its own <code>.framework</code> bundle and rewrites the Tcl <code>load</code> paths. (A deeper root cause — <code>ldid</code> emitting a legacy SHA-1-primary code directory that iOS 26 rejects — is why a modern, codesign-equivalent signer is ultimately needed for reliable free-account sideloading.)</p></li>
+</ul>
+<h2 id="repository">Repository</h2>
+<p>Source, build scripts, and patches: <strong><a class="gh" href="https://github.com/johnbuckman/iwish">https://github.com/johnbuckman/iwish</a></strong></p>
+<p>Part of the <a href="https://johnbuckman.github.io/tcltk/">Tcl/Tk on modern platforms</a> collection. Sibling projects build the same stack as a native Apple-Silicon <strong>macOS</strong> binary and as a <strong>32-bit armv7 / iOS 9</strong> full-source snapshot for old jailbroken devices.</p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>

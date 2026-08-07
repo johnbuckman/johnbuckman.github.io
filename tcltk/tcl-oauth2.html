@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tcl_oauth2_library — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; tcl_oauth2_library</nav>
+  <header class="masthead">
+    <h1>tcl_oauth2_library</h1>
+    <p class="lede">Pure-Tcl OAuth 2.0 (Authorization Code, with PKCE) client library, with Basecamp and QuickBooks Online examples.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/tcl_oauth2_library">tcl_oauth2_library on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p><strong>tcl_oauth2_library</strong> is a self-contained OAuth 2.0 client written in pure Tcl. It implements the <strong>Authorization Code</strong> flow: it opens the user's browser, catches the redirect on a one-shot local web server, exchanges the <code>code</code> for tokens, persists them to a <code>0600</code> JSON file, refreshes expired access tokens, and provides a one-liner for authenticated API calls.</p>
+<p>Dependencies: <code>http</code> (bundled with the core Tcl distribution) and <code>tls</code> (the standard Tcl TLS extension). JSON parsing and encoding are handled by a decoder included in the file, and base64 by core Tcl's <code>binary encode base64</code>, so nothing from Tcllib is required. <code>tls</code> is the one unavoidable extension: HTTPS cannot be done in pure Tcl, as there is no pure-Tcl TLS handshake.</p>
+<p>It is licensed under the <strong>Tcl/Tk license</strong> (BSD-style), the same license used by Tcl/Tk and Tcllib, and is structured to drop into Tcllib as the module <code>modules/oauth2/</code>.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li><strong>Authorization Code flow</strong> — send the browser to the provider, catch the redirect on a local socket, exchange the code, and save the tokens. Non-OAuth redirect parameters (such as Intuit's <code>realmId</code>) are kept under the token's <code>extra</code> key.</li>
+<li><strong>Refresh</strong> — <code>oauth2::token</code> returns a valid access token, refreshing it when it is within 60 seconds of expiry. <code>oauth2::request</code> attaches it as a <code>Bearer</code> header and, on an HTTP 401, refreshes once and retries.</li>
+<li><strong>PKCE (RFC 7636)</strong> — a single <code>-pkce S256</code> option. The SHA-256 it needs is implemented in-package (verified against the SHA-256 known-answer vectors and the RFC 7636 appendix-B test vector), keeping the dependency footprint at <code>http</code> + <code>tls</code>. <code>plain</code> is also supported. The code verifier is not included in the authorize URL.</li>
+<li><strong>Provider-agnostic</strong> — the same code path drives providers that each deviate from the spec differently. Each deviation is expressed as configuration via <code>-auth_extra</code> / <code>-token_exchange_extra</code> / <code>-token_refresh_extra</code> dicts and a <code>-token_auth body|basic</code> switch.</li>
+<li><strong>Additional grants and helpers</strong> — Client Credentials (RFC 6749 §4.4) for machine-to-machine flows, Token Introspection (RFC 7662), and a non-verifying <code>jwt_decode</code> for inspecting an access token's claims.</li>
+<li><strong>Cross-platform</strong> — runs unchanged on Unix, macOS, and Windows. Browser launch, <code>~</code> expansion, and CA-bundle discovery are handled internally.</li>
+</ul>
+<h2 id="supported-providers--examples">Supported providers &amp; examples</h2>
+<p>The library ships three self-standing examples in <code>examples/</code>. Each is a single file that depends only on the <code>oauth2</code> library, configures one provider inline, runs the login, and makes one API call. Each runs two ways — plain Tcl, or behind a Tk UI with <code>-gui 1</code> — and takes its credentials from the command line or the environment, not from the repo.</p>
+<ul>
+<li><strong>Twitter / X</strong> (<code>twitter_login.tcl</code>) — Authorization Code <strong>with mandatory PKCE</strong> (<code>-pkce S256</code>), then <code>GET /2/users/me</code>. A confidential client (with a secret) authenticates with HTTP Basic; a public client (no secret) relies on PKCE alone; the example selects the mode automatically.</li>
+<li><strong>Basecamp</strong> (<code>basecamp_login.tcl</code>) — 37signals Launchpad uses <code>type=web_server</code> in place of <code>response_type=code</code> / <code>grant_type=…</code>, expressed through the <code>-*_extra</code> options. Shows identity and accounts, then lists projects.</li>
+<li><strong>QuickBooks Online / Intuit</strong> (<code>qbo_login.tcl</code>) — close to standard OAuth2 but requires HTTP Basic auth on the token endpoint (<code>-token_auth basic</code>) and, in production, bans <code>localhost</code> redirect URIs. Register a public bounce page that 302-redirects to a local <code>…/callback</code>; the local callback server listens on that port. Fetches the connected company's profile via <code>CompanyInfo</code>.</li>
+</ul>
+<p>A fourth directory, <code>examples/testing/</code>, has five runnable programs that each demonstrate a way to <strong>test an OAuth2 configuration</strong> — OIDC discovery, Client Credentials, Introspection, live token validation, and JWT decoding. They run as-is against a public IdentityServer demo (no registration needed), then point at another provider by editing a few lines at the top.</p>
+<h2 id="using-it">Using it</h2>
+<p>Load the library through the package system or by sourcing the file directly:</p>
+<pre class="tcl"><code>lappend auto_path /path/to/tcl-oauth2
+package require oauth2</code></pre>
+<p>Create a client, log in once, and make a call. Credentials shown here are placeholders; supply real ones from environment variables:</p>
+<pre class="tcl"><code>set client [oauth2::new \
+    -name          myapp \
+    -auth_url      https://provider.example/authorize \
+    -token_url     https://provider.example/token \
+    -client_id     YOUR_CLIENT_ID \
+    -client_secret YOUR_CLIENT_SECRET \
+    -redirect_uri  http://localhost:9876/callback \
+    -scope         &quot;read write&quot; \
+    -auth_extra            {response_type code} \
+    -token_exchange_extra  {grant_type authorization_code} \
+    -token_refresh_extra   {grant_type refresh_token} \
+    -token_file    ~/.config/myapp/tokens.json]
+
+oauth2::login $client   ;# first run: opens browser, saves tokens
+
+set json [oauth2::request $client GET https://api.example/v1/things]</code></pre>
+<p>After the first <code>login</code>, tokens live in <code>-token_file</code> and are refreshed automatically — subsequent runs skip straight to <code>oauth2::request</code>.</p>
+<p>Core API surface:</p>
+<ul>
+<li><code>oauth2::new</code> — create a client (loads any existing token file immediately).</li>
+<li><code>oauth2::login</code> / <code>authorize_url</code> / <code>exchange_code</code> — interactive or manual Authorization Code flow.</li>
+<li><code>oauth2::token</code> — a currently-valid access token, refreshing as needed.</li>
+<li><code>oauth2::request</code> / <code>get</code> / <code>post</code> — authenticated TLS calls with Bearer auth and refresh-and-retry on 401.</li>
+<li><code>oauth2::validate</code> — live-test the current token, optionally auto-refreshing.</li>
+<li><code>oauth2::refresh</code> — force a refresh-token grant now.</li>
+<li><code>oauth2::client_credentials</code> / <code>introspect</code> / <code>jwt_decode</code> — the extra grants and helpers.</li>
+<li><code>oauth2::tokens</code> / <code>set_tokens</code> / <code>save</code> / <code>load</code> / <code>logout</code> / <code>config</code> — token and configuration management.</li>
+<li><code>oauth2::json_parse</code> / <code>json_get</code> — decode a JSON body and reach into it by dotted path with array indices, e.g. <code>QueryResponse.Item[0].Id</code>.</li>
+</ul>
+<p><strong>Security.</strong> Client secrets are read from the environment, never hard-coded. Tokens are written with mode <code>0600</code> and excluded from version control. The <code>state</code> parameter is generated per-login and verified on the redirect as a CSRF guard.</p>
+<h2 id="status">Status</h2>
+<ul>
+<li>In production use, driving logins against Intuit (QuickBooks Online) and Basecamp.</li>
+<li><strong>PKCE (RFC 7636)</strong> is implemented and verified against the standard test vectors.</li>
+<li>Ships with Tcllib packaging artifacts: a doctools reference manual (<code>oauth2.man</code>, renders via <code>dtplite</code>) and a <code>tcltest</code> suite (<code>oauth2.test</code>, <strong>36 offline tests pass</strong> — SHA-256/PKCE vectors, JSON parse/get, JWT, authorize-URL construction, option validation, and <code>0600</code> token persistence).</li>
+<li>Relicensed to the <strong>Tcl/Tk license</strong> (from GPL-3), for submission of the package to Tcllib.</li>
+</ul>
+<h2 id="repository">Repository</h2>
+<p>Source, examples, manual, and tests: <strong><a class="gh" href="https://github.com/johnbuckman/tcl_oauth2_library">https://github.com/johnbuckman/tcl_oauth2_library</a></strong></p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>

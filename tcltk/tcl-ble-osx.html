@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tcl-ble-osx — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; tcl-ble-osx</nav>
+  <header class="masthead">
+    <h1>tcl-ble-osx</h1>
+    <p class="lede">Bluetooth LE for Tcl/Tk on macOS via CoreBluetooth, exposing the same ble command as AndroWish.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/tcl-ble-osx">tcl-ble-osx on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p><code>tcl-ble-osx</code> is a Bluetooth Low Energy library for Tcl/Tk on macOS. It provides a <code>ble</code> command that is API-compatible with <a href="https://www.androwish.org/">AndroWish</a>, whose built-in <code>ble</code> command exists only on Android and Linux.</p>
+<p>macOS has no such command, so Tcl code written against the AndroWish BLE API — for example the <a class="gh" href="https://github.com/decentespresso/de1app">Decent Espresso <code>de1app</code></a> — cannot reach Bluetooth devices on the Mac. This library implements the API using Apple's CoreBluetooth, so that code runs unmodified.</p>
+<p>It runs under plain <code>tclsh</code> (no Tk), standard Aqua <code>wish</code>, and undroidwish. It has been tested end-to-end against a Decent Espresso DE1 machine and an Atomax Skale scale: scan, connect, service and characteristic discovery, notification enable plus ACK, live notifications, and reads.</p>
+<h2 id="how-it-works-corebluetooth-helper">How it works (CoreBluetooth helper)</h2>
+<p><code>ble.tcl</code> installs the <code>ble</code> command and presents the AndroWish event dictionaries (<code>scan</code>, <code>connection</code>, <code>characteristic</code>, <code>descriptor</code>), invoking the callback as <code>{*}$callback $event $datadict</code>. It has two interchangeable CoreBluetooth backends and selects one automatically:</p>
+<ul>
+<li><strong>Subprocess helper — <code>bin/ble_helper.bin</code></strong> (a universal arm64 + x86_64 Swift binary). It speaks a tab-separated line protocol over a stdio pipe and works on every interpreter, signed or not. This is the default.</li>
+<li><strong>Native extension — <code>lib/libtclble.dylib</code></strong> (built from <code>native/tclble.m</code>). A loadable Tcl extension that drives CoreBluetooth in-process. Lower overhead, and the only option on iOS (iWish), where spawning a subprocess isn't allowed.</li>
+</ul>
+<p>Rationale for the separate process: a loadable extension runs inside the interpreter, so its Bluetooth access takes on the interpreter's TCC (privacy) identity. That works for a signed app or on iOS, but an unsignable host such as undroidwish cannot get Bluetooth that way — and an in-process attempt there can wedge the process. The subprocess helper re-spawns itself with responsibility disclaimed (<code>responsibility_spawnattrs_setdisclaim</code>), so on hosts that need it the helper becomes its own TCC identity. It is also architecture- and stubs-independent.</p>
+<p>Two macOS constraints the library handles:</p>
+<ol type="1">
+<li><strong>No MAC addresses.</strong> CoreBluetooth never exposes a peripheral's hardware address; it uses an opaque, host-stable <code>NSUUID</code>. The library uses that UUID string as the "address" used to scan, store, and reconnect. It is stable across launches for a given Mac + peripheral pair.</li>
+<li><strong>Bluetooth permission (TCC).</strong> macOS attributes a Bluetooth request to the "responsible" app and needs an <code>NSBluetoothAlwaysUsageDescription</code> usage string to prompt. The library arranges attribution so the first-run prompt appears; it is approved once and the grant persists.</li>
+</ol>
+<h2 id="status">Status</h2>
+<p>Tested end-to-end against a DE1 + Skale on x86_64 undroidwish, arm64 (Apple Silicon) undroidwish, iWish (Catalyst), and standard Aqua <code>wish</code>: scan, connect, characteristic discovery, notification enable and descriptor ACK, streaming notifications, and reads.</p>
+<p>On macOS the default is the subprocess helper, which runs on any interpreter. The native in-process extension is opt-in and intended for signed apps and iOS.</p>
+<h2 id="using-it-api-env-vars">Using it (API, env vars)</h2>
+<p>Load the package and drive it from the Tcl event loop:</p>
+<pre class="tcl"><code>package require ble
+
+proc cb {event data} {
+    if {$event eq &quot;scan&quot;} {
+        puts &quot;[dict get $data rssi] dBm  [dict get $data name]  [dict get $data address]&quot;
+    }
+}
+ble scanner cb        ;# start scanning; cb fires for every device
+vwait forever         ;# in a script (or tclsh) you must run the event loop</code></pre>
+<p>BLE is asynchronous, so the callback only fires while Tcl's event loop is running. <code>wish</code>/undroidwish enter it automatically once the script finishes, but <code>tclsh</code> does not — end a script with <code>vwait forever</code> (or <code>vwait somevar</code>).</p>
+<p>Core subcommands:</p>
+<pre><code>ble scanner   &lt;callback&gt;                          -&gt; scanner token; starts scanning
+ble start     &lt;token&gt;                             -&gt; idempotent re-scan
+ble stop      &lt;token&gt;                             -&gt; stop scanning
+ble connect   &lt;address&gt; &lt;callback&gt; ?&lt;reconnect&gt;?  -&gt; connection handle (e.g. &quot;ble1&quot;)
+ble reconnect &lt;handle&gt;                            -&gt; reconnect an existing handle
+ble close     &lt;handle&gt;                            -&gt; disconnect (or stop a scanner)
+ble info      ?&lt;handle&gt;?                          -&gt; open handles / info for one
+ble enable    &lt;h&gt; &lt;suuid&gt; &lt;si&gt; &lt;cuuid&gt; &lt;ci&gt;       -&gt; enable notifications
+ble disable   &lt;h&gt; &lt;suuid&gt; &lt;si&gt; &lt;cuuid&gt; &lt;ci&gt;
+ble write     &lt;h&gt; &lt;suuid&gt; &lt;si&gt; &lt;cuuid&gt; &lt;ci&gt; ?&lt;writetype&gt;? &lt;data&gt;
+ble read      &lt;h&gt; &lt;suuid&gt; &lt;si&gt; &lt;cuuid&gt; &lt;ci&gt;
+ble mtu       &lt;h&gt; ?&lt;value&gt;?                        -&gt; negotiated MTU
+ble userdata  &lt;h&gt; ?&lt;value&gt;?                        -&gt; per-handle scratch store
+ble state                                          -&gt; central manager state</code></pre>
+<p>The callback receives <code>$event $datadict</code>:</p>
+<table>
+<thead>
+<tr>
+<th><code>event</code></th>
+<th><code>datadict</code> keys</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scan</code></td>
+<td><code>address</code> <code>name</code> <code>rssi</code></td>
+</tr>
+<tr>
+<td><code>connection</code></td>
+<td><code>handle</code> <code>address</code> <code>state</code> (<code>connected</code>/<code>disconnected</code>), <code>mtu</code> on connect</td>
+</tr>
+<tr>
+<td><code>characteristic</code> (<code>state=discovery</code>)</td>
+<td><code>handle</code> <code>address</code> <code>suuid</code> <code>sinstance</code> <code>cuuid</code> <code>cinstance</code></td>
+</tr>
+<tr>
+<td><code>characteristic</code> (<code>state=connected</code>)</td>
+<td><code>access</code> (<code>r</code> read / <code>w</code> write-ack / <code>c</code> notification), <code>value</code> (binary), <code>cuuid</code> …</td>
+</tr>
+<tr>
+<td><code>descriptor</code> (<code>state=connected access=w</code>)</td>
+<td>the notification-enable (CCCD) acknowledgement</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>sinstance</code>/<code>cinstance</code> integers are assigned during discovery and echoed back; store them keyed by UUID and pass them to <code>enable</code>/<code>write</code>/<code>read</code>.</p>
+<p><strong>Environment variables:</strong></p>
+<ul>
+<li><code>BLE_USE_NATIVE=1</code> — opt in to the in-process native dylib (default is the subprocess helper). Use only from a host that can legitimately hold Bluetooth in-process, such as a signed app whose Info.plist carries <code>NSBluetoothAlwaysUsageDescription</code>. Loading the native dylib on a host without a usage description (plain tclsh, unsignable undroidwish) makes macOS TCC abort the process with an uncatchable SIGABRT the instant it touches CoreBluetooth.</li>
+<li><code>BLE_NO_NATIVE=1</code> — force the subprocess helper (now the default; kept for backward compatibility).</li>
+<li><code>BLE_HELPER_NO_REEXEC=1</code> — skip the helper's self-disclaim, so Bluetooth attributes to the launching app instead. Useful when the host bundle is itself grantable.</li>
+<li><code>BLE_HELPER_DEBUG</code> — enable helper debug logging (off by default).</li>
+</ul>
+<h2 id="building">Building</h2>
+<p>Requires the Xcode command-line tools (<code>swiftc</code>).</p>
+<pre class="bash"><code>git clone https://github.com/johnbuckman/tcl-ble-osx
+cd tcl-ble-osx
+./build.sh            # builds + signs bin/ble_helper.bin (universal)</code></pre>
+<p>A prebuilt helper is included. Rebuilding locally binds the Bluetooth grant to a locally controlled signature. <code>native/build.sh</code> builds the in-process native dylib.</p>
+<p><code>package require ble</code> finds the package only if its directory is on Tcl's <code>auto_path</code>. <code>/usr/local/lib</code> is on the <code>auto_path</code> of both the system <code>tclsh</code>/<code>wish</code> and undroidwish, so a single symlink there makes it available everywhere:</p>
+<pre class="bash"><code>ln -s /path/to/tcl-ble-osx /usr/local/lib/tcl-ble-osx</code></pre>
+<p>Always move the whole directory — the package locates <code>bin/ble_helper.bin</code> relative to <code>ble.tcl</code>.</p>
+<p><strong>First run</strong> shows a one-time macOS Bluetooth prompt; approve it and the grant persists (keyed to the helper's code signature, so rebuilding re-prompts). For distribution, sign the helper with a Developer ID and notarize the containing app so the grant is stable and Gatekeeper-friendly; keep <code>NSBluetoothAlwaysUsageDescription</code> in the embedded <code>Info.plist</code>.</p>
+<h2 id="repository">Repository</h2>
+<ul>
+<li>Source and issues: <a class="gh" href="https://github.com/johnbuckman/tcl-ble-osx">github.com/johnbuckman/tcl-ble-osx</a></li>
+<li>License: Tcl/Tk license (BSD-style).</li>
+</ul>
+<p>Presented at EuroTcl 2026 (Vienna) — "BLE for Tcl: one Bluetooth Low Energy API, from desktop to phone, wired into the Tcl event loop." Originally written to run the Decent Espresso <code>de1app</code> on macOS; usable by any Tcl program that needs Bluetooth LE on the Mac.</p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>

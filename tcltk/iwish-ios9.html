@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iWish for iOS 9 — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; iWish for iOS 9</nav>
+  <header class="masthead">
+    <h1>iWish for iOS 9</h1>
+    <p class="lede">The undroidwish extension set built for 32-bit armv7 and iOS 9, for hardware that cannot run current iOS.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/iwish-ios9">iwish-ios9 on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p>iWish for iOS 9 is a 32-bit armv7 / iOS 9.3 port of iWish — the AndroWish stack that runs Tcl/Tk on SDL2 with batteries included. It builds a self-contained <code>sdl2wish</code> interpreter plus a set of loadable native extensions, all compiled for 32-bit Apple A-series devices (such as an iPad mini 1, A5 CPU, no Metal) not targeted by current toolchains and app stores.</p>
+<p>It is a separate build tree from the arm64 iOS/Catalyst iWish port: the two build trees do not share output, and shared C code is guarded by iOS-version macros rather than forked. Rendering uses SDL2's GLES2 path with AGG software rasterization, because these GPUs predate Metal.</p>
+<p>The Decent Espresso de1app runs on top of this port — GUI, Bluetooth LE hardware discovery, and in-app self-update work end-to-end on an A5 iPad.</p>
+<h2 id="scope">Scope</h2>
+<p>No current SDK builds cleanly for armv7, and modern side-loading tools require iOS 12.2 or newer. A first-generation iPad mini cannot run current software.</p>
+<p>With a jailbreak for signing, this port provides a Tcl/Tk environment with networking, TLS, Bluetooth, SQLite, and a full widget toolkit, sufficient to run an application. The result is a single-purpose appliance on a decade-old tablet.</p>
+<h2 id="status">Status</h2>
+<ul>
+<li>Tcl and Tk regression suites pass on-device. The stack (FreeType, SDL2 GLES2, Tcl 8.6, sdl2tk + AGG, sdl2wish) builds as armv7, minimum iOS 9.0, and runs on the device. Remaining test failures are floating-point edge cases (armv7 <code>long double</code> == <code>double</code>) and known sdl2tk reduced-X11 backend semantics — no armv7 codegen bugs, no crashes.</li>
+<li>Bluetooth LE: verified end-to-end on an A5 iPad — scanning delivers advertised names, connect works, GATT discovery works, characteristic reads work.</li>
+<li>de1app runs on the device — GUI renders and BLE discovery of real hardware is confirmed.</li>
+<li>In-app self-update works over HTTPS, after fixing an armv7-specific TLS crypto bug (see below); an HTTP + SHA-256 path remains as a fallback.</li>
+<li>Idle CPU cut ~63% via a batched event-loop pump (see below).</li>
+<li>Batteries: ~130 native packages verified loading on-device, and the demos menu is fully enabled.</li>
+</ul>
+<p>Open item for daily use: startup performance — first launch is dominated by Tk photo-image scaling of skin assets. The fix is to pre-scale and cache skin PNGs, or to ship a lighter skin.</p>
+<h2 id="building">Building</h2>
+<p>The build is driven by shell scripts in the repo's <code>ios9-build/</code> kit:</p>
+<ol type="1">
+<li>A foundation build compiles FreeType, SDL2 (GLES2, Metal off), Tcl/Tk and sdl2tk into <code>sdl2wish</code>, targeting <code>armv7-apple-ios9.0</code> against an iOS 9.3 SDK.</li>
+<li>An extensions harness cross-compiles each native battery (tls, sqlite3, tdom, BLT, tkimg, zint, Thread, Itcl, treectrl, and more) into ldid-signable loadable dylibs, with a static verifier confirming every <code>pkgIndex</code> target resolves.</li>
+<li>An app-bundle step assembles and signs the <code>.app</code>, using <code>ldid</code> with a platform-application entitlement set (jailbreak, no App Store).</li>
+</ol>
+<p>The prerequisites, tree layout, and step-by-step commands are in <code>ios9-build/BUILD.md</code>.</p>
+<h2 id="implementation-notes">Implementation notes</h2>
+<h3 id="armv7-toolchain-a-two-compiler-build">armv7 toolchain (a two-compiler build)</h3>
+<p>Current Apple clang cannot assemble 32-bit armv7 reliably: its integrated assembler fails on Tcl's large bytecode-interpreter function ("relocation not in range," at any optimization level, ARM or Thumb). The build uses a compiler wrapper that compiles with a modern NDK clang (which has a working armv7 assembler) while linking with Apple's linker via the classic-linker flag, which produces a binary that loads on jailbroken iOS 9.</p>
+<p>The iOS 9.3 SDK was missing <code>mem*</code>/<code>str*</code> stub symbols, an entire libc++ header set, and several availability headers, so the build idempotently repairs the SDK before compiling, and several SDL source files are guarded so they compile against the old SDK.</p>
+<h3 id="tls-on-old-ios">TLS on old iOS</h3>
+<p>The bundled LibreSSL initially produced a wrong TLS 1.3 handshake on armv7. Root cause: the crypto code included the system <code>&lt;endian.h&gt;</code> and called <code>be64toh()</code> for SHA-512/384's 64-bit words, but on iOS that function doesn't exist. Compiled as an implicit <code>int</code>-returning function, every 64-bit value was truncated to 32 bits — so SHA-384/512 were wrong while SHA-256 was correct. Because the TLS 1.3 cipher suite in use derives its keys via HKDF-SHA384, the client computed the wrong handshake keys and could not decrypt the server's first record. In-process test handshakes had masked the bug, since both sides shared the same broken hash.</p>
+<p>The fix forces correct 64-bit byte-swap macros into the LibreSSL build. With that in place, on-device known-answer tests pass and a TLS 1.3 handshake to a live server succeeds, enabling HTTPS self-update on the device.</p>
+<h3 id="idle-cpu--heartbeat">Idle CPU / heartbeat</h3>
+<p>de1app pegged a CPU core when idle (foreground, screen on). Profiling showed the cost was native, not application-level: sdl2tk's event thread called SDL's <code>SDL_WaitEvent</code>, which on iOS runs a full CFRunLoop pump on every event returned — so a burst of queued events cost one pump each, and a fixed 100 Hz timer heartbeat kept the queue non-empty.</p>
+<p>Two changes addressed it: lowering the iOS heartbeat rate, and replacing the wait loop with a batched pump that drains the already-queued events first and only pumps the CFRunLoop when the queue is empty — one pump per drained burst instead of one per event. Foreground-idle dropped from ~0.83 core to ~0.31 core (~63%) on the A5. The same batched-pump change ports to modern arm64 iPads, where it also cuts idle CPU (~70% on an M2 device).</p>
+<h2 id="repository">Repository</h2>
+<p>Source, build scripts, and build notes: <a class="gh" href="https://github.com/johnbuckman/iwish-ios9">https://github.com/johnbuckman/iwish-ios9</a></p>
+<p>This repo is a full-source, clone-and-build snapshot — a fork of <a href="https://www.androwish.org">AndroWish</a> (Tcl/Tk-on-SDL2 by Christian Werner) with the armv7 / iOS 9.3 source patches and build kit added. Upstream AndroWish, Tcl/Tk, and each bundled extension retain their own licenses.</p>
+<p>It has an arm64 sibling for modern iOS devices, <a class="gh" href="https://github.com/johnbuckman/iwish">iwish</a>.</p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>

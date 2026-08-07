@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>undroidwish for Apple Silicon — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; undroidwish for Apple Silicon</nav>
+  <header class="masthead">
+    <h1>undroidwish for Apple Silicon</h1>
+    <p class="lede">undroidwish (SDL2 wish, full extension set) built natively for arm64 macOS, in both Tcl/Tk 8.6 and Tcl/Tk 9.1.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included">Tcl/Tk 8.6 build on GitHub →</a> <a class="btn gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included-tcltk91">Tcl/Tk 9.1 build on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p><strong>undroidwish</strong> is the desktop, batteries-included SDL2 <code>wish</code> from <a href="https://www.androwish.org/">AndroWish</a> — AndroWish without the Android. Instead of rendering Tk through a real X server, Cocoa, or Win32, it draws Tk via an X11-server emulation layer built on top of <strong>SDL2</strong> (with Anti-Grain-Geometry for rasterization). That backend, called <code>sdl2tk</code>, is a fork of Tk's Unix platform layer.</p>
+<p>This project builds undroidwish as a native Apple Silicon (arm64) macOS binary. The stock undroidwish is x86-64 and runs on Apple Silicon only through Rosetta 2, which Apple is retiring. A native arm64 binary allows AndroWish/Tk apps (for example, <a class="gh" href="https://github.com/decentespresso/de1app">de1app</a>) to keep running on the Mac after Rosetta is removed. On an M4 the arm64 build is about <strong>1.5× faster on compute</strong> and <strong>1.25× faster on cold startup</strong> than the same code under Rosetta.</p>
+<p>The work spans <strong>two sibling repositories</strong> — one that ships <strong>Tcl/Tk 8.6</strong> and one that ports the SDL2 backend forward to <strong>Tcl/Tk 9.1</strong>.</p>
+<h2 id="the-two-builds-86--91">The two builds (8.6 &amp; 9.1)</h2>
+<p>Both are batteries-included, native-arm64 undroidwish builds. They target different Tcl/Tk generations and are at different maturity levels.</p>
+<p><strong>Tcl/Tk 8.6 build</strong> — <a class="gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included"><code>undroidwish-arm64-batteries-included</code></a></p>
+<ul>
+<li>Ships <strong>Tcl/Tk 8.6.10</strong>. Shipped, notarized production build.</li>
+<li>Native Cocoa desktop build, delivered as a self-contained single-file Mach-O (the <code>wish</code> binary with an embedded <code>assets.zip</code>).</li>
+<li>Distributed under the <strong>Tcl/Tk (BSD-style) license</strong> for the patches and docs; AndroWish and its bundled third-party libraries keep their own licenses.</li>
+<li>Bundles ~60 statically-linked Tcl/Tk extensions (Img, tls, tdom, BLT, tkpath, itk, treectrl, mpexpr, and more), plus the reintroduced desktop <code>borg</code> command and a Bluetooth-LE (<code>ble</code>) demo.</li>
+</ul>
+<p><strong>Tcl/Tk 9.1 build</strong> — <a class="gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included-tcltk91"><code>undroidwish-arm64-batteries-included-tcltk91</code></a></p>
+<ul>
+<li>Ports the <code>sdl2tk</code> backend forward to <strong>Tcl/Tk 9.1b0</strong> (Tk 9.1 is the first Tk 9.x release able to run on the SDL2 backend). Tk 9 is a major release with an ABI break from 8.6 (<code>Tcl_Size</code>/TIP 494, removed deprecated APIs, renamed platform hooks, <code>Tcl_ObjCmdProc2</code>), so this is a port, not a version bump.</li>
+<li>Runs natively on arm64 as a self-contained <code>.app</code>, reproducing the undroidwish bare launch (console + Tk window + <strong>Demos</strong> menu). <strong>All 17 bare-launch demos work</strong> (it started at 1). <strong>21 C-extension stacks</strong> are ported to Tcl 9.1.</li>
+<li>Licensed under the <strong>Tcl/Tk license</strong> (matching upstream Tcl/Tk).</li>
+</ul>
+<p>Both repositories contain <strong>patches, new sources, and documentation only</strong> — they do not redistribute the AndroWish, Tcl, Tk, SDL2, FreeType, or AGG sources.</p>
+<h2 id="status">Status</h2>
+<p><strong>8.6 build — shipped:</strong></p>
+<ul>
+<li>Multiple alpha releases, the latest <strong>notarized and stapled</strong> (passes Gatekeeper as a Notarized Developer ID app).</li>
+<li>The Tcl regression suite passes natively on arm64 (46090 total, 38920 passed, 7169 skipped, and 1 failure that is an environment/harness artifact — a locale-encoding test — not an arm64 bug).</li>
+<li>Native arm64 is about <strong>1.46× faster overall</strong> than x86-under-Rosetta (startup 1.25×, math 1.47×, general Tcl 1.53×, Tk 1.31×). The two builds also differ by a Tcl minor bump (8.6.9 vs 8.6.10), so this is a build-to-build comparison, not pure architecture isolation.</li>
+<li>Includes a macOS Retina rendering fix (the UI fills the whole window on a built-in Retina display instead of drawing into a corner) and non-overlapping bare-launch windows.</li>
+</ul>
+<p><strong>9.1 build — port complete at spike level, production tail remaining:</strong></p>
+<ul>
+<li>The entire SDL backend compiles clean against Tk 9.1 (all files, zero errors), and the bare <code>wish</code> links and runs.</li>
+<li>Tk 9.1-on-SDL renders a full, visible window natively on arm64, with all <strong>17/17 demos</strong> working and 21 C-extension stacks ported. The <code>.app</code> is self-contained with library auto-discovery, a bare-launch console, and a Demos menu.</li>
+<li>Remaining for production: notarization, integration into the 8.6 build recipe, application validation, and roughly <strong>40 optional non-demo batteries</strong> (an individual-fix tail). A window-management capture fix and a Bluetooth usage-description fix have landed.</li>
+</ul>
+<h2 id="building">Building</h2>
+<p>Both repositories are <strong>recipes</strong>: the upstream sources (AndroWish, Tcl, Tk, SDL2, FreeType, AGG) are fetched separately, the repo's patches applied, and its build script run. Neither repo redistributes upstream source.</p>
+<p><strong>8.6 build.</strong> Get an AndroWish checkout, apply the repo's patches with <code>apply-patches.sh</code>, then run AndroWish's <code>build-undroidwish-macosx.sh</code> <strong>out of tree</strong> (the script refuses to run inside the AndroWish source tree). It first <code>init</code>s by copying sources, then builds. Prerequisites: an Apple Silicon Mac (macOS 11+), Xcode command-line tools, and MacPorts for <code>autoconf</code>/<code>automake</code>/ <code>pkg-config</code>/<code>cmake</code>. For a notarizable single-file binary, the build uses an <code>ebuild</code> target that embeds <code>assets.zip</code> as a Mach-O <code>__TEXT,__zipfs</code> <strong>section</strong> (a plain appended zip leaves trailing data after the Mach-O and fails strict codesign validation).</p>
+<p><strong>9.1 build.</strong> Uses a <strong>direct build script</strong> (no autoconf): it compiles Tk 9.1's <code>generic/</code> sources plus the SDL platform layer and AGG renderer, and links against a prebuilt static Tcl 9.1, SDL2, FreeType, and AGG. The script also packages a self-contained <code>.app</code> whose Tcl/Tk 9.1 script libraries live under <code>Contents/Resources</code>; the binary discovers them relative to itself, so <code>TCL_LIBRARY</code> / <code>TK_LIBRARY</code> need not be set.</p>
+<p><strong>A <code>.app</code> bundle is required on macOS for both builds.</strong> A bare binary launched from a terminal gets no window-server connection and renders nothing (<code>CGContextFillRects: invalid context 0x0</code>). Run via <code>open</code>.</p>
+<p>The x86-64 half of the universal notarized macOS app (the Intel slice, for a <code>lipo</code>'d universal binary) is built separately by GitHub Actions on a native x86 runner and combined with the arm64 slice.</p>
+<h2 id="implementation-notes">Implementation notes</h2>
+<p><strong>The core arm64 fix (8.6).</strong> AndroWish's bundled SDL2 <code>configure</code> treated the Apple-Silicon Mac host triple <code>arm64-apple-darwin*</code> as <strong>iOS</strong> — its iOS branch label <code>arm*-apple-darwin*</code> swallowed arm64 Macs — so it enabled UIKit/OpenGL ES and disabled Cocoa, then failed with <code>GLES/gl.h not found</code>. x86 Macs never hit this. The fix narrows the iOS label so arm64 Macs take the macOS/Cocoa branch.</p>
+<p><strong>Modern-toolchain hardening (8.6).</strong> A chain of issues from a recent clang and old autoconf: implicit-int / implicit-function-declaration / int-conversion became hard errors; autoconf-2.13 <code>cc -E</code> probes aborted on SIGPIPE and mis-detected <code>size_t</code>/<code>pid_t</code>/<code>sizeof</code> as 0 (poisoning downstream builds), fixed by pre-seeding the autoconf cache; x86-only SIMD paths in jpeg-turbo; and bundled codec gaps in libpng (a NEON symbol) and libtiff (uncompiled PixarLog/ZIP codecs).</p>
+<p><strong>Why 9.1 forced a full Tk port.</strong> No Tk-9-on-SDL exists upstream, and Tk 9.1 only runs on Tcl 9.1 — so the 8.6 Tk backend cannot be paired with Tcl 9. The platform contract (<code>Tkp*</code>) is largely stable across 8.6→9.1 (one new stubbable hook, plus mostly mechanical signature tweaks: <code>int</code>→<code>bool</code>, <code>ClientData</code>→<code>void*</code>). AndroWish barely patched Tk's <code>generic/</code>, so the approach was to take Tk 9.1's <code>generic/</code> <strong>wholesale</strong>, re-apply the small AndroWish hooks, and re-fork only the platform layer. The long pole was recompiling ~70 C batteries against Tcl 9 stubs.</p>
+<p><strong>The Tcl/Tk 9.1 window-manager capture fix.</strong> Early in the 9.1 port, window management was dead — you could not move, resize, or close a window after the first click landed in any widget. The root cause was a missing capture release (<code>TkpSetCapture(NULL)</code>); once fixed, decorative frames move, resize, and close correctly. Two lessons: (1) building on <strong>pristine</strong> Tk 9.1 <code>generic/</code> silently drops every AndroWish <code>#ifdef PLATFORM_SDL</code> hunk, so those hunks (font aliases/DPI sizing, the <code>sdltk</code> ensemble and <code>-sdl*</code> options, the capture release) must be deliberately re-applied — and several files remain to be reviewed; and (2) the fix was verified with a <strong>headless UI test harness</strong> that injects synthetic SDL mouse events (<code>uwsynthmouse</code>) plus SDL event tracing, so window-management regressions can be tested without taking over the machine's real pointer.</p>
+<p><strong>The <code>Tcl_Size</code> class-of-bug (9.1).</strong> Tk 9 widened many length types to <code>Tcl_Size</code> (TIP 494). Any <code>int</code> length variable still receiving a value from <code>Tcl_ListObjGetElements</code> / <code>Tcl_SplitList</code> / <code>Tcl_GetStringFromObj</code> can overrun and crash (SIGBUS) as its code path executes. Several sites in the SDL layer are fixed; a sweep of the remainder is a tracked task.</p>
+<p><strong>The widget-extension configuration shim (9.1).</strong> Old extensions call the string-based <code>Tk_ConfigureWidget(interp, tkwin, specs, argc, argv, rec, flags)</code>, which Tk 9 made object-based — a mismatch that segfaults. The fix is a shim the <code>wish</code> itself exports that converts <code>char**</code> argv into <code>Tcl_Obj**</code> and calls the real object-based function; the extension build then source-rewrites each call site to the shim. (A macro-based approach fought the stubs machinery and was abandoned in favor of the source rewrite.)</p>
+<p><strong>Headless / BLT rendering.</strong> undroidwish can boot a GUI script and render Tk — including BLT graphs — <strong>fully headless</strong>, with no display attached: SDL creates an offscreen surface, widgets map, and <code>update idletasks</code> paints. This was confirmed while benchmarking a live-chart redraw hot path — a script that did <code>package require Tk</code> → <code>package require BLT</code> → <code>blt::graph</code> → <code>element create</code> → <code>time {update idletasks}</code> returned redraw timings with <code>winfo ismapped</code> true and correct widget geometry, from a plain shell. (The package name is <code>BLT</code> v2.4, not <code>tkblt</code>.) The Tk <strong>GUI test suite</strong> cannot run headless on this SDL2 build — it has only Cocoa and dummy drivers, and modal dialogs block the run — so those tests need a real Cocoa session; that is a property of the reduced X11 backend, not an arm64 issue.</p>
+<h2 id="repositories">Repositories</h2>
+<ul>
+<li><strong>Tcl/Tk 8.6 (shipped, notarized):</strong> <a class="gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included"><code>johnbuckman/undroidwish-arm64-batteries-included</code></a></li>
+<li><strong>Tcl/Tk 9.1 (work in progress):</strong> <a class="gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included-tcltk91"><code>johnbuckman/undroidwish-arm64-batteries-included-tcltk91</code></a></li>
+</ul>
+<p>Part of <a href="https://johnbuckman.github.io/tcltk/">John Buckman's Tcl/Tk projects</a>.</p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebWish — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; WebWish</nav>
+  <header class="masthead">
+    <h1>WebWish</h1>
+    <p class="lede">An SDL2 video driver that runs an AndroWish, undroidwish or Tk app headless and streams its framebuffer to a browser canvas, with input sent back over a WebSocket.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/WebWish">WebWish on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p><strong>WebWish</strong> serves any <a href="https://libsdl.org">SDL2</a> / Tk desktop application as a web app, with no changes to the app. It runs the program headless on a server and renders and controls it in a browser tab: the app's framebuffer is streamed to an HTML <code>&lt;canvas&gt;</code> over a WebSocket, and the viewer's mouse and keyboard travel back the same way. To the app, WebWish is another SDL video backend.</p>
+<p>The driver works for anything that renders through SDL's software framebuffer path. The original target is <a href="https://www.androwish.org/"><strong>undroidwish</strong></a>, AndroWish's Tcl/Tk-on-SDL runtime, run inside a browser.</p>
+<p>The driver's internal name is <code>wstiles</code> (it appears in the environment variables and the on-the-wire handshake magic <code>wtil</code>). The project name is WebWish.</p>
+<h2 id="how-it-works">How it works</h2>
+<p>WebWish is an SDL2 <strong>video driver</strong>. When an SDL2 app selects it (<code>SDL_VIDEODRIVER=wstiles</code>), the app draws into an in-memory framebuffer the driver hands it, and the driver moves pixels to the browser and events back.</p>
+<ul>
+<li><strong>Pixel format.</strong> The framebuffer is advertised as <code>SDL_PIXELFORMAT_ABGR8888</code>, whose little-endian byte order is <code>R, G, B, A</code> — what the browser's <code>putImageData</code> expects, so no per-pixel conversion is needed.</li>
+<li><strong>Dirty-tile transport (lossless).</strong> Each frame is diffed against a shadow copy on a <strong>64×64-pixel tile grid</strong>; only changed tiles are sent, each <strong>zlib-deflated</strong>. On first connect the whole screen goes out as a single deflated frame rather than hundreds of raw tiles — a flat 1024×768 UI's first paint drops from about 3 MB to roughly 19 KB (~160×), lossless. The browser inflates each tile with the native <code>DecompressionStream("deflate")</code> and paints it independently.</li>
+<li><strong>Whole-screen AV1 (optional).</strong> With <code>SDL_VIDEO_WSTILES_CODEC=av1</code>, the driver hands each changed frame to a realtime <strong>AV1</strong> encoder (libaom, <code>tune=screen</code>, 4:4:4) and the browser decodes it with the <strong>WebCodecs</strong> <code>VideoDecoder</code>. There is a live constant-quality knob and a bandwidth meter. From benchmarking: lossless tiles are smaller on flat UI (typically ~0.1 ms per tile, and smaller than AV1 for a static screen); AV1 is smaller on large animated or photographic change, e.g. a live shot graph.</li>
+<li><strong>Browser-driven resize.</strong> The session sizes itself to the viewport — on connect and on window resize the client requests the space it can show, and the driver reallocates the framebuffer and tells the app. Opt out per page with <code>window.WSTILES_AUTORESIZE = false</code>, or cap it with <code>SDL_VIDEO_WSTILES_SIZE</code>.</li>
+<li><strong>Input.</strong> Browser mouse and keyboard events are packed in a binary wire format and unpacked into SDL events. Control keys work, and multi-command round-trips have been verified end to end.</li>
+</ul>
+<p>Three transports are available, chosen by environment variable:</p>
+<ol type="1">
+<li><strong>Built-in server</strong> — the driver runs its own <a href="https://libwebsockets.org">libwebsockets</a> server and serves the client page directly.</li>
+<li><strong>stdio framing</strong> — length-prefixed <code>[u32-be len][payload]</code> frames on stdin/stdout, so an external proxy can bridge it. This is what the NaviServer reference bridge uses, and it means a container's stdin/stdout <em>is</em> the wire — no per-session port is opened.</li>
+<li><strong>oneshot</strong> — the process self-terminates when its last client disconnects, giving the per-session model.</li>
+</ol>
+<p>A reference <a href="https://naviserver.sourceforge.io/">NaviServer</a> bridge multiplexes many independent sessions through a <strong>single public port</strong>: each browser tab gets its own private process, spawned on connect and reaped on disconnect. The bridge is event-driven and runs <em>off</em> the connection-thread pool; an idle server measures ~0% CPU, and it handles many concurrent viewers.</p>
+<p>The complete byte-level wire format is documented in the repository's <code>docs/WIRE-PROTOCOL.md</code>.</p>
+<h2 id="status">Status</h2>
+<p><strong>Working alpha.</strong> As of mid-2026 the following are all verified live:</p>
+<ul>
+<li>Display, mouse (motion, click, drag), keyboard including control keys, and menus.</li>
+<li>Browser-driven resize.</li>
+<li>Lossless zlib tiles <strong>and</strong> whole-screen AV1 with a live quality slider.</li>
+<li>Per-session process spawn and reap (many users on one URL), plus the single-port, off-connection-thread NaviServer bridge.</li>
+<li>Runs on <strong>arm64 macOS</strong> (the primary development target) and in a <strong>hardened Linux container</strong> (x86-64 and arm64), built against AndroWish's SDL2 fork.</li>
+</ul>
+<p>Prebuilt Docker images are published as a GitHub release: x86-64 and arm64, in lossless-tiles and AV1 variants.</p>
+<p><strong>Limitations:</strong> no touch input (mouse events only, so phones/tablets cannot drive a session); clipboard is one-way (server→browser frames are dropped by the client); <code>WarpMouse</code> is unimplemented; there is no shared multi-viewer stream (each viewer drives its own process); and it is a <strong>patch into an SDL2 build tree</strong>, not a drop-in shared library. Neither reference bridge authenticates or caps sessions on its own — see the security note below.</p>
+<h2 id="security">Security</h2>
+<p>Exposing a GUI app to untrusted users — especially undroidwish's default <strong>Tcl console</strong> — is remote code execution as a service. WebWish uses defense-in-depth; read the repository's <code>SECURITY.md</code> before exposing it to anyone:</p>
+<ol type="1">
+<li><strong>Never expose a console.</strong> Ship a locked-down app inside a Tcl <strong>safe interpreter</strong> with resource limits.</li>
+<li><strong>Isolate every session.</strong> Run each one in a hardened, ephemeral container: <code>--network none</code>, read-only rootfs, non-root user, <code>--cap-drop ALL</code>, <code>no-new-privileges</code>, and pid/memory/CPU caps. Because the stdio transport makes the container's stdin/stdout the wire, no per-session port is even opened. For anonymous exposure, escalate to a stronger sandbox (e.g. gVisor or a microVM).</li>
+<li><strong>Authenticate and rate-limit the bridge.</strong> Per-session hardening bounds what one session can do, but does nothing about someone opening a thousand of them. Add auth and a session cap before any public deployment. (The driver's own built-in server does support HTTP Basic auth.)</li>
+</ol>
+<h2 id="building--running">Building &amp; running</h2>
+<p>WebWish is a driver compiled into an SDL2 build and linked against. Constraint: it targets <strong>AndroWish's SDL2 fork (SDL 2.0.6)</strong>, not stock upstream SDL2 — several internal APIs differ enough that stock SDL will not compile. The repository's <code>docs/BUILDING.md</code> states the requirement and the source layout; <code>patches/</code> documents the edits that wire the driver into an SDL2 tree.</p>
+<p>The prebuilt Docker image plus the bundled bridge requires no build:</p>
+<pre class="sh"><code># load the image for your architecture
+gunzip -c webwish-undroidwish-amd64-tiles.tar.gz | docker load
+
+# one hardened session; stdio is the wire, so no port is opened
+docker run --rm -i --network none --read-only --tmpfs /tmp \
+  --user 65534:65534 --cap-drop ALL --security-opt no-new-privileges \
+  --pids-limit 128 --memory 256m --cpus 1 \
+  webwish/undroidwish:latest-amd64</code></pre>
+<p>Given a binary, the driver's own server serves it directly:</p>
+<pre class="sh"><code>SDL_VIDEODRIVER=wstiles SDL_VIDEO_WSTILES_PORT=8090 \
+    ./undroidwish-wstiles yourapp.tcl
+# then open http://localhost:8090/</code></pre>
+<p>For many users on one port, the self-contained <code>server/</code> bridge drops into any NaviServer docroot subdirectory with nothing to edit — <code>stream.adp</code> locates its siblings relative to itself, and dropping an <code>app.tcl</code> beside it makes that the app each session runs. For an existing NaviServer, <code>docs/DEPLOY-NAVISERVER.md</code> documents a no-build deploy (load an image, copy one directory).</p>
+<p>Key environment variables:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SDL_VIDEODRIVER=wstiles</code></td>
+<td>select this driver</td>
+</tr>
+<tr>
+<td><code>SDL_VIDEO_WSTILES_PORT=&lt;n&gt;</code></td>
+<td>built-in server listen port</td>
+</tr>
+<tr>
+<td><code>SDL_VIDEO_WSTILES_STDIO=1</code></td>
+<td>length-prefixed frames on stdin/stdout instead</td>
+</tr>
+<tr>
+<td><code>SDL_VIDEO_WSTILES_CODEC=av1</code></td>
+<td>whole-screen AV1 instead of lossless tiles</td>
+</tr>
+<tr>
+<td><code>SDL_VIDEO_WSTILES_CQ=&lt;12..63&gt;</code></td>
+<td>AV1 constant-quality (lower = sharper/bigger)</td>
+</tr>
+<tr>
+<td><code>SDL_VIDEO_WSTILES_ONESHOT=1</code></td>
+<td>exit when the last client disconnects</td>
+</tr>
+<tr>
+<td><code>SDL_VIDEO_WSTILES_SIZE=WxH</code></td>
+<td>maximum framebuffer size (default 1024×768)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="implementation-notes">Implementation notes</h2>
+<ul>
+<li><strong>Zero-copy pixel format.</strong> Choosing <code>ABGR8888</code> so the framebuffer's byte layout matches <code>putImageData</code> eliminates a conversion pass on every frame.</li>
+<li><strong>One deflated frame, not hundreds of tiles, on connect.</strong> Sending the first paint as a single zlib stream turns a 3 MB cold start into ~19 KB while staying lossless.</li>
+<li><strong>Independent per-tile decode.</strong> The client inflates and paints each tile on its own rather than chaining them; a single rejected promise in a chain would poison every later repaint.</li>
+<li><strong>Codec chosen for the workload.</strong> Lossless tiles for static UI; AV1 with <code>tune=screen</code> (which fixes the text-blur of the older MPEG-1 path) for animated/photographic content — with a measured keyframe often ~2× smaller than a full zlib frame and clock-tick deltas of ~100 bytes.</li>
+<li><strong>Bridge concurrency.</strong> A stdio child pipe and a WebSocket must cooperate inside NaviServer's event reactor: the socket side is event-driven only, and the child pipe needs a Tcl event loop. Each session runs on its own detached thread with event-driven output, off the connection-thread pool. An idle server measures 0% CPU with one detached channel per client and no leaks.</li>
+<li><strong>Upstream bug found and fixed.</strong> After a root-window resize, SDL-Tk recreated the screen texture with the wrong pixel format at 32bpp, swapping red and blue on every subsequent frame (a blue desktop turned brown). The fix affects only backends that report <code>ABGR8888</code> — which includes iOS (<code>uikit</code>) as well as <code>wstiles</code> — and is carried as a documented patch.</li>
+</ul>
+<h2 id="repository">Repository</h2>
+<p>Source, build recipes, wire-protocol spec, security model, and prebuilt images: <strong><a class="gh" href="https://github.com/johnbuckman/WebWish">github.com/johnbuckman/WebWish</a></strong>. Released under the <strong>zlib license</strong> (the same as SDL); <code>driver/SDL_wstiles.c</code> is derived from SDL's <code>SDL_jsmpeg.c</code>.</p>
+<p><code>docs/AGENT-BOOTSTRAP.md</code> documents current state, build recipes for both architectures, the bugs already solved (with the wrong theories that were ruled out), and the traps to avoid.</p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLT-faster — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; BLT-faster</nav>
+  <header class="masthead">
+    <h1>BLT-faster</h1>
+    <p class="lede">A patch for BLT 2.4 that caches axis tick labels and static chrome to cut graph-redraw cost. Measured ~1.3–1.9x, pixel-identical output.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/BLT-faster">BLT-faster on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p><strong>BLT-faster</strong> is a C patch against the BLT 2.4 <code>graph</code> / <code>stripchart</code> / <code>barchart</code> widget that reduces the per-frame cost of live, continuously-redrawn charts, with no change to rendered output. It targets the BLT 2.4 tree as bundled in <a href="https://www.androwish.org/">AndroWish</a> / undroidwish and most other BLT 2.4 distributions.</p>
+<p>It ships as a GPL-3 patch project: it distributes <code>patches/blt-faster.patch</code> plus documentation, not the BLT source. Apply the patch to a pristine BLT 2.4 tree and rebuild; the changes apply to every graph.</p>
+<h2 id="the-performance-problem">The performance problem</h2>
+<p>Profiling case: three live espresso charts (pressure, flow, temperature) redrawing at 10 Hz on a tablet. Findings:</p>
+<ul>
+<li>The per-frame cost is dominated by the axes, not the data. Roughly <strong>55–70 % of every frame</strong> goes into drawing the axis tick <strong>labels</strong> and tick <strong>marks</strong> — re-rasterized through FreeType/AGG on <em>every</em> redraw, even though the label text ("0", "5", "10"…) rarely changes.</li>
+<li>The data curves are a minority of the cost.</li>
+<li>Line width, point count, <code>-smooth</code>, <code>-reduce</code>, and dashes each move the frame time by <strong>less than 10 %</strong>.</li>
+<li>Batching the tick-mark segments into one draw call saved <strong>~6 %</strong>: the cost is pixel-coverage rasterization, not per-segment setup.</li>
+</ul>
+<p>The approach is to avoid repeating the axis work every frame.</p>
+<h2 id="the-optimizations">The optimizations</h2>
+<h3 id="-cachelabels--the-label-cache-default-on"><code>-cachelabels</code> — the label cache (default ON)</h3>
+<p>Each unique axis tick-label string is rendered once into a small pixmap (on the axis-margin background, where there is no grid underneath) and then blitted at its new position each frame instead of re-rasterizing the text.</p>
+<ul>
+<li>Pixel-identical — verified by snapshot comparison with zero differing pixels. Falls back to normal drawing for rotated / active / shadowed labels.</li>
+<li>Applies when the axis is auto-scaling, because only the label <em>position</em> moves — the text is reused.</li>
+<li>Measured <strong>~1.3×</strong> on live charts.</li>
+<li>On by default; no application change required: patch, rebuild, and every graph's labels use the cache.</li>
+<li>Implemented in <code>bltGrAxis.c</code> (<code>DrawAxis</code>, a per-axis label cache, <code>GetLabelSprite</code>, <code>Blt_ClearAllLabelCaches</code>).</li>
+</ul>
+<h3 id="-bufferchrome--chrome-buffering-default-off-opt-in"><code>-bufferchrome</code> — chrome buffering (default OFF, opt-in)</h3>
+<p>The entire static "chrome" (background, grid, tick labels, axes, border) is rendered once into a cache pixmap and reused, drawing only the data elements on top.</p>
+<ul>
+<li>The chrome is re-rendered only when a signature changes (<code>Blt_ComputeChromeSignature</code>, an FNV hash of the plot rectangle, focus, and each axis's hidden / min / max / tick-count state), and is invalidated on graph or axis reconfigure.</li>
+<li>Measured <strong>~1.9×</strong> on graphs whose axes are static or change rarely — history views, zoomed plots, dashboards, finished charts.</li>
+<li>Off by default because a graph whose x-axis auto-rescales on <em>every</em> frame (a live stripchart) cannot cache anything, so it is roughly neutral-to-slightly-slower there. Enable it per graph with <code>-bufferchrome 1</code>.</li>
+<li>Implemented in <code>bltGraph.c</code> (<code>DrawChrome</code>, <code>DrawCachedChrome</code>, <code>DisplayGraph</code>).</li>
+</ul>
+<h3 id="-redrawduty---minredrawms--redraw-throttling-designed"><code>-redrawduty</code> / <code>-minredrawms</code> — redraw throttling (designed)</h3>
+<p>A separately-designed redraw-pacing pair of options that limits how often expensive redraws run on slow hardware:</p>
+<ul>
+<li><strong><code>-redrawduty &lt;k&gt;</code></strong> — adaptive. After a redraw that took D ms, refuse to redraw again for D·k ms (k=1 gives roughly a 50 % duty cycle). Self-tuning to the hardware.</li>
+<li><strong><code>-minredrawms &lt;ms&gt;</code></strong> — a fixed minimum interval between redraws.</li>
+</ul>
+<p>This is a responsiveness / CPU-budget change (it can free ~40 % CPU on a slow tablet where stock BLT leaves only ~8 % headroom), not a chart-freshness fix — keeping the chart up to date instead relies on cheaper redraws (<code>-bufferchrome</code> plus a stepped rather than grow-every-frame x-axis). It composes with the label cache and chrome buffering. These options are designed and documented but not part of the applied patch yet.</p>
+<h2 id="results">Results</h2>
+<p>Measured on an Apple M4, using a reproduction of the 3-chart live espresso page (pressure / flow / temperature), full element set, 10 Hz over a 45 s "shot":</p>
+<table>
+<thead>
+<tr>
+<th>chart kind</th>
+<th>stock BLT</th>
+<th>BLT-faster</th>
+<th>speedup</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>live charts, <strong>auto-scaling</strong> x-axis (1280×800)</td>
+<td>5.3 ms/frame</td>
+<td>3.9 ms/frame</td>
+<td><strong>1.34×</strong> (<code>-cachelabels</code>)</td>
+</tr>
+<tr>
+<td><strong>fixed-axis</strong> graph (history / zoomed / dashboard)</td>
+<td>3.8 ms/frame</td>
+<td>2.0 ms/frame</td>
+<td><strong>1.9×</strong> (<code>-bufferchrome</code>)</td>
+</tr>
+<tr>
+<td>slow tablet, <code>-redrawduty</code></td>
+<td>—</td>
+<td>—</td>
+<td>frees <strong>~40 % CPU</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The relative speedup typically grows on slower hardware (tablets, single-board computers), where text rasterization is comparatively more expensive than on a fast desktop.</p>
+<p>Measurement note: benchmark the <strong>on-screen</strong> redraw path (<code>update idletasks</code>), not <code>$graph snap</code>. Snap forces a full reset-world redraw plus a photo read-back and bypasses <code>-bufferchrome</code>, so it does not reflect real live-redraw cost.</p>
+<h2 id="how-to-apply">How to apply</h2>
+<p>From the root of a BLT 2.4 source tree (the directory containing <code>src/</code>):</p>
+<pre class="sh"><code>patch -p1 &lt; /path/to/BLT-faster/patches/blt-faster.patch
+# ...then rebuild BLT the way you normally do.</code></pre>
+<p>Or use the helper:</p>
+<pre class="sh"><code>./apply-patch.sh /path/to/blt</code></pre>
+<p>The patch touches four files (<code>src/bltGraph.{c,h}</code>, <code>src/bltGrAxis.{c,h}</code>), adds roughly 375 lines, and is additive: with the options at their defaults the rendering is identical to stock BLT. After rebuilding, every graph has <code>-cachelabels</code> <strong>on</strong>; enable <code>-bufferchrome</code> per graph:</p>
+<pre class="tcl"><code>.g configure -bufferchrome 1     ;# opt IN to the chrome cache (default off)
+.g configure -cachelabels  0     ;# opt OUT of the label cache (default on)</code></pre>
+<p>BLT loads as a runtime library, so a test script can <code>load</code> the patched build to override an embedded one without relinking the host wish.</p>
+<h2 id="repository">Repository</h2>
+<p>Source, patch, and documentation (<code>docs/HOW-IT-WORKS.md</code>, <code>docs/BENCHMARKS.md</code>) are on GitHub: <a class="gh" href="https://github.com/johnbuckman/BLT-faster">github.com/johnbuckman/BLT-faster</a>. GPL-3.0. The patch and docs are original work; they modify BLT, which carries its own license — this repo distributes the changes, not the BLT source.</p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AndroWish on Tcl/Tk 9.1 — Tcl/Tk projects — John Buckman</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; AndroWish on Tcl/Tk 9.1</nav>
+  <header class="masthead">
+    <h1>AndroWish on Tcl/Tk 9.1</h1>
+    <p class="lede">AndroWish (Tcl/Tk on Android, SDL2/AGG) rebuilt on Tcl/Tk 9.1b0, with the full AndroWish extension set.</p>
+  </header>
+  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/androwish-tcl91">androwish-tcl91 on GitHub →</a></div>
+  <main class="prose">
+<h2 id="what-it-is">What it is</h2>
+<p>A port of <a href="https://www.androwish.org/">AndroWish</a> — Tcl/Tk on Android, via an SDL2 + AGG X11-emulation backend — rebuilt on <strong>Tcl/Tk 9.1b0</strong> (the 2026-06-30 beta), targeting the 9.1 release.</p>
+<p>Upstream AndroWish ships <strong>Tcl/Tk 8.6.10</strong> on both its <code>trunk</code> and <code>wtf-8-experiment</code> Fossil branches, and there is no Tk-9-on-SDL upstream. The method: take <strong>stock Tk 9.1 <code>generic/</code></strong> and re-insert the SDL-specific regions that Christian Werner guards behind <code>#ifdef PLATFORM_SDL</code> — about 177 markers across 37 files — then port the self-contained <code>sdl/</code> backend (~49k lines) and <code>xlib/</code> (~1.8k lines) to Tk 9.1 internals (<code>Tcl_Size</code>, changed structs, and the Tcl 9 object-based widget-option APIs). It is not a three-way merge: the sdl2tk <code>generic/</code> is forked from an older 8.6.x, so diffing against 8.6.10 is misleading.</p>
+<h2 id="status">Status</h2>
+<p><strong>0.1-alpha.</strong> A signed arm64 APK boots on Android to an interactive Tcl console (File/Edit menu, <code>%</code> prompt) plus a main window with a <strong>Demos</strong> menu (12 entries) whose demos launch. All 84 native libraries build against Tcl/Tk 9.1b0 with zero errors, including the full "batteries included" extension set.</p>
+<p>Runtime is verified end to end: the Tcl 9.1b0 interpreter runs on Android arm64 (<code>tcl_patchLevel</code> = 9.1b0, bignum arithmetic via libtommath), and the signed APK installs, launches, and renders the Tk root window. Outstanding: a default icon, and the empty placeholder <code>.</code> window.</p>
+<p>A signed build is attached to the project's <a class="gh" href="https://github.com/johnbuckman/androwish-tcl91/releases">Releases</a>.</p>
+<h2 id="building-ndktoolchain">Building (NDK/toolchain)</h2>
+<p>The upstream sources are supplied by the builder; this repo carries documentation and build configuration only.</p>
+<p>Requirements:</p>
+<ul>
+<li>The AndroWish source tree (Fossil), plus the Tcl 9.1 and Tk 9.1 sources</li>
+<li>Android <strong>NDK r27d</strong></li>
+<li>JDK 21 (Android Studio's JBR works)</li>
+<li><strong>arm64-v8a only</strong>, <code>android-21</code> baseline</li>
+</ul>
+<p>The core Tcl module (<code>libtcl.so</code>) is regenerated from the Tcl 9.1 tarball into an ndk-build module. Seven changes distinguish it from the 8.6 module, including: regenerating the source list from the Tcl 9.1 <code>unix/Makefile.in</code> OBJS; adding <code>utf8proc</code> with <code>-DUTF8PROC_STATIC</code> (a new 9.x encoding dependency); pointing <code>TCL_LIBRARY</code> at the staged <code>tcl9.1</code> assets; and dropping <code>TCL_UTF_MAX=6</code>. The standalone stock-<code>configure</code> route fails on macOS (a Darwin define leak makes <code>tclUnixTime</code> <code>#error</code>); the ndk-build path is the supported one.</p>
+<pre class="sh"><code>export ANDROID_NDK_HOME=.../ndk/27.3.13750724
+export JAVA_HOME=&quot;/Applications/Android Studio.app/Contents/jbr/Contents/Home&quot;
+export PATH=&quot;$ANDROID_NDK_HOME:$PATH&quot;
+
+&quot;$ANDROID_NDK_HOME/ndk-build&quot; NDK_PROJECT_PATH=. \
+    APP_BUILD_SCRIPT=./jni/Android.mk \
+    NDK_APPLICATION_MK=./jni/Application64.mk APP_ABI=arm64-v8a -j8
+./gradlew assembleRelease</code></pre>
+<p>Two gotchas:</p>
+<ul>
+<li><strong>Stale <code>.o</code> files.</strong> Changing a compiler flag in a <code>*-config.mk</code> does <strong>not</strong> invalidate ndk-build's object files. After editing one, <code>rm -rf obj/local/arm64-v8a/objs/&lt;module&gt;</code> or the flag will not apply.</li>
+<li><strong>Stale <code>.so</code> repackaging.</strong> Gradle can skip repackaging when a native <code>.so</code> changes outside its task tracking, packaging a stale library. Run the <code>ndk-build</code> step first, then <code>./gradlew --no-daemon assembleRelease --rerun-tasks</code>, and verify the <code>.so</code> inside the APK matches the built one.</li>
+</ul>
+<h2 id="packaging-apk">Packaging (APK)</h2>
+<p>The alpha APK is Tcl/Tk 9.1b0, <strong>arm64-v8a only</strong>, <code>minSdkVersion 21</code>, <code>targetSdkVersion 36</code>, <code>versionName 0.1-alpha</code>, with <strong>84 native libraries</strong> and the full batteries-included extension set. Its <code>applicationId</code> is <code>tk.tcl.wish.tcl91</code>, so it installs <strong>alongside</strong> stock AndroWish (<code>tk.tcl.wish</code>) rather than replacing it. The release build is 32,145,360 bytes (sha256 <code>8651613169…f959</code>).</p>
+<p>Two Android packaging facts:</p>
+<ul>
+<li><strong>Fonts must be staged.</strong> Stock Tk 9.1 omits AndroWish's bundled DejaVu/Symbola faces, so they must be copied into <code>assets/sdl2tk9.1/fonts/</code> (13 files) or font setup fails at first draw.</li>
+<li><strong>The zipfs 128 MB self-mount cap.</strong> An AndroWish app mounts its own APK via Tcl zipfs at startup, in C, before Tcl runs. Tcl zipfs (<code>ZipFS.zipmax</code>) defaults to a 128 MB limit, so an APK larger than that fails <code>zipfs mount</code> with "invalid file size" and dies at Tcl init. It cannot be raised from Tcl because the self-mount is native-first; the fix bumps both initializers to 1.5 GB (below the ~2 GB 32-bit-offset wall).</li>
+</ul>
+<p>Under Tcl 9, zipfs mounts live under <code>//zipfs:/</code> (TIP 430), so the boot directory and <code>TCL_LIBRARY</code>/<code>TK_LIBRARY</code> are rewritten to <code>//zipfs:/assets/...</code> for the 9.x build.</p>
+<h2 id="implementation-notes">Implementation notes</h2>
+<p>Four runtime bugs stood between "it links" and "it runs". All are written up in <code>docs/PORT.md</code>.</p>
+<ol type="1">
+<li><p><strong><code>Tcl_GetIntFromObj</code> failed for every non-negative integer on arm64</strong>, surfacing as <code>bad level "#0"</code> from <code>upvar #0</code> inside <code>tkInit</code> — no console and no menu. <code>TCL_WIDE_INT_IS_LONG</code> was undefined on this LP64 build, so <code>Tcl_GetLongFromObj</code> took its 32-bit-<code>long</code> branch where <code>(Tcl_WideInt)(ULONG_MAX)</code> overflows to <code>-1</code>, making the range check <code>w &lt;= -1</code> reject everything. Arithmetic still worked, because bytecode literals are parsed at compile time; only runtime string→integer conversion broke. Fix: define the macro.</p></li>
+<li><p><strong>Stack corruption (<code>SIGABRT</code>, <code>-fstack-protector</code>) in <code>wm title</code>.</strong> The 8.6-era X11-emulation layer passed <code>int*</code> where Tcl 9 expects <code>Tcl_Size*</code> (8-byte) out-params, smashing the stack. These are silent <code>-Wincompatible-pointer-types</code> warnings; every <code>Tcl_GetStringFromObj</code>, <code>Tcl_ListObjGetElements</code>, <code>Tcl_GetByteArrayFromObj</code> and <code>Tcl_SplitList</code> in the SDL layer had to be checked for an <code>int</code> out-param.</p></li>
+<li><p><strong>Pointer-truncation <code>SIGSEGV</code>.</strong> <code>-Wno-implicit-function-declaration</code> had masked missing prototypes for SDL-backend calls into pointer-returning Tk internals, so their results were int-truncated. Removing the flag and adding the missing prototypes fixed it. Implicit-declaration warnings on a 64-bit build hide pointer truncation.</p></li>
+<li><p><strong>Fonts.</strong> Several failures stacked up: an uninitialized font hash before first window-decoration draw; the bundled TTFs not being staged (see above); and a wildcard XLFD that could not match a concrete family, panicking with "cannot get any font".</p></li>
+</ol>
+<p>A separate issue: <strong>everything rendered tiny on high-DPI.</strong> Tk was correct — it computed 44.5 px for a 10 pt font at 320 dpi. The bug was in the emulated <code>XListFonts</code>, which answered generic family requests (<code>Helvetica</code>, <code>courier</code>) with a hardcoded XLFD carrying <strong>pixel size 12</strong>. In X11 a non-zero pixel size means a fixed bitmap font, so Tk loaded it as-is and discarded the requested size. Synthesized font-list entries must use <strong>pixel size 0</strong> (= scalable).</p>
+<p>A 100%-reproducible <strong>launch crash on API 34+</strong>: <code>addGpsStatusListener</code>/<code>addNmeaListener</code> throw <code>UnsupportedOperationException</code> on every launch, killing the console process where wish runs, so the app never appears. The fix guards both registrations (and their teardown) behind an SDK-version check with try/catch. The modern <code>GnssStatus</code>/<code>OnNmeaMessageListener</code> replacements are not yet wired to Tcl, so <code>borg gps</code>/NMEA is inactive on API 34+.</p>
+<p>On-device verification uses a repeatable check: a smoke script asserts all four bugs and the console wiring on-device and passes 15/15 at both 320 dpi / API 34 and 420 dpi / API 31. Not yet tested on physical hardware.</p>
+<h2 id="repository">Repository</h2>
+<ul>
+<li><strong>Project page:</strong> <a href="https://johnbuckman.github.io/tcltk/androwish-tcl91.html">https://johnbuckman.github.io/tcltk/androwish-tcl91.html</a></li>
+<li><strong>Collection:</strong> <a href="https://johnbuckman.github.io/tcltk/">https://johnbuckman.github.io/tcltk/</a></li>
+<li><strong>Source:</strong> <a class="gh" href="https://github.com/johnbuckman/androwish-tcl91">https://github.com/johnbuckman/androwish-tcl91</a></li>
+</ul>
+<p>The repo contains documentation and ndk-build configuration only; it does <strong>not</strong> redistribute the Tcl, Tk, SDL2 or AndroWish sources. Docs: <code>docs/PORT.md</code> (roadmap and every runtime fix), <code>docs/AGENT-BOOTSTRAP.md</code> (build/test commands and environment traps), <code>docs/SDL2TK-GRAFT.md</code> (how the backend was grafted onto stock Tk 9.1), and <code>docs/BATTERIES-TRIAGE.md</code> (the per-extension Tcl 9 migration matrix). Licensed under the same terms as Tcl/Tk. AndroWish is by Christian Werner; Tcl/Tk by the Tcl Core Team.</p>
+  </main>
+  <footer class="foot">
+    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>
