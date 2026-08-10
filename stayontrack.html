@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stay on Track — John Buckman</title>
+<meta name="description" content="A fully-offline hiking companion that keeps you on your intended trail, with spoken junction cues and an off-trail warning tone. SwiftUI, for iPhone and Mac Catalyst.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="crumbs"><a href="./">John Buckman</a> &nbsp;/&nbsp; Stay on Track</nav>
+  <header class="masthead">
+    <h1>Stay on Track</h1>
+    <p class="lede">A minimal, fully-offline hiking companion that keeps you on your intended trail — with
+      spoken cues at every trail junction and an off-trail warning tone. SwiftUI, for iPhone and
+      Mac&nbsp;Catalyst.</p>
+  </header>
+  <div class="meta">
+    <a class="btn gh" href="https://github.com/johnbuckman/stayontrack">Stay on Track on GitHub →</a>
+  </div>
+  <main class="prose">
+
+    <h2>What it is</h2>
+    <p>You load a planned hike as a GPX file, and Stay on Track guides you along it. Its focus is the
+      moment you actually get lost — a <strong>decision point</strong>, where another path branches off
+      and you confidently walk down the wrong one. As you approach a real trail junction, a posh British
+      voice simply says <em>&ldquo;Left&rdquo;</em>, <em>&ldquo;Right&rdquo;</em> or
+      <em>&ldquo;Straight&rdquo;</em> — how to stay on your intended path. If you drift off the trail, a
+      Geiger-counter-style tone rises in pitch the further you stray, so you can course-correct without
+      looking at the screen.</p>
+    <p>Everything needed for the hike — map tiles, the trail network, elevation — is downloaded once when
+      you import the route. After that the app is <strong>fully offline</strong>: put the phone in
+      airplane mode for all-day battery.</p>
+
+    <div class="gallery">
+      <figure>
+        <img src="assets/stayontrack-app.jpg" alt="Stay on Track following a hike near Pommerol, France — route, km markers, junction arrows, START marker and controls">
+        <figcaption>Following a hike — route, 1&nbsp;km markers, junction arrows, and the START marker.</figcaption>
+      </figure>
+    </div>
+
+    <h2>Features</h2>
+    <ul>
+      <li><strong>Junction guidance.</strong> Decision points come from the OpenStreetMap trail network
+        (nodes where three or more trails meet), matched to your route. Each is called out by voice
+        (&ldquo;Left / Right / Straight&rdquo;, a high-quality offline voice), shown as an arrow on the
+        map, and previewed in a top banner with a live distance countdown.</li>
+      <li><strong>Off-trail alert.</strong> Silent within 100&nbsp;m of the route; beyond that, a
+        continuous tone whose pitch rises with distance.</li>
+      <li><strong>Offline OpenStreetMap maps.</strong> A corridor around the route is downloaded and
+        disk-cached at import, so the map works with no signal.</li>
+      <li><strong>Live stats &amp; ETA.</strong> Distance walked, elevation gained, elapsed time, and two
+        ETAs — a grade-adjusted estimate (Tobler&rsquo;s hiking function) and one from your measured pace.</li>
+      <li><strong>Record &amp; export.</strong> Records your actual track and exports it as GPX.</li>
+      <li><strong>Navigate to start.</strong> Hands the trailhead to Apple&nbsp;Maps, Google&nbsp;Maps,
+        Waze, or the share sheet, to drive there.</li>
+      <li><strong>Lock-Screen Live Activity</strong> on iPhone, showing the next junction and distance.</li>
+      <li><strong>Reverse</strong> the route, a green <strong>START</strong> / red <strong>STOP</strong>
+        marker, a faint breadcrumb of where you&rsquo;ve walked, and auto-recentre as you move.</li>
+    </ul>
+
+    <h2>How it&rsquo;s built</h2>
+    <p>SwiftUI with MapKit (a custom offline OpenStreetMap tile layer), CoreLocation and AVFoundation.
+      Trail junctions are queried from the <a href="https://overpass-api.de/">Overpass API</a>; elevation,
+      when a GPX lacks it, comes from <a href="https://open-meteo.com/">Open-Meteo</a>; the spoken clips are
+      pre-rendered with <a href="https://github.com/hexgrad/kokoro">Kokoro</a> and bundled so the app stays
+      offline. Built for iPhone, with a Mac&nbsp;Catalyst build used for development.</p>
+
+    <h2>Attribution</h2>
+    <p>Map tiles and trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>
+      contributors; elevation from Open-Meteo (Copernicus DEM); voice from Kokoro-82M (Apache-2.0).</p>
+
+    <h2>Repository</h2>
+    <p>Source and build instructions:
+      <a class="gh" href="https://github.com/johnbuckman/stayontrack">github.com/johnbuckman/stayontrack</a>.
+      Licensed under the GNU General Public License v3.0.</p>
+
+  </main>
+  <footer class="foot">
+    <p><a href="./">← John Buckman</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
+  </footer>
+</div>
+</body>
+</html>
