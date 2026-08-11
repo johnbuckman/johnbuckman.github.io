@@ -17,6 +17,15 @@
       Mac&nbsp;Catalyst.</p>
   </header>
   <div class="meta">
+    <p style="text-align:center;margin:0 0 6px">
+      <span class="sidestep-install"
+            data-repo="johnbuckman/stayontrack"
+            data-app="Stay on Track"
+            data-installer="https://github.com/johnbuckman/stayontrack/releases/latest/download/stayontrack-installer.zip"></span>
+    </p>
+    <p class="muted" style="text-align:center;margin:0 0 14px;font-size:.9em">
+      One-tap install for iPhone/iPad via <a href="https://github.com/johnbuckman/SideStep">SideStep</a> (macOS).
+    </p>
     <a class="btn gh" href="https://github.com/johnbuckman/stayontrack">Stay on Track on GitHub →</a>
   </div>
   <main class="prose">
@@ -81,5 +90,47 @@
     <p><a href="./">← John Buckman</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
   </footer>
 </div>
+<script>
+(function () {
+  function mount(el){
+    var repo=el.getAttribute("data-repo"); if(!repo) return;
+    var dl=el.getAttribute("data-installer")||"";
+    var app=el.getAttribute("data-app")||repo.split("/").pop();
+    var btn=document.createElement("a");
+    btn.textContent="Install "+app+" with SideStep";
+    btn.href="sidestep://install?repo="+encodeURIComponent(repo);
+    btn.style.cssText="display:inline-block;padding:12px 22px;border-radius:10px;background:#0a84ff;color:#fff;font-weight:600;text-decoration:none;cursor:pointer;";
+    var note=document.createElement("div"); note.style.cssText="margin-top:10px;font-size:14px;opacity:.75;"; note.style.display="none";
+    var downloaded=false;
+    function download(){ if(!dl) return; var a=document.createElement("a"); a.href=dl; a.setAttribute("download",""); document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+    btn.addEventListener("click",function(ev){
+      if(downloaded) return;
+      ev.preventDefault();
+      btn.textContent="Installing…";
+      var launched=false;
+      document.addEventListener("visibilitychange",function vc(){if(document.hidden){launched=true;document.removeEventListener("visibilitychange",vc);}});
+      var scheme="sidestep://install?repo="+encodeURIComponent(repo);
+      var isSafari=/^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent)&&/apple/i.test(navigator.vendor||"");
+      if(isSafari){
+        var ifr=document.createElement("iframe"); ifr.style.display="none"; ifr.src=scheme;
+        document.body.appendChild(ifr);
+        setTimeout(function(){ if(ifr.parentNode) ifr.parentNode.removeChild(ifr); },1000);
+      } else { window.location.href=scheme; }
+      setTimeout(function(){
+        if(launched) return;
+        if(!dl){ note.textContent="Install SideStep first, then click again."; note.style.display="block"; btn.textContent="Install "+app+" with SideStep"; return; }
+        download();
+        downloaded=true; btn.href=dl; btn.setAttribute("download","");
+        btn.textContent="Run the "+app+" installer now";
+        note.textContent="It’s going to your Downloads folder now.";
+        note.style.display="block";
+      },1500);
+    });
+    el.appendChild(btn); el.appendChild(note);
+  }
+  function init(){document.querySelectorAll(".sidestep-install").forEach(mount);}
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();
+})();
+</script>
 </body>
 </html>
