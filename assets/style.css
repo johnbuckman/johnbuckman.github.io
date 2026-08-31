@@ -273,6 +273,31 @@ a.gh::before { margin-right: .35em; }
   color: var(--muted);
 }
 
+/* ---- Video embed ---- */
+figure.video {
+  margin: 24px 0;
+}
+.video-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-soft);
+}
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+figure.video figcaption {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 /* ---- Footer ---- */
 footer.foot {
   margin-top: 64px;

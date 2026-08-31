@@ -14,6 +14,12 @@
     <p class="lede">An SDL2 video driver that runs an AndroWish, undroidwish or Tk app headless and streams its framebuffer to a browser canvas, with input sent back over a WebSocket.</p>
   </header>
   <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/WebWish">WebWish on GitHub →</a></div>
+  <figure class="video">
+    <div class="video-frame">
+      <iframe src="https://www.youtube-nocookie.com/embed/QToyZKVbSVs" title="WebWish: Tcl/Tk apps inside a web browser" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    <figcaption>Demo: WebWish streaming Tcl/Tk apps live into a browser tab.</figcaption>
+  </figure>
   <main class="prose">
 <h2 id="what-it-is">What it is</h2>
 <p><strong>WebWish</strong> serves any <a href="https://libsdl.org">SDL2</a> / Tk desktop application as a web app, with no changes to the app. It runs the program headless on a server and renders and controls it in a browser tab: the app's framebuffer is streamed to an HTML <code>&lt;canvas&gt;</code> over a WebSocket, and the viewer's mouse and keyboard travel back the same way. To the app, WebWish is another SDL video backend.</p>
