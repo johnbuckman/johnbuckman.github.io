@@ -12,8 +12,9 @@
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <a class="brand" href="./">Tcl/Tk projects</a>
   <nav>
+    <a href="../">John Buckman</a>
     <a href="#how">How it works</a>
     <a href="#details">Details</a>
     <a href="./" class="keep">All projects</a>
@@ -34,7 +35,7 @@
     <div class="fine">Tcl/Tk 8.6 build: shipped, latest release notarized · Tcl/Tk 9.1 build: work in progress · free and open source</div>
   </div>
   <div class="hero-right">
-    <div class="hero-shot"><img src="img/undroidwish-arm64-widgetdemo-borg.jpg" alt="undroidwish running natively on Apple Silicon: the Tk widget demo, and the borg desktop bridge reporting manufacturer Apple, model Mac16,12, cpu_abi arm64"></div>
+    <div class="hero-shot"><img src="img/undroidwish-arm64-widgetdemo-borg-1000.avif" srcset="img/undroidwish-arm64-widgetdemo-borg-500.avif 500w, img/undroidwish-arm64-widgetdemo-borg-1000.avif 1000w" sizes="(max-width:900px) calc(100vw - 40px), 500px" width="1000" height="781" data-full="img/undroidwish-arm64-widgetdemo-borg.avif" alt="undroidwish running natively on Apple Silicon: the Tk widget demo, and the borg desktop bridge reporting manufacturer Apple, model Mac16,12, cpu_abi arm64"></div>
     <span class="watch soon" id="tour"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Explainer video coming soon</span>
   </div>
 </div></div>
@@ -44,10 +45,10 @@
   <h2>Keep your Tk apps running on the Mac</h2>
   <p class="intro">Once Rosetta is gone, x86-only programs stop running on Apple Silicon. A native arm64 undroidwish keeps AndroWish and Tk apps, such as Decent's <a href="https://github.com/decentespresso/de1app">de1app</a>, working on the Mac.</p>
   <div class="cards">
-    <div class="card"><div class="ic">💻</div><h3>Native, and faster</h3><p>No Rosetta needed. On an M4 the arm64 build is about 1.5× faster on compute and 1.25× faster at cold startup than the same code under Rosetta.</p></div>
-    <div class="card"><div class="ic">🔋</div><h3>Batteries included</h3><p>About 60 extensions are built in: Img, tls, tdom, BLT, tkpath, itk, treectrl, mpexpr and more, plus the desktop <code>borg</code> command and a Bluetooth LE demo.</p></div>
-    <div class="card"><div class="ic">📦</div><h3>One notarized file</h3><p>The 8.6 build is a self-contained single-file program, notarized and stapled, so it passes Gatekeeper.</p></div>
-    <div class="card"><div class="ic">🧭</div><h3>A path to Tcl/Tk 9.1</h3><p>The 9.1 build ports the SDL2 backend to Tk 9.1. All 17 bare-launch demos work and 21 C-extension stacks are ported.</p></div>
+    <div class="card"><h3>Native, and faster</h3><p>No Rosetta needed. On an M4 the arm64 build is about 1.5× faster on compute and 1.25× faster at cold startup than the same code under Rosetta.</p></div>
+    <div class="card"><h3>Batteries included</h3><p>About 60 extensions are built in: Img, tls, tdom, BLT, tkpath, itk, treectrl, mpexpr and more, plus the desktop <code>borg</code> command and a Bluetooth LE demo.</p></div>
+    <div class="card"><h3>One notarized file</h3><p>The 8.6 build is a self-contained single-file program, notarized and stapled, so it passes Gatekeeper.</p></div>
+    <div class="card"><h3>A path to Tcl/Tk 9.1</h3><p>The 9.1 build ports the SDL2 backend to Tk 9.1. All 17 bare-launch demos work and 21 C-extension stacks are ported.</p></div>
   </div>
 </div></section>
 
@@ -63,7 +64,7 @@
       <li><b>Run it as a .app</b>: on macOS a bare binary started from a terminal gets no window and draws nothing, so both builds run as an app bundle.</li>
     </ul>
   </div>
-  <div class="shot"><img src="img/undroidwish-arm64-widgetdemo-borg.jpg" alt="The Tk widget demo and the borg desktop bridge running natively on an Apple Silicon Mac"></div>
+  <div class="shot"><img src="img/undroidwish-arm64-widgetdemo-borg-1000.avif" srcset="img/undroidwish-arm64-widgetdemo-borg-500.avif 500w, img/undroidwish-arm64-widgetdemo-borg-1000.avif 1000w" sizes="(max-width:900px) calc(100vw - 40px), 500px" width="1000" height="781" data-full="img/undroidwish-arm64-widgetdemo-borg.avif" alt="The Tk widget demo and the borg desktop bridge running natively on an Apple Silicon Mac"></div>
 </div></section>
 
 <section id="details" class="alt"><div class="wrap">
@@ -152,5 +153,6 @@
   </div>
 </div></footer>
 
+<script src="lightbox.js"></script>
 </body>
 </html>

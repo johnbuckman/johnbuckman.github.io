@@ -12,8 +12,9 @@
 <body>
 
 <header class="top"><div class="wrap">
-  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <a class="brand" href="./">Tcl/Tk projects</a>
   <nav>
+    <a href="../">John Buckman</a>
     <a href="#start">Get started</a>
     <a href="#details">Details</a>
     <a href="./" class="keep">All projects</a>
@@ -54,10 +55,10 @@ set json [oauth2::request $client GET \
   <h2>The fiddly parts of OAuth, done for you</h2>
   <p class="intro">Most web APIs, from QuickBooks to Basecamp, want an OAuth 2.0 login before they'll answer. This library handles the whole flow in one Tcl file, so your program can get on with calling the API.</p>
   <div class="cards">
-    <div class="card"><div class="ic">🌐</div><h3>Browser login, built in</h3><p>It sends the user to the provider, catches the redirect on a one-shot local web server, and exchanges the code for tokens.</p></div>
-    <div class="card"><div class="ic">🔄</div><h3>Tokens that stay fresh</h3><p>Tokens are saved to a private <code>0600</code> file and refreshed automatically. On a 401 it refreshes once and retries.</p></div>
-    <div class="card"><div class="ic">🧩</div><h3>Works with picky providers</h3><p>Each provider's quirks are plain configuration options. Examples for Twitter/X, Basecamp and QuickBooks Online are included.</p></div>
-    <div class="card"><div class="ic">📦</div><h3>Almost no dependencies</h3><p>Just <code>http</code> and <code>tls</code>. JSON, SHA-256 for PKCE and base64 are handled inside, so Tcllib isn't required.</p></div>
+    <div class="card"><h3>Browser login, built in</h3><p>It sends the user to the provider, catches the redirect on a one-shot local web server, and exchanges the code for tokens.</p></div>
+    <div class="card"><h3>Tokens that stay fresh</h3><p>Tokens are saved to a private <code>0600</code> file and refreshed automatically. On a 401 it refreshes once and retries.</p></div>
+    <div class="card"><h3>Works with picky providers</h3><p>Each provider's quirks are plain configuration options. Examples for Twitter/X, Basecamp and QuickBooks Online are included.</p></div>
+    <div class="card"><h3>Almost no dependencies</h3><p>Just <code>http</code> and <code>tls</code>. JSON, SHA-256 for PKCE and base64 are handled inside, so Tcllib isn't required.</p></div>
   </div>
 </div></section>
 
@@ -186,5 +187,6 @@ set json [oauth2::request $client GET https://api.example/v1/things]</code></pre
   </div>
 </div></footer>
 
+<script src="lightbox.js"></script>
 </body>
 </html>

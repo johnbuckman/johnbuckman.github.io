@@ -12,8 +12,9 @@
 <body>
 
 <header class="top"><div class="wrap">
-  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <a class="brand" href="./">Tcl/Tk projects</a>
   <nav>
+    <a href="../">John Buckman</a>
     <a href="#apply">Apply it</a>
     <a href="#results">Results</a>
     <a href="#details">Details</a>
@@ -50,10 +51,10 @@ patch -p1 &lt; BLT-faster/patches/blt-faster.patch
   <h2>Smoother charts on slow hardware</h2>
   <p class="intro">It started with three live espresso charts redrawing ten times a second on a tablet. Roughly 55–70% of every frame went into redrawing axis labels that hardly ever change.</p>
   <div class="cards">
-    <div class="card"><div class="ic">🏷️</div><h3>Labels drawn once</h3><p><code>-cachelabels</code> renders each tick label once and reuses it. About 1.3× faster on live charts, on by default.</p></div>
-    <div class="card"><div class="ic">🖼️</div><h3>Static frame cached</h3><p><code>-bufferchrome</code> caches the background, grid, axes and labels, drawing only the data on top. About 1.9× faster when the axes don't move.</p></div>
-    <div class="card"><div class="ic">🎯</div><h3>Pixel-identical</h3><p>Checked by snapshot comparison with zero differing pixels. With the defaults, output matches stock BLT.</p></div>
-    <div class="card"><div class="ic">🔌</div><h3>No app changes</h3><p>Patch and rebuild, and every graph uses the label cache. The patch touches four files and is additive.</p></div>
+    <div class="card"><h3>Labels drawn once</h3><p><code>-cachelabels</code> renders each tick label once and reuses it. About 1.3× faster on live charts, on by default.</p></div>
+    <div class="card"><h3>Static frame cached</h3><p><code>-bufferchrome</code> caches the background, grid, axes and labels, drawing only the data on top. About 1.9× faster when the axes don't move.</p></div>
+    <div class="card"><h3>Pixel-identical</h3><p>Checked by snapshot comparison with zero differing pixels. With the defaults, output matches stock BLT.</p></div>
+    <div class="card"><h3>No app changes</h3><p>Patch and rebuild, and every graph uses the label cache. The patch touches four files and is additive.</p></div>
   </div>
 </div></section>
 
@@ -199,5 +200,6 @@ patch -p1 &lt; BLT-faster/patches/blt-faster.patch
   </div>
 </div></footer>
 
+<script src="lightbox.js"></script>
 </body>
 </html>

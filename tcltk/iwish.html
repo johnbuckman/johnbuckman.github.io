@@ -13,8 +13,9 @@
 <body>
 
 <header class="top"><div class="wrap">
-  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <a class="brand" href="./">Tcl/Tk projects</a>
   <nav>
+    <a href="../">John Buckman</a>
     <a href="#install">Install</a>
     <a href="#details">Details</a>
     <a href="./" class="keep">All projects</a>
@@ -35,7 +36,7 @@
     <div class="fine">Version 0.2.2 (alpha) · free and open source · installs from a Mac with SideStep</div>
   </div>
   <div class="hero-right">
-    <div class="hero-shot ipad"><img src="img/iwish-ipad.jpg" alt="iWish on an iPad: the borg device-bridge demo, the Bluetooth LE debugger connected to a scale, and the Tcl console"></div>
+    <div class="hero-shot ipad"><img src="img/iwish-ipad-1120.avif" srcset="img/iwish-ipad-560.avif 560w, img/iwish-ipad-1120.avif 1120w" sizes="(max-width:900px) calc(100vw - 40px), 560px" width="1120" height="783" data-full="img/iwish-ipad.avif" alt="iWish on an iPad: the borg device-bridge demo, the Bluetooth LE debugger connected to a scale, and the Tcl console"></div>
     <span class="watch soon" id="tour"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Explainer video coming soon</span>
   </div>
 </div></div>
@@ -45,10 +46,10 @@
   <h2>Tk programs, in your pocket</h2>
   <p class="intro">Apple's App Store doesn't accept apps that run a scripting language, so Tcl/Tk has never been available on an iPhone. iWish is the whole thing, packaged as an app you install yourself.</p>
   <div class="cards">
-    <div class="card"><div class="ic">🖥️</div><h3>Run existing Tk apps</h3><p>The same Tk widgets and canvas you use on a desktop, drawn on the device. A large real-world Tk app, Decent's espresso tablet software, runs on it end to end.</p></div>
-    <div class="card"><div class="ic">🔋</div><h3>Batteries included</h3><p>About 115 packages come bundled: sqlite3, tls, TclCurl, tdom, Img, BLT and TkBLT plotting, Tktable, itcl, thread and more.</p></div>
-    <div class="card"><div class="ic">📡</div><h3>Talk to hardware</h3><p>The <code>ble</code> command scans, connects and reads Bluetooth LE devices through CoreBluetooth, and <code>borg</code> reaches the screen, speech and device info.</p></div>
-    <div class="card"><div class="ic">⌨️</div><h3>A console on the device</h3><p>Type Tcl straight into the iPad. Familiar commands like <code>ls</code>, <code>cat</code> and <code>grep</code> work, written in pure Tcl since iOS forbids running programs.</p></div>
+    <div class="card"><h3>Run existing Tk apps</h3><p>The same Tk widgets and canvas you use on a desktop, drawn on the device. A large real-world Tk app, Decent's espresso tablet software, runs on it end to end.</p></div>
+    <div class="card"><h3>Batteries included</h3><p>About 115 packages come bundled: sqlite3, tls, TclCurl, tdom, Img, BLT and TkBLT plotting, Tktable, itcl, thread and more.</p></div>
+    <div class="card"><h3>Talk to hardware</h3><p>The <code>ble</code> command scans, connects and reads Bluetooth LE devices through CoreBluetooth, and <code>borg</code> reaches the screen, speech and device info.</p></div>
+    <div class="card"><h3>A console on the device</h3><p>Type Tcl straight into the iPad. Familiar commands like <code>ls</code>, <code>cat</code> and <code>grep</code> work, written in pure Tcl since iOS forbids running programs.</p></div>
   </div>
 </div></section>
 
@@ -79,7 +80,7 @@
       <li><b>Every extension wrapped as a framework</b>, so sideloaders can re-sign all 60-odd native libraries.</li>
     </ul>
   </div>
-  <div class="shot"><img src="img/iwish-ipad.jpg" alt="The bundled demos: borg device bridge and the Bluetooth LE debugger"></div>
+  <div class="shot"><img src="img/iwish-ipad-1120.avif" srcset="img/iwish-ipad-560.avif 560w, img/iwish-ipad-1120.avif 1120w" sizes="(max-width:900px) calc(100vw - 40px), 560px" width="1120" height="783" data-full="img/iwish-ipad.avif" alt="The bundled demos: borg device bridge and the Bluetooth LE debugger"></div>
 </div></section>
 
 <section id="details"><div class="wrap">
@@ -170,5 +171,6 @@
 </div></footer>
 
 <script src="install-button.js"></script>
+<script src="lightbox.js"></script>
 </body>
 </html>

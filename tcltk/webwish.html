@@ -12,8 +12,9 @@
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <a class="brand" href="./">Tcl/Tk projects</a>
   <nav>
+    <a href="../">John Buckman</a>
     <a href="#start">Get started</a>
     <a href="#details">Details</a>
     <a href="./" class="keep">All projects</a>
@@ -34,7 +35,7 @@
     <div class="fine">Working alpha · zlib license · runs on arm64 macOS and in Linux containers</div>
   </div>
   <div class="hero-right">
-    <div class="hero-shot"><img src="img/webwish-demo.jpg" alt="WebWish: undroidwish Tk apps (the starDOM XML editor and a TkTable spreadsheet) rendered and driven live in a browser tab"></div>
+    <div class="hero-shot"><img src="img/webwish-demo-1120.avif" srcset="img/webwish-demo-560.avif 560w, img/webwish-demo-1120.avif 1120w" sizes="(max-width:900px) calc(100vw - 40px), 560px" width="1120" height="948" data-full="img/webwish-demo.avif" alt="WebWish: undroidwish Tk apps (the starDOM XML editor and a TkTable spreadsheet) rendered and driven live in a browser tab"></div>
     <a class="watch" id="tour" href="https://youtu.be/QToyZKVbSVs"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Watch the demo video on YouTube</a>
   </div>
 </div></div>
@@ -44,10 +45,10 @@
   <h2>A desktop app, served as a web page</h2>
   <p class="intro">WebWish works for anything that draws through SDL's software framebuffer. It was built to run <a href="https://www.androwish.org/">undroidwish</a>, AndroWish's Tcl/Tk on SDL, inside a browser.</p>
   <div class="cards">
-    <div class="card"><div class="ic">🌐</div><h3>No changes to the app</h3><p>The app picks the driver with <code>SDL_VIDEODRIVER=wstiles</code> and draws as usual. The browser shows it, and the session resizes to fit the browser window.</p></div>
-    <div class="card"><div class="ic">🪶</div><h3>Light on bandwidth</h3><p>Only changed 64×64 tiles are sent, compressed. The first paint of a flat 1024×768 screen is about 19 KB instead of 3 MB. AV1 video is an option for busy, animated screens.</p></div>
-    <div class="card"><div class="ic">👥</div><h3>Many users, one port</h3><p>A reference NaviServer bridge gives each browser tab its own private process, started when it connects and cleaned up when it leaves.</p></div>
-    <div class="card"><div class="ic">🔒</div><h3>Made to be locked down</h3><p>Each session can run in a hardened container with no network. The stdio transport means no per-session port is opened. Read <code>SECURITY.md</code> before exposing it.</p></div>
+    <div class="card"><h3>No changes to the app</h3><p>The app picks the driver with <code>SDL_VIDEODRIVER=wstiles</code> and draws as usual. The browser shows it, and the session resizes to fit the browser window.</p></div>
+    <div class="card"><h3>Light on bandwidth</h3><p>Only changed 64×64 tiles are sent, compressed. The first paint of a flat 1024×768 screen is about 19 KB instead of 3 MB. AV1 video is an option for busy, animated screens.</p></div>
+    <div class="card"><h3>Many users, one port</h3><p>A reference NaviServer bridge gives each browser tab its own private process, started when it connects and cleaned up when it leaves.</p></div>
+    <div class="card"><h3>Made to be locked down</h3><p>Each session can run in a hardened container with no network. The stdio transport means no per-session port is opened. Read <code>SECURITY.md</code> before exposing it.</p></div>
   </div>
 </div></section>
 
@@ -204,5 +205,6 @@ docker run --rm -i --network none --read-only --tmpfs /tmp \
   </div>
 </div></footer>
 
+<script src="lightbox.js"></script>
 </body>
 </html>

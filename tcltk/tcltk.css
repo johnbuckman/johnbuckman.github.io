@@ -3,7 +3,7 @@
 :root{
   --bg:#fdf9f3; --panel:#fff; --ink:#1c1c1c; --ink-soft:#55524c; --muted:#8a8579;
   --line:#ece6db; --line-strong:#ddd5c7; --accent:#e8902a; --accent-ink:#b8650c; --link:#1d64c2; --btn:#16a34a;
-  --hero1:#2f7a6b; --hero2:#1d4f4a; --hero3:#0f2a2a;
+  --hero1:#3d5aa8; --hero2:#24346e; --hero3:#141c3c;
   --shadow:0 1px 2px rgba(40,30,10,.06), 0 8px 24px rgba(40,30,10,.07);
   color-scheme:light;
 }
@@ -33,7 +33,6 @@ img{max-width:100%;height:auto;display:block}
 .top{position:absolute;inset:0 0 auto;z-index:3}
 .top .wrap{display:flex;align-items:center;gap:22px;padding-top:16px;padding-bottom:16px}
 .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:18px}
-.brand .feather{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:17px}
 .top nav{margin-left:auto;display:flex;gap:22px;font-size:15px}
 .top nav a{color:rgba(255,255,255,.85)}
 
@@ -76,8 +75,7 @@ b,strong{color:var(--ink)}
 .cards.three{grid-template-columns:repeat(3,1fr)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
 .alt .card{background:var(--bg)}
-.card .ic{font-size:30px;line-height:1}
-.card h3{font-size:18px;margin:12px 0 6px}
+.card h3{font-size:18px;margin:0 0 6px}
 .card p{margin:0;font-size:15.5px}
 
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
@@ -101,9 +99,9 @@ ul.ticks li::before{content:"✓";position:absolute;left:0;top:0;width:22px;heig
 .projects{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .project{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow);color:inherit}
 .alt .project{background:var(--bg)}
-.project:hover{text-decoration:none;border-color:var(--line-strong)}
-.project .ic{font-size:28px;line-height:1}
-.project h3{font-size:19px;margin:12px 0 6px;color:var(--ink)}
+.project{transition:transform .15s,box-shadow .15s}
+.project:hover{text-decoration:none;transform:translateY(-3px);box-shadow:0 2px 4px rgba(40,30,10,.08),0 16px 36px rgba(40,30,10,.12)}
+.project h3{font-size:19px;margin:0 0 6px;color:var(--ink)}
 .project p{margin:0 0 14px;font-size:15.5px}
 .project .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
 .project .chips span{font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink-soft)}
@@ -146,8 +144,29 @@ footer li{margin:6px 0}
 @media(max-width:560px){ .watch .len{display:none} .cards,.cards.three,.projects,.steps.four{grid-template-columns:1fr} .hero .lead{font-size:21px} }
 
 /* hero code card: for projects with no screenshot, a short real usage sample */
-.hero-code{width:100%;border-radius:12px;background:#0d1714;border:1px solid rgba(255,255,255,.14);box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden}
+.hero-code{width:100%;border-radius:12px;background:#111a33;border:1px solid rgba(255,255,255,.14);box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden}
 .hero-code .bar{display:flex;gap:6px;padding:10px 12px;background:rgba(255,255,255,.06)}
 .hero-code .bar i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.22)}
-.hero-code pre{margin:0;padding:16px 18px;font:13.5px/1.55 ui-monospace,Menlo,monospace;color:#d7efe6;white-space:pre-wrap;overflow:auto}
-.hero-code .c{color:#7fa79a}
+.hero-code pre{margin:0;padding:16px 18px;font:13.5px/1.55 ui-monospace,Menlo,monospace;color:#dde6fa;white-space:pre-wrap;overflow:auto}
+.hero-code .c{color:#8fa3cf}
+
+/* lightbox (lightbox.js): click a screenshot to see it full size */
+.lb{position:fixed;inset:0;z-index:20;background:rgba(12,10,8,.88);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px 70px}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:calc(100vh - 110px);width:auto;height:auto;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#fff;cursor:default}
+.lb .cap{color:rgba(255,255,255,.85);font-size:15px;text-align:center;max-width:46em}
+.lb .cap span{color:rgba(255,255,255,.5);margin-left:10px}
+.lb button{position:absolute;border:0;background:rgba(255,255,255,.12);color:#fff;width:48px;height:48px;border-radius:50%;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb button:hover{background:rgba(255,255,255,.24)}
+.lb .prev{left:12px;top:50%;transform:translateY(-50%)}
+.lb .next{right:12px;top:50%;transform:translateY(-50%)}
+.lb .close{right:12px;top:12px;width:40px;height:40px;font-size:22px}
+@media(max-width:560px){ .lb{padding:56px 10px 80px} .lb .prev,.lb .next{top:auto;bottom:16px;transform:none} .lb .prev{left:calc(50% - 60px)} .lb .next{right:calc(50% - 60px)} }
+
+/* phones: nothing may widen the page (grid columns, long code, wide tables, long names) */
+.hero .wrap > *,.split > *{min-width:0}
+.prose table{display:block;overflow-x:auto}
+code{overflow-wrap:anywhere}
+.hero h1{overflow-wrap:anywhere}
+@media(max-width:560px){ .hero h1{font-size:36px} }
+footer a,.prose a{overflow-wrap:anywhere}

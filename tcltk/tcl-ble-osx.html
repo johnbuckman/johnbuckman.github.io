@@ -12,8 +12,9 @@
 <body>
 
 <header class="top"><div class="wrap">
-  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <a class="brand" href="./">Tcl/Tk projects</a>
   <nav>
+    <a href="../">John Buckman</a>
     <a href="#start">Get started</a>
     <a href="#details">Details</a>
     <a href="./" class="keep">All projects</a>
@@ -53,10 +54,10 @@ vwait forever    <span class="c">;# tclsh needs the event loop</span></pre></div
   <h2>One Bluetooth API, now on the Mac too</h2>
   <p class="intro">Code written against AndroWish's <code>ble</code> command, such as the Decent Espresso <code>de1app</code>, couldn't reach Bluetooth devices on macOS. With this package it can.</p>
   <div class="cards">
-    <div class="card"><div class="ic">🔁</div><h3>Same code as AndroWish</h3><p>The <code>ble</code> command matches AndroWish's API and its event dictionaries, so existing Bluetooth LE code runs unmodified.</p></div>
-    <div class="card"><div class="ic">🧰</div><h3>Works in any interpreter</h3><p>Runs under plain <code>tclsh</code> with no Tk, standard Aqua <code>wish</code>, and undroidwish, on Apple Silicon and Intel.</p></div>
-    <div class="card"><div class="ic">☕</div><h3>Tested on real hardware</h3><p>Checked end to end with a Decent Espresso DE1 and an Atomax Skale scale: scan, connect, discovery, notifications and reads.</p></div>
-    <div class="card"><div class="ic">🔐</div><h3>Handles macOS permissions</h3><p>It arranges the Bluetooth permission prompt so it appears on first run. You approve it once and the grant sticks.</p></div>
+    <div class="card"><h3>Same code as AndroWish</h3><p>The <code>ble</code> command matches AndroWish's API and its event dictionaries, so existing Bluetooth LE code runs unmodified.</p></div>
+    <div class="card"><h3>Works in any interpreter</h3><p>Runs under plain <code>tclsh</code> with no Tk, standard Aqua <code>wish</code>, and undroidwish, on Apple Silicon and Intel.</p></div>
+    <div class="card"><h3>Tested on real hardware</h3><p>Checked end to end with a Decent Espresso DE1 and an Atomax Skale scale: scan, connect, discovery, notifications and reads.</p></div>
+    <div class="card"><h3>Handles macOS permissions</h3><p>It arranges the Bluetooth permission prompt so it appears on first run. You approve it once and the grant sticks.</p></div>
   </div>
 </div></section>
 
@@ -225,5 +226,6 @@ cd tcl-ble-osx
   </div>
 </div></footer>
 
+<script src="lightbox.js"></script>
 </body>
 </html>
