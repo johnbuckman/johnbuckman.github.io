@@ -3,117 +3,350 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MacCVS — John Buckman</title>
-<meta name="description" content="A native SwiftUI CVS client for macOS — successor to the discontinued Carbon cvsgui MacCVS. Bundles its own cvs; Apple silicon and Intel; notarized.">
-<link rel="stylesheet" href="assets/style.css">
+<title>MacCVS</title>
+<meta name="description" content="MacCVS is a free, native Mac app for CVS: browse a working copy, see what changed, diff, discard, commit, update and read the history. The successor to the Carbon cvsgui MacCVS.">
+<link rel="icon" href="assets/maccvs/appicon.png">
+<meta property="og:title" content="MacCVS: a native CVS client for the Mac">
+<meta property="og:description" content="A free, open-source Mac app for CVS working copies, with its own cvs built in.">
+<meta property="og:image" content="https://johnbuckman.github.io/assets/maccvs/main.png">
+<style>
+/* Same look as the SideStep home page and the MacCVS Help page. */
+:root{
+  --bg:#fdf9f3; --panel:#fff; --ink:#1c1c1c; --ink-soft:#55524c; --muted:#8a8579;
+  --line:#ece6db; --line-strong:#ddd5c7; --accent:#e8902a; --accent-ink:#b8650c; --link:#1d64c2; --btn:#16a34a;
+  --hero1:#3d5aa8; --hero2:#24346e; --hero3:#141c3c;
+  --shadow:0 1px 2px rgba(40,30,10,.06), 0 8px 24px rgba(40,30,10,.07);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+    --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+  --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.top{position:absolute;inset:0 0 auto;z-index:3}
+.top .wrap{display:flex;align-items:center;gap:22px;padding-top:16px;padding-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:18px}
+.brand img{width:30px;height:30px}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:15px}
+.top nav a{color:rgba(255,255,255,.85)}
+
+/* hero */
+.hero{background:radial-gradient(120% 100% at 25% 15%,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%);color:#fff;padding:110px 0 80px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center}
+.hero-icon{width:96px;height:96px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.hero h1{font-size:64px;line-height:1.05;letter-spacing:-.02em;margin:18px 0 14px}
+.hero .lead{font-size:24px;line-height:1.35;margin:0 0 14px;color:#fff}
+.hero .sub{font-size:17px;color:rgba(255,255,255,.8);margin:0 0 26px;max-width:30em}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:650;font-size:16px;background:var(--btn);color:#fff}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3)}
+.fine{margin-top:16px;font-size:14px;color:rgba(255,255,255,.65)}
+.hero-shots{position:relative;height:420px}
+.hero-shots .mac{position:absolute;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;background:#fff}
+.hero-shots .back{right:0;top:0;width:430px}
+.hero-shots .front{left:0;top:150px;width:400px}
+
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:18px}
+.hero-right .hero-shots{width:100%}
+.watch{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:15px;font-weight:600}
+.watch:hover{text-decoration:none;background:rgba(0,0,0,.5)}
+.watch .play{width:30px;height:30px;border-radius:50%;background:#e62117;display:flex;align-items:center;justify-content:center;padding-left:2px}
+.watch .len{font-weight:500;color:rgba(255,255,255,.65);white-space:nowrap}
+
+/* sections */
+section{padding:70px 0}
+section.alt{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2{font-size:36px;letter-spacing:-.015em;line-height:1.15;margin:0 0 12px}
+.kicker{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 8px}
+.intro{color:var(--ink-soft);font-size:19px;max-width:44em;margin:0 0 34px}
+p{color:var(--ink-soft)}
+b,strong{color:var(--ink)}
+
+.video{border-radius:16px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#000;aspect-ratio:16/9}
+.video iframe{width:100%;height:100%;border:0;display:block}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.alt .card{background:var(--bg)}
+.card .ic{font-size:30px;line-height:1}
+.card h3{font-size:18px;margin:12px 0 6px}
+.card p{margin:0;font-size:15.5px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.step{display:flex;flex-direction:column}
+.step .n{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step h3{font-size:20px;margin:12px 0 4px}
+.step p{margin:0 0 16px;font-size:16px}
+.shot{border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff;overflow:hidden;margin-top:auto}
+.shot.crop{max-height:300px}
+.shot.crop img{width:100%}
+.shot + .shot{margin-top:18px}
+.steps .shot{height:230px}
+.steps .shot img{width:100%;height:100%;object-fit:cover;object-position:top left}
+
+.split{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center}
+.split.rev{grid-template-columns:1.1fr 1fr}
+.split > *{min-width:0}
+.split.rev .txt{order:2}
+ul.ticks{list-style:none;padding:0;margin:18px 0 0}
+ul.ticks li{position:relative;padding-left:32px;margin:12px 0;color:var(--ink-soft)}
+ul.ticks li::before{content:"✓";position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,.14);color:var(--btn);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pills span{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:15px;color:var(--ink-soft)}
+.alt .pills span{background:var(--bg)}
+
+pre{background:#1d1b18;color:#ece7dd;border-radius:12px;padding:18px 20px;overflow-x:auto;font:14px/1.6 ui-monospace,Menlo,monospace;box-shadow:var(--shadow);margin:18px 0}
+pre .c{color:#8f897d}
+table.keys{border-collapse:collapse;width:100%;font-size:15.5px}
+table.keys td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+kbd{font:13px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:6px;padding:1px 7px;color:var(--ink)}
+.alt kbd{background:var(--bg)}
+
+footer{padding:44px 0 60px;color:var(--muted);font-size:14.5px}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+footer h4{color:var(--ink);font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+footer p{color:var(--muted);margin:0 0 8px}
+footer a{color:var(--ink-soft)}
+footer ul{list-style:none;padding:0;margin:0}
+footer li{margin:6px 0}
+code{font:14px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.alt code{background:var(--bg)}
+pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
+
+@media(max-width:900px){
+  .hero .wrap,.split,.split.rev{grid-template-columns:1fr}
+  .split.rev .txt{order:0}
+  .hero-shots{display:none}
+  .hero-right{align-items:flex-start}
+  .hero h1{font-size:48px}
+  .cards{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr}
+  footer .cols{grid-template-columns:1fr}
+  .top nav a:not(.keep){display:none}
+  h2{font-size:30px}
+}
+@media(max-width:560px){ .watch .len{display:none} .cards{grid-template-columns:1fr} .wrap{padding:0 16px} }
+</style>
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="./">John Buckman</a> &nbsp;/&nbsp; MacCVS</nav>
-  <header class="masthead">
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="assets/maccvs/appicon.png" alt="">MacCVS</a>
+  <nav>
+    <a href="#video">Video</a>
+    <a href="maccvs-help.html" class="keep">Guide</a>
+    <a href="https://github.com/johnbuckman/MacCVS">GitHub</a>
+    <a href="./">John Buckman</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
+    <img class="hero-icon" src="assets/maccvs/appicon.png" alt="The MacCVS app icon">
     <h1>MacCVS</h1>
-    <p class="lede">A native SwiftUI CVS client for macOS — a successor to the discontinued Carbon cvsgui
-      MacCVS.</p>
-  </header>
-  <div class="meta">
-    <a class="btn gh" href="https://github.com/johnbuckman/MacCVS">MacCVS on GitHub →</a>
-    <a class="btn" href="https://github.com/johnbuckman/MacCVS/releases">Download (notarized zip)</a>
-    <a class="btn" href="maccvs-help.html">User guide</a>
-  </div>
-  <main class="prose">
-
-    <figure class="video">
-      <div class="video-frame">
-        <iframe src="https://www.youtube-nocookie.com/embed/MQ6-EnU0xs0" title="MacCVS explainer video"
-          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-      <figcaption>Two-minute tour: browsing a working copy, diffs, discarding a hunk, commit, update, add, revert, history and the command line.</figcaption>
-    </figure>
-
-    <h2>What it is</h2>
-    <p>MacCVS is a native macOS client for CVS, written in SwiftUI with AppKit where needed. It replaces
-      the original Carbon-based cvsgui MacCVS, which stopped running when macOS removed Carbon and 32-bit
-      support. It works on existing working copies (checked out with <code>cvs checkout</code>) and runs
-      every operation through a <code>cvs</code> binary bundled inside the app, so working copies remain
-      ordinary CVS working copies.</p>
-
-    <h2>Features</h2>
-    <ul>
-      <li><strong>Column browser</strong> (<code>NSBrowser</code>). Column 0 is a project switcher listing
-        the working copies opened so far; each can be given a display name, forgotten, or revealed in Finder.</li>
-      <li><strong>File list</strong> with per-file CVS status (Modified, Added, Removed, Needs update, Needs
-        merge, Conflict, Missing, Unknown) and revision, sortable by name, status or revision.</li>
-      <li><strong>Local change detection without the server.</strong> A file's modified state is computed
-        from its mtime against the timestamp in <code>CVS/Entries</code>, the same test <code>cvs</code>
-        uses; an FSEvents watcher re-checks on every save.</li>
-      <li><strong>Prefetched base revisions.</strong> When a file becomes modified, its base revision is
-        fetched in the background and cached, so a diff opens without a network round-trip.</li>
-      <li><strong>Diff window</strong>: side-by-side or unified, line- or word-level highlighting, a draggable
-        centre divider, several files in one window, per-hunk <em>Discard</em> and per-file
-        <em>Discard all</em> (reverse-applies the hunk to the working file), and a Commit button for the
-        files shown.</li>
-      <li><strong>Operations</strong>: Update (current directory, non-recursive, or the selection), Commit
-        with a per-file picker, Add, Revert (<code>cvs update -C</code>), Log.</li>
-      <li><strong>History window</strong>: <code>cvs log</code> parsed into revision, author, date, ± line
-        counts and message; <em>Show diffs</em> loads the diff each revision introduced, on demand.</li>
-      <li><strong>Console</strong> showing every command run and its output.</li>
-      <li><strong>Session restore</strong>: last working copy, directory, file selection and sort order.</li>
-      <li><strong>Self-update</strong> from GitHub Releases (daily check; the download's notarization is
-        verified before it replaces the app).</li>
-    </ul>
-
-    <h2>Screenshots</h2>
-    <div class="gallery">
-      <figure>
-        <img src="assets/maccvs/main.png" alt="MacCVS main window: project column, folders, file list with status and revision, console">
-        <figcaption>Main window — projects and folders, files with status and revision, console.</figcaption>
-      </figure>
-      <figure>
-        <img src="assets/maccvs/diff.png" alt="MacCVS diff window: side-by-side diff with a Discard button on each hunk">
-        <figcaption>Diff window — side by side, with Discard per hunk and Commit.</figcaption>
-      </figure>
-      <figure>
-        <img src="assets/maccvs/word.png" alt="MacCVS diff window in word mode: only the changed numbers are highlighted">
-        <figcaption>Word mode — only the changed tokens are highlighted.</figcaption>
-      </figure>
-      <figure>
-        <img src="assets/maccvs/log.png" alt="MacCVS history window with the diff of each revision shown">
-        <figcaption>History window with <em>Show diffs</em> on.</figcaption>
-      </figure>
+    <p class="lead">CVS, as a proper Mac app.</p>
+    <p class="sub">Browse a working copy, see what you've changed the moment you save, read clear diffs, throw away the bits you don't want, then commit or update. A native successor to the old Carbon MacCVS, with its own <code style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff">cvs</code> built in.</p>
+    <div class="btns">
+      <a class="btn" href="https://github.com/johnbuckman/MacCVS/releases"> Download for Mac</a>
+      <a class="btn ghost" href="maccvs-help.html">Read the guide</a>
     </div>
-    <p>Screenshots use a demo repository.</p>
+    <div class="fine">macOS 14 or newer · Apple silicon and Intel · notarized · free and open source (GPL-3.0)</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-shots" aria-hidden="true">
+      <div class="mac back"><img src="assets/maccvs/main.png" alt=""></div>
+      <div class="mac front"><img src="assets/maccvs/diff.png" alt=""></div>
+    </div>
+    <a class="watch" href="https://youtu.be/MQ6-EnU0xs0"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Watch the explainer video on YouTube <span class="len">2 min</span></a>
+  </div>
+</div></div>
 
-    <h2>Command line</h2>
-<pre><code>MacCVS=/Applications/MacCVS.app/Contents/MacOS/MacCVS
-"$MacCVS" /path/to/workingcopy     # open a working copy
-"$MacCVS" --diff a.c b.c c.c       # CVS diffs of several files, one window
-"$MacCVS" --compare LEFT RIGHT     # visual diff of any two files</code></pre>
-    <p>In <code>--diff</code> / <code>--compare</code> mode only the diff window is shown and the app exits when
-      it is closed, so it can serve as a git difftool:
-      <code>git config --global difftool.maccvs.cmd '/Applications/MacCVS.app/Contents/MacOS/MacCVS --compare "$LOCAL" "$REMOTE"'</code>.</p>
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>The CVS client the Mac lost</h2>
+  <p class="intro">For years MacCVS was how Mac users worked with CVS. It was written for Carbon, and when macOS dropped Carbon and 32-bit apps it stopped running. This is a new one, written from scratch in SwiftUI, for the many projects still kept in CVS.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">⚡</div><h3>Changes show up as you save</h3><p>A file turns Modified the moment you save it, worked out locally the same way <code>cvs</code> does. No server round trip.</p></div>
+    <div class="card"><div class="ic">🔍</div><h3>Diffs you can read</h3><p>Side by side or unified, by line or by word, with several files in one window. Opens instantly: the base revision is fetched ahead of time.</p></div>
+    <div class="card"><div class="ic">↩️</div><h3>Undo one change, keep the rest</h3><p>Each change in a diff has its own Discard button, so you can drop a debugging line without losing the work around it.</p></div>
+    <div class="card"><div class="ic">📦</div><h3>Nothing else to install</h3><p>GNU CVS 1.11.23 is built in, for Apple silicon and Intel. Your working copies stay ordinary CVS working copies.</p></div>
+  </div>
+</div></section>
 
-    <h2>Requirements</h2>
-    <ul>
-      <li>macOS 14 or later, Apple silicon or Intel (universal binary), Developer ID signed and notarized.</li>
-      <li>No CVS installation needed: GNU CVS 1.11.23 is bundled (built per-arch from source, linking only
-        <code>libSystem</code>).</li>
-      <li><code>:pserver:</code> passwords are read from <code>~/.cvspass</code> (written by <code>cvs login</code>).</li>
+<section id="video"><div class="wrap">
+  <p class="kicker">Two-minute tour</p>
+  <h2>See it working</h2>
+  <p class="intro">Browsing a working copy, diffs, discarding a change, committing, updating, adding and reverting, the history, and the command line.</p>
+  <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/MQ6-EnU0xs0" title="MacCVS explainer video" loading="lazy"
+    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">How it works</p>
+  <h2>Open a working copy, and you're in</h2>
+  <p class="intro">MacCVS works on folders you've already checked out with <code>cvs checkout</code>. Your login and server settings come from the working copy itself and from <code>~/.cvspass</code>.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Open it</h3><p><b>File ▸ Open Working Copy…</b> (<kbd>⌘O</kbd>) and choose the module's top folder. It joins the list of projects in the left-hand column, and comes back next time you start.</p>
+      <div class="shot"><img src="assets/maccvs/projects.jpg" alt="The MacCVS main window: projects in the first column, folders in the second" loading="lazy"></div></div>
+    <div class="step"><div class="n">2</div><h3>Find your changes</h3><p>Click through folders in the column browser. Each file shows its status and revision, coloured so changed files stand out. Sort by status to put them at the top.</p>
+      <div class="shot"><img src="assets/maccvs/main.png" alt="Three modified files in the lib folder, shown in orange" loading="lazy"></div></div>
+    <div class="step"><div class="n">3</div><h3>Diff, then commit</h3><p>Double-click a file for its diff. When it looks right, press <b>Commit</b> (<kbd>⌘K</kbd>), tick the files to include, write a message, and send it.</p>
+      <div class="shot"><img src="assets/maccvs/commit.png" alt="The commit sheet: a message and the files to commit" loading="lazy"></div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">The diff window</p>
+    <h2>Exactly what changed</h2>
+    <p>Select one or more files and press <b>Diff</b> (<kbd>⌘D</kbd>). Every file you picked appears in one window, one after the other.</p>
+    <ul class="ticks">
+      <li><b>Side by side or unified</b>, with a divider you can drag to give either side more room.</li>
+      <li><b>Line or word highlighting.</b> Word mode marks only the characters that changed, which makes a changed number or name easy to spot.</li>
+      <li><b>Instant.</b> As soon as a file becomes modified, MacCVS fetches the revision you started from and keeps it, so the diff needs no trip to the server.</li>
+      <li><b>Works on any two files</b>, not just CVS ones: see <a href="#cli">the command line</a>.</li>
     </ul>
+  </div>
+  <div>
+    <div class="shot"><img src="assets/maccvs/diff.png" alt="Side-by-side diff of orders.tcl with three changes" loading="lazy"></div>
+    <div class="shot"><img src="assets/maccvs/word.png" alt="Word mode: only the changed prices are highlighted" loading="lazy"></div>
+  </div>
+</div></section>
 
-    <h2>Limitations</h2>
-    <ul>
-      <li>No checkout, login, remove, tag, branch, annotate or import; use <code>cvs</code> in Terminal for those.</li>
-      <li>Alpha releases (v0.7-alpha).</li>
+<section class="alt"><div class="wrap split rev">
+  <div class="txt">
+    <p class="kicker">Discard</p>
+    <h2>Keep the work, drop the leftovers</h2>
+    <p>Each change in the diff window has a <b>Discard</b> button. It puts just that part of the file back the way it was, and leaves your other changes alone. <b>Discard all</b> does the whole file.</p>
+    <p>Then commit straight from the diff window: its <b>Commit</b> button opens the commit sheet with the files you're looking at already ticked.</p>
+    <p><a href="maccvs-help.html#discard">More about discarding →</a></p>
+  </div>
+  <div>
+    <div class="shot"><img src="assets/maccvs/discard.jpg" alt="The diff after one change was discarded: two changes remain" loading="lazy"></div>
+  </div>
+</div></section>
+
+<section><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Staying in step</p>
+    <h2>Update, add and revert</h2>
+    <ul class="ticks">
+      <li><b>Refresh</b> (<kbd>⌘R</kbd>) asks the server what's new. Files a colleague has committed show <b>Needs update</b>, in blue.</li>
+      <li><b>Update</b> (<kbd>⌘U</kbd>) brings in their changes, for the folder you're in or just the files you've selected.</li>
+      <li><b>Add</b> puts a new file under CVS. Turn on <b>View ▸ Show Non-CVS Files</b> (<kbd>⌘⇧U</kbd>) to see files CVS doesn't know about yet.</li>
+      <li><b>Revert</b> throws away all your local changes to a file and gets a fresh copy from the server.</li>
+      <li>Every command and its output appears in the <b>console</b> at the bottom of the window, so you always know what was run.</li>
     </ul>
+  </div>
+  <div>
+    <div class="shot"><img src="assets/maccvs/update.jpg" alt="index.html shows Needs update after a colleague committed a newer version" loading="lazy"></div>
+    <div class="shot"><img src="assets/maccvs/add.jpg" alt="A new file, coupons.tcl, not yet under CVS" loading="lazy"></div>
+  </div>
+</div></section>
 
-    <h2>Repository</h2>
-    <p>Source (GPL-3): <a class="gh" href="https://github.com/johnbuckman/MacCVS">github.com/johnbuckman/MacCVS</a>.
-      Full user guide: <a href="maccvs-help.html">MacCVS Help</a>.</p>
+<section class="alt"><div class="wrap split rev">
+  <div class="txt">
+    <p class="kicker">History</p>
+    <h2>Who changed what, and why</h2>
+    <p>Select a file and choose <b>Log</b> (<kbd>⌘L</kbd>). The history window lists every revision, newest first, with its author, date, lines added and removed, and the commit message.</p>
+    <p>Turn on <b>Show diffs</b> to see the change each revision made, right under its message. Diffs load as you scroll, so long histories stay quick.</p>
+  </div>
+  <div>
+    <div class="shot"><img src="assets/maccvs/log.png" alt="The history window with each revision's diff shown" loading="lazy"></div>
+  </div>
+</div></section>
 
-  </main>
-  <footer class="foot">
-    <p><a href="./">← John Buckman</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+<section id="cli"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Command line</p>
+    <h2>A diff tool for Terminal, too</h2>
+    <p>The diff window works from Terminal. Give it CVS files to see their changes, or any two files to compare them. In this mode MacCVS shows only the diff window, and quits when you close it.</p>
+    <p>That makes it a good <code>git difftool</code>:</p>
+<pre><code>git config --global difftool.maccvs.cmd \
+  '/Applications/MacCVS.app/Contents/MacOS/MacCVS --compare "$LOCAL" "$REMOTE"'</code></pre>
+  </div>
+  <div>
+<pre><code><span class="c"># the app itself</span>
+MacCVS=/Applications/MacCVS.app/Contents/MacOS/MacCVS
+
+<span class="c"># open a working copy</span>
+"$MacCVS" ~/Projects/bakery
+
+<span class="c"># CVS diffs of several files, in one window</span>
+"$MacCVS" --diff orders.tcl prices.tcl
+
+<span class="c"># compare any two files</span>
+"$MacCVS" --compare old.txt new.txt</code></pre>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Keyboard</p>
+    <h2>Shortcuts</h2>
+    <table class="keys">
+      <tr><td><kbd>⌘O</kbd></td><td>Open a working copy</td></tr>
+      <tr><td><kbd>⌘R</kbd></td><td>Refresh status (asks the server)</td></tr>
+      <tr><td><kbd>⌘D</kbd></td><td>Diff the selected files</td></tr>
+      <tr><td><kbd>⌘K</kbd></td><td>Commit…</td></tr>
+      <tr><td><kbd>⌘U</kbd></td><td>Update</td></tr>
+      <tr><td><kbd>⌘L</kbd></td><td>History of the selected file</td></tr>
+      <tr><td><kbd>⌘↑</kbd></td><td>Up to the enclosing folder</td></tr>
+      <tr><td><kbd>⌘⇧U</kbd></td><td>Show or hide files not under CVS</td></tr>
+    </table>
+  </div>
+  <div>
+    <p class="kicker">Good to know</p>
+    <h2>What it does and doesn't do</h2>
+    <p>MacCVS covers the everyday work: status, diff, discard, commit, update, add, revert and history. It updates itself from GitHub, checking once a day, and checks that each download is notarized before installing it.</p>
+    <p>It doesn't check out, log in, remove, tag, branch, annotate or import. Use <code>cvs</code> in Terminal for those. It's still an alpha release.</p>
+    <div class="pills"><span>Remembers where you were</span><span>Several working copies at once</span><span>Updates itself</span><span>Built-in cvs 1.11.23</span></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>MacCVS</h4>
+    <p>A native macOS client for CVS, written in SwiftUI with AppKit where needed, by John Buckman. It runs every operation through its own copy of GNU CVS, so working copies remain ordinary CVS working copies.</p>
+    <p>Open source under the GNU GPL v3.0. Screenshots use a demo repository.</p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/MacCVS/releases">Download</a></li>
+      <li><a href="maccvs-help.html">The full guide</a></li>
+      <li><a href="https://youtu.be/MQ6-EnU0xs0">The video tour</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Build it</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/MacCVS">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/MacCVS/issues">Report a problem</a></li>
+      <li><a href="./">← John Buckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
 </body>
 </html>
