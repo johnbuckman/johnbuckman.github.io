@@ -3,18 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BLT-faster — Tcl/Tk projects — John Buckman</title>
-<link rel="stylesheet" href="../assets/style.css">
+<title>BLT-faster: quicker BLT graph redraws</title>
+<meta name="description" content="BLT-faster is a patch for BLT 2.4 that caches axis tick labels and static chart chrome, making graph redraws about 1.3–1.9× faster with pixel-identical output.">
+<meta property="og:title" content="BLT-faster: quicker BLT graph redraws">
+<meta property="og:description" content="A drop-in patch for BLT 2.4 graphs: cached axis labels and chrome, about 1.3–1.9× faster redraws, pixel-identical output.">
+<link rel="stylesheet" href="tcltk.css">
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; BLT-faster</nav>
-  <header class="masthead">
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <nav>
+    <a href="#apply">Apply it</a>
+    <a href="#results">Results</a>
+    <a href="#details">Details</a>
+    <a href="./" class="keep">All projects</a>
+    <a href="https://github.com/johnbuckman/BLT-faster">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
     <h1>BLT-faster</h1>
-    <p class="lede">A patch for BLT 2.4 that caches axis tick labels and static chrome to cut graph-redraw cost. Measured ~1.3–1.9x, pixel-identical output.</p>
-  </header>
-  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/BLT-faster">BLT-faster on GitHub →</a></div>
-  <main class="prose">
+    <p class="lead">Faster live charts from BLT 2.4, with identical pixels.</p>
+    <p class="sub">Most of the time a BLT graph spends redrawing goes into the axis labels, not the data. This patch draws each label once and reuses it, and can also cache the whole static frame of a chart. Measured <b style="color:#fff">1.3–1.9×</b> faster, with output that matches stock BLT pixel for pixel.</p>
+    <div class="tags"><span>BLT 2.4</span><span>graph · stripchart · barchart</span><span>C patch</span><span>AndroWish / undroidwish</span><span>GPL-3</span></div>
+    <div class="btns">
+      <a class="btn" href="#apply">Apply the patch</a>
+      <a class="btn ghost" href="https://github.com/johnbuckman/BLT-faster">Source on GitHub</a>
+    </div>
+    <div class="fine">Free and open source · GPL-3 patch project; it distributes the changes, not the BLT source</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-code"><div class="bar"><i></i><i></i><i></i></div><pre><span class="c"># from the root of a BLT 2.4 source tree</span>
+patch -p1 &lt; BLT-faster/patches/blt-faster.patch
+<span class="c"># ...then rebuild BLT as usual</span>
+
+<span class="c"># label cache is on by default; opt in per graph</span>
+.g configure -bufferchrome 1</pre></div>
+    <span class="watch soon" id="tour"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Explainer video coming soon</span>
+  </div>
+</div></div>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>Smoother charts on slow hardware</h2>
+  <p class="intro">It started with three live espresso charts redrawing ten times a second on a tablet. Roughly 55–70% of every frame went into redrawing axis labels that hardly ever change.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">🏷️</div><h3>Labels drawn once</h3><p><code>-cachelabels</code> renders each tick label once and reuses it. About 1.3× faster on live charts, on by default.</p></div>
+    <div class="card"><div class="ic">🖼️</div><h3>Static frame cached</h3><p><code>-bufferchrome</code> caches the background, grid, axes and labels, drawing only the data on top. About 1.9× faster when the axes don't move.</p></div>
+    <div class="card"><div class="ic">🎯</div><h3>Pixel-identical</h3><p>Checked by snapshot comparison with zero differing pixels. With the defaults, output matches stock BLT.</p></div>
+    <div class="card"><div class="ic">🔌</div><h3>No app changes</h3><p>Patch and rebuild, and every graph uses the label cache. The patch touches four files and is additive.</p></div>
+  </div>
+</div></section>
+
+<section id="apply"><div class="wrap">
+  <p class="kicker">Apply it</p>
+  <h2>Patch, rebuild, done</h2>
+  <p class="intro">The patch works on the BLT 2.4 tree bundled with AndroWish / undroidwish and most other BLT 2.4 distributions.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Patch the source</h3><p>From the root of a pristine BLT 2.4 tree, run <code>patch -p1</code> with <code>patches/blt-faster.patch</code>, or use <code>./apply-patch.sh /path/to/blt</code>.</p></div>
+    <div class="step"><div class="n">2</div><h3>Rebuild BLT</h3><p>Build it the way you normally do. Every graph now has <code>-cachelabels</code> on.</p></div>
+    <div class="step"><div class="n">3</div><h3>Opt in where it helps</h3><p>Turn on <code>-bufferchrome 1</code> for graphs whose axes are fixed or change rarely: history views, zoomed plots, dashboards.</p></div>
+  </div>
+</div></section>
+
+<section id="results" class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Results</p>
+    <h2>Measured, frame by frame</h2>
+    <p>On an Apple M4, reproducing the three-chart live espresso page at 10 Hz over a 45-second shot:</p>
+    <ul class="ticks">
+      <li><b>Auto-scaling live charts:</b> 5.3 → 3.9 ms per frame, 1.34× with <code>-cachelabels</code>.</li>
+      <li><b>Fixed-axis graphs:</b> 3.8 → 2.0 ms per frame, 1.9× with <code>-bufferchrome</code>.</li>
+      <li><b>Slower hardware</b> such as tablets and single-board computers typically sees a bigger gain, since drawing text costs more there.</li>
+      <li><b>Not for every graph:</b> <code>-bufferchrome</code> is off by default because a stripchart that rescales every frame can't cache anything.</li>
+    </ul>
+  </div>
+  <div class="hero-code"><div class="bar"><i></i><i></i><i></i></div><pre><span class="c"># per-graph switches after rebuilding</span>
+.g configure -bufferchrome 1  <span class="c">;# opt IN</span>
+.g configure -cachelabels  0  <span class="c">;# opt OUT</span></pre></div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <p class="kicker">Technical details</p>
+  <div class="prose">
 <h2 id="what-it-is">What it is</h2>
 <p><strong>BLT-faster</strong> is a C patch against the BLT 2.4 <code>graph</code> / <code>stripchart</code> / <code>barchart</code> widget that reduces the per-frame cost of live, continuously-redrawn charts, with no change to rendered output. It targets the BLT 2.4 tree as bundled in <a href="https://www.androwish.org/">AndroWish</a> / undroidwish and most other BLT 2.4 distributions.</p>
 <p>It ships as a GPL-3 patch project: it distributes <code>patches/blt-faster.patch</code> plus documentation, not the BLT source. Apply the patch to a pristine BLT 2.4 tree and rebuild; the changes apply to every graph.</p>
@@ -98,10 +171,33 @@
 <p>BLT loads as a runtime library, so a test script can <code>load</code> the patched build to override an embedded one without relinking the host wish.</p>
 <h2 id="repository">Repository</h2>
 <p>Source, patch, and documentation (<code>docs/HOW-IT-WORKS.md</code>, <code>docs/BENCHMARKS.md</code>) are on GitHub: <a class="gh" href="https://github.com/johnbuckman/BLT-faster">github.com/johnbuckman/BLT-faster</a>. GPL-3.0. The patch and docs are original work; they modify BLT, which carries its own license — this repo distributes the changes, not the BLT source.</p>
-  </main>
-  <footer class="foot">
-    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>BLT-faster</h4>
+    <p>A C patch for the <code>graph</code>, <code>stripchart</code> and <code>barchart</code> widgets of BLT 2.4, as bundled in <a href="https://www.androwish.org/">AndroWish</a> / undroidwish. BLT carries its own license; this project distributes only the changes, under GPL-3.</p>
+    <p>Written to speed up the live charts in the <a href="https://decentespresso.com/">Decent Espresso</a> tablet app. <span style="color:var(--muted)">— John Buckman</span></p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="#apply">Apply the patch</a></li>
+      <li><a href="https://github.com/johnbuckman/BLT-faster/blob/main/patches/blt-faster.patch">The patch file</a></li>
+      <li><a href="https://github.com/johnbuckman/BLT-faster/blob/main/docs/BENCHMARKS.md">Benchmarks</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/BLT-faster">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/BLT-faster/issues">Report a problem</a></li>
+      <li><a href="./">All Tcl/Tk projects</a></li>
+      <li><a href="https://github.com/johnbuckman">github.com/johnbuckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
 </body>
 </html>

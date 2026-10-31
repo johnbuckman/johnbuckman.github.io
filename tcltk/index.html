@@ -3,109 +3,107 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tcl/Tk projects — John Buckman</title>
+<title>Tcl/Tk projects</title>
 <meta name="description" content="Bringing Tcl/Tk (via AndroWish / undroidwish) to modern iOS, Apple Silicon, Android and the browser, plus the BLE, OAuth and graph-speed libraries around it.">
-<link rel="stylesheet" href="../assets/style.css">
+<meta property="og:title" content="Tcl/Tk projects: Tcl/Tk on iPhone, iPad, Apple Silicon, Android and the web">
+<meta property="og:description" content="Ports of AndroWish and undroidwish to platforms upstream doesn't build for, and the libraries that run the Decent Espresso tablet app on them.">
+<meta property="og:image" content="https://johnbuckman.github.io/tcltk/img/iwish-ipad.jpg">
+<link rel="stylesheet" href="tcltk.css">
 </head>
 <body>
-<div class="wrap">
-  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; Tcl/Tk projects</nav>
-  <header class="masthead">
-    <h1>Tcl/Tk projects</h1>
-    <p class="lede">Ports of <a href="https://www.androwish.org/">AndroWish</a> and
-      <strong>undroidwish</strong> (Tcl/Tk on SDL2, with the full AndroWish extension set) to targets the
-      upstream project does not build for: iOS/iPadOS, arm64&nbsp;macOS, Tcl/Tk&nbsp;9.1 on Android, and the
-      browser. Plus the supporting libraries used to run the
-      <a href="https://decentespresso.com/">Decent Espresso</a> tablet app on those targets — Bluetooth&nbsp;LE
-      for macOS and Linux, an OAuth&nbsp;2.0 client, and a BLT graph-redraw patch.</p>
-  </header>
 
-  <main>
-    <div class="section-label">Tcl/Tk on new platforms</div>
-    <div class="grid">
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <nav>
+    <a href="#platforms">Platforms</a>
+    <a href="#libraries">Libraries</a>
+    <a href="../" class="keep">John Buckman</a>
+    <a href="https://github.com/johnbuckman">GitHub</a>
+  </nav>
+</div></header>
 
-      <div class="card">
-        <h3><a href="iwish.html">iWish</a></h3>
-        <p>Port of AndroWish/undroidwish (Tcl/Tk on SDL2, full extension set) to 64-bit iOS and iPadOS.</p>
-        <div class="tags"><span class="tag">iOS</span><span class="tag">iPadOS</span><span class="tag">arm64</span><span class="tag">SDL2</span></div>
-        <div class="links"><a href="iwish.html">Details</a><a class="gh" href="https://github.com/johnbuckman/iwish">GitHub</a></div>
-      </div>
-
-      <div class="card">
-        <h3><a href="iwish-ios9.html">iWish for iOS&nbsp;9</a></h3>
-        <p>The same wish built for 32-bit armv7 and iOS&nbsp;9, for hardware that cannot run current iOS.</p>
-        <div class="tags"><span class="tag">iOS 9</span><span class="tag">armv7</span><span class="tag">32-bit</span></div>
-        <div class="links"><a href="iwish-ios9.html">Details</a><a class="gh" href="https://github.com/johnbuckman/iwish-ios9">GitHub</a></div>
-      </div>
-
-      <div class="card">
-        <h3><a href="undroidwish-arm64.html">undroidwish for Apple&nbsp;Silicon</a></h3>
-        <p>undroidwish (SDL2 wish, full extension set) built natively for arm64 macOS, in both
-          Tcl/Tk&nbsp;8.6 and Tcl/Tk&nbsp;9.1.</p>
-        <div class="tags"><span class="tag">macOS</span><span class="tag">Apple Silicon</span><span class="tag">Tcl 8.6</span><span class="tag">Tcl 9.1</span></div>
-        <div class="links"><a href="undroidwish-arm64.html">Details</a><a class="gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included">8.6 repo</a><a class="gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included-tcltk91">9.1 repo</a></div>
-      </div>
-
-      <div class="card">
-        <h3><a href="androwish-tcl91.html">AndroWish on Tcl/Tk&nbsp;9.1</a></h3>
-        <p>AndroWish (Tcl/Tk on Android, SDL2/AGG) rebuilt on Tcl/Tk&nbsp;9.1b0 — patches, ndk-build config
-          and build scripts.</p>
-        <div class="tags"><span class="tag">Android</span><span class="tag">Tcl 9.1</span><span class="tag">NDK</span></div>
-        <div class="links"><a href="androwish-tcl91.html">Details</a><a class="gh" href="https://github.com/johnbuckman/androwish-tcl91">GitHub</a></div>
-      </div>
-
-      <div class="card">
-        <h3><a href="webwish.html">WebWish</a></h3>
-        <p>An SDL2 video driver that runs an AndroWish / undroidwish / Tk app headless and streams its
-          framebuffer to a browser canvas (zlib tiles or AV1), with mouse/keyboard sent back over a
-          WebSocket.</p>
-        <div class="tags"><span class="tag">Browser</span><span class="tag">WebSocket</span><span class="tag">SDL2</span><span class="tag">AV1</span></div>
-        <div class="links"><a href="webwish.html">Details</a><a class="gh" href="https://github.com/johnbuckman/WebWish">GitHub</a></div>
-      </div>
-
+<div class="hero"><div class="wrap">
+  <div>
+    <h1>Tcl/Tk, everywhere</h1>
+    <p class="lead">Real Tcl/Tk on iPhone, iPad, Apple Silicon, Android and the web.</p>
+    <p class="sub">Ports of <a href="https://www.androwish.org/">AndroWish</a> and <b style="color:#fff">undroidwish</b> (Tcl/Tk drawn with SDL2, with the full AndroWish extension set) to platforms the upstream project doesn't build for. Plus the libraries that run the <a href="https://decentespresso.com/">Decent Espresso</a> tablet app on them: Bluetooth LE for macOS and Linux, OAuth 2.0, and faster BLT graphs.</p>
+    <div class="btns">
+      <a class="btn" href="iwish.html">Try iWish on your iPad</a>
+      <a class="btn ghost" href="#platforms">See all projects</a>
     </div>
+    <div class="fine">Free and open source · every project has its source and build recipe on GitHub</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-shot ipad"><img src="img/iwish-ipad.jpg" alt="iWish running Tk demos on an iPad"></div>
+  </div>
+</div></div>
 
-    <div class="section-label">Libraries &amp; building blocks</div>
-    <div class="grid">
+<section class="alt" id="platforms"><div class="wrap">
+  <p class="kicker">Tcl/Tk on new platforms</p>
+  <h2>The same wish, on five more targets</h2>
+  <p class="intro">Each port runs the real Tcl interpreter and the real Tk widgets, with AndroWish's hundred-plus bundled extensions, so one Tk program runs everywhere.</p>
+  <div class="projects">
+    <a class="project" href="iwish.html"><div class="ic">📱</div><h3>iWish</h3><p>Tcl/Tk on iPhone and iPad (64-bit iOS and iPadOS), installable with one click through SideStep.</p><div class="chips"><span>iOS</span><span>iPadOS</span><span>arm64</span><span>SDL2</span></div><span class="more">Details →</span></a>
+    <a class="project" href="iwish-ios9.html"><div class="ic">🕰️</div><h3>iWish for iOS 9</h3><p>The same wish built for 32-bit armv7 and iOS 9, for old iPads that can't run current iOS.</p><div class="chips"><span>iOS 9</span><span>armv7</span><span>32-bit</span></div><span class="more">Details →</span></a>
+    <a class="project" href="undroidwish-arm64.html"><div class="ic">💻</div><h3>undroidwish for Apple Silicon</h3><p>undroidwish built natively for arm64 macOS, in both Tcl/Tk 8.6 and Tcl/Tk 9.1.</p><div class="chips"><span>macOS</span><span>Apple Silicon</span><span>Tcl 8.6</span><span>Tcl 9.1</span></div><span class="more">Details →</span></a>
+    <a class="project" href="androwish-tcl91.html"><div class="ic">🤖</div><h3>AndroWish on Tcl/Tk 9.1</h3><p>AndroWish (Tcl/Tk on Android) rebuilt on Tcl/Tk 9.1b0: patches, ndk-build config and build scripts.</p><div class="chips"><span>Android</span><span>Tcl 9.1</span><span>NDK</span></div><span class="more">Details →</span></a>
+    <a class="project" href="webwish.html"><div class="ic">🌐</div><h3>WebWish</h3><p>Run any Tk app headless and use it from a web browser: the screen streams to a canvas, and mouse and keyboard go back over a WebSocket.</p><div class="chips"><span>Browser</span><span>WebSocket</span><span>SDL2</span><span>AV1</span></div><span class="more">Details →</span></a>
+  </div>
+</div></section>
 
-      <div class="card">
-        <h3><a href="tcl-ble-osx.html">tcl-ble-osx</a></h3>
-        <p>Bluetooth&nbsp;LE for Tcl/Tk on macOS via CoreBluetooth, exposing the same <code>ble</code> command
-          as AndroWish.</p>
-        <div class="tags"><span class="tag">macOS</span><span class="tag">BLE</span><span class="tag">CoreBluetooth</span></div>
-        <div class="links"><a href="tcl-ble-osx.html">Details</a><a class="gh" href="https://github.com/johnbuckman/tcl-ble-osx">GitHub</a></div>
-      </div>
+<section id="libraries"><div class="wrap">
+  <p class="kicker">Libraries &amp; building blocks</p>
+  <h2>What a real app needs</h2>
+  <p class="intro">Written to run Decent's espresso tablet app on every platform, and useful to any Tcl program.</p>
+  <div class="projects">
+    <a class="project" href="tcl-ble-osx.html"><div class="ic">📡</div><h3>tcl-ble-osx</h3><p>Bluetooth LE for Tcl/Tk on macOS through CoreBluetooth, with the same <code>ble</code> command as AndroWish.</p><div class="chips"><span>macOS</span><span>BLE</span><span>CoreBluetooth</span></div><span class="more">Details →</span></a>
+    <a class="project" href="blz-ble-shim.html"><div class="ic">🐧</div><h3>blz_ble_shim</h3><p>Run AndroWish Bluetooth LE apps unchanged on Linux/BlueZ, with a hardware-free DE1 and Skale simulator for testing.</p><div class="chips"><span>Linux</span><span>BlueZ</span><span>BLE</span></div><span class="more">Details →</span></a>
+    <a class="project" href="tcl-oauth2.html"><div class="ic">🔑</div><h3>tcl_oauth2_library</h3><p>Pure-Tcl OAuth 2.0 client (Authorization Code with PKCE), with Basecamp and QuickBooks Online examples.</p><div class="chips"><span>OAuth2</span><span>PKCE</span><span>pure Tcl</span></div><span class="more">Details →</span></a>
+    <a class="project" href="blt-faster.html"><div class="ic">📈</div><h3>BLT-faster</h3><p>Faster BLT graph redraws by caching axis labels and static chrome: a drop-in patch for BLT 2.4, 1.3–1.9× faster and pixel-identical.</p><div class="chips"><span>BLT</span><span>performance</span><span>patch</span></div><span class="more">Details →</span></a>
+  </div>
+</div></section>
 
-      <div class="card">
-        <h3><a href="blz-ble-shim.html">blz_ble_shim</a></h3>
-        <p>Run AndroWish Bluetooth-LE Tcl apps unaltered on Linux/BlueZ, with a hardware-free DE1/Skale
-          simulator for testing.</p>
-        <div class="tags"><span class="tag">Linux</span><span class="tag">BlueZ</span><span class="tag">BLE</span></div>
-        <div class="links"><a href="blz-ble-shim.html">Details</a><a class="gh" href="https://github.com/johnbuckman/blz_ble_shim">GitHub</a></div>
-      </div>
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Why I built these</p>
+    <h2>An espresso machine's app</h2>
+    <p>I make espresso machines, and our tablet software is written in Tcl/Tk. These projects are how that one program reaches Android tablets, iPads, old iPads, Macs, Linux and a web browser, talking Bluetooth to the machine and its scale on each. Everything is open source, in case it helps your Tcl/Tk program travel too. <span style="color:var(--muted)">— John Buckman</span></p>
+  </div>
+  <div>
+    <ul class="ticks">
+      <li><b>One Tk codebase</b>, unchanged across every platform.</li>
+      <li><b>Bluetooth LE everywhere</b>: Android, iOS, macOS and Linux all answer the same <code>ble</code> command.</li>
+      <li><b>No App Store needed</b> on iPhone and iPad: <a href="https://johnbuckman.github.io/SideStep/">SideStep</a> installs and updates it.</li>
+    </ul>
+  </div>
+</div></section>
 
-      <div class="card">
-        <h3><a href="tcl-oauth2.html">tcl_oauth2_library</a></h3>
-        <p>Pure-Tcl OAuth&nbsp;2.0 (Authorization Code, with PKCE) client library, with Basecamp and
-          QuickBooks Online examples.</p>
-        <div class="tags"><span class="tag">OAuth2</span><span class="tag">PKCE</span><span class="tag">pure-Tcl</span></div>
-        <div class="links"><a href="tcl-oauth2.html">Details</a><a class="gh" href="https://github.com/johnbuckman/tcl_oauth2_library">GitHub</a></div>
-      </div>
+<footer><div class="wrap cols">
+  <div>
+    <h4>Tcl/Tk projects</h4>
+    <p>Built on <a href="https://www.androwish.org/">AndroWish and undroidwish</a> by Christian Werner and contributors. Each repository is a recipe of build scripts, patches and glue code against the upstream sources.</p>
+  </div>
+  <div>
+    <h4>Platforms</h4>
+    <ul>
+      <li><a href="iwish.html">iWish (iOS)</a></li>
+      <li><a href="iwish-ios9.html">iWish for iOS 9</a></li>
+      <li><a href="undroidwish-arm64.html">Apple Silicon</a></li>
+      <li><a href="androwish-tcl91.html">Android, Tcl 9.1</a></li>
+      <li><a href="webwish.html">WebWish</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Libraries</h4>
+    <ul>
+      <li><a href="tcl-ble-osx.html">tcl-ble-osx</a></li>
+      <li><a href="blz-ble-shim.html">blz_ble_shim</a></li>
+      <li><a href="tcl-oauth2.html">tcl_oauth2_library</a></li>
+      <li><a href="blt-faster.html">BLT-faster</a></li>
+      <li><a href="../">← John Buckman</a></li>
+    </ul>
+  </div>
+</div></footer>
 
-      <div class="card">
-        <h3><a href="blt-faster.html">BLT-faster</a></h3>
-        <p>Faster BLT graph redraws — cache axis tick labels and static chrome. Drop-in patch for BLT&nbsp;2.4
-          (AndroWish/undroidwish), ~1.3–1.9× and pixel-identical.</p>
-        <div class="tags"><span class="tag">BLT</span><span class="tag">performance</span><span class="tag">patch</span></div>
-        <div class="links"><a href="blt-faster.html">Details</a><a class="gh" href="https://github.com/johnbuckman/BLT-faster">GitHub</a></div>
-      </div>
-
-    </div>
-  </main>
-
-  <footer class="foot">
-    <p><a href="../">← John Buckman</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
 </body>
 </html>

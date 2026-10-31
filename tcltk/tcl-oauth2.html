@@ -3,18 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tcl_oauth2_library — Tcl/Tk projects — John Buckman</title>
-<link rel="stylesheet" href="../assets/style.css">
+<title>tcl_oauth2_library: OAuth 2.0 logins in pure Tcl</title>
+<meta name="description" content="tcl_oauth2_library is a self-contained OAuth 2.0 client in pure Tcl: Authorization Code with PKCE, token refresh, and one-line authenticated API calls, with Twitter/X, Basecamp and QuickBooks Online examples.">
+<meta property="og:title" content="tcl_oauth2_library: OAuth 2.0 logins in pure Tcl">
+<meta property="og:description" content="A pure-Tcl OAuth 2.0 client: browser login, PKCE, saved and auto-refreshed tokens, and one-line API calls. Needs only http and tls.">
+<link rel="stylesheet" href="tcltk.css">
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; tcl_oauth2_library</nav>
-  <header class="masthead">
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <nav>
+    <a href="#start">Get started</a>
+    <a href="#details">Details</a>
+    <a href="./" class="keep">All projects</a>
+    <a href="https://github.com/johnbuckman/tcl_oauth2_library">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
     <h1>tcl_oauth2_library</h1>
-    <p class="lede">Pure-Tcl OAuth 2.0 (Authorization Code, with PKCE) client library, with Basecamp and QuickBooks Online examples.</p>
-  </header>
-  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/tcl_oauth2_library">tcl_oauth2_library on GitHub →</a></div>
-  <main class="prose">
+    <p class="lead">Log in to OAuth 2.0 web services from Tcl.</p>
+    <p class="sub">A self-contained OAuth 2.0 client written in pure Tcl. It opens the browser, catches the login on a local web server, saves the tokens, refreshes them when they expire, and gives you a one-line way to call the API. It only needs <b style="color:#fff">http</b> and <b style="color:#fff">tls</b>.</p>
+    <div class="tags"><span>OAuth 2.0</span><span>PKCE</span><span>pure Tcl</span><span>Unix · macOS · Windows</span><span>Tcl/Tk license</span></div>
+    <div class="btns">
+      <a class="btn" href="#start">Get started</a>
+      <a class="btn ghost" href="https://github.com/johnbuckman/tcl_oauth2_library">Source on GitHub</a>
+    </div>
+    <div class="fine">Free and open source · Tcl/Tk license (BSD-style) · packaged for submission to Tcllib</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-code"><div class="bar"><i></i><i></i><i></i></div><pre>package require oauth2
+
+set client [oauth2::new -name myapp \
+    -auth_url  https://provider.example/authorize \
+    -token_url https://provider.example/token \
+    -client_id YOUR_CLIENT_ID ...]
+
+oauth2::login $client  <span class="c">;# first run: opens browser</span>
+
+set json [oauth2::request $client GET \
+    https://api.example/v1/things]</pre></div>
+    <span class="watch soon" id="tour"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Explainer video coming soon</span>
+  </div>
+</div></div>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>The fiddly parts of OAuth, done for you</h2>
+  <p class="intro">Most web APIs, from QuickBooks to Basecamp, want an OAuth 2.0 login before they'll answer. This library handles the whole flow in one Tcl file, so your program can get on with calling the API.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">🌐</div><h3>Browser login, built in</h3><p>It sends the user to the provider, catches the redirect on a one-shot local web server, and exchanges the code for tokens.</p></div>
+    <div class="card"><div class="ic">🔄</div><h3>Tokens that stay fresh</h3><p>Tokens are saved to a private <code>0600</code> file and refreshed automatically. On a 401 it refreshes once and retries.</p></div>
+    <div class="card"><div class="ic">🧩</div><h3>Works with picky providers</h3><p>Each provider's quirks are plain configuration options. Examples for Twitter/X, Basecamp and QuickBooks Online are included.</p></div>
+    <div class="card"><div class="ic">📦</div><h3>Almost no dependencies</h3><p>Just <code>http</code> and <code>tls</code>. JSON, SHA-256 for PKCE and base64 are handled inside, so Tcllib isn't required.</p></div>
+  </div>
+</div></section>
+
+<section id="start"><div class="wrap">
+  <p class="kicker">Get started</p>
+  <h2>Log in once, then just call the API</h2>
+  <p class="intro">Credentials below are placeholders: read your real client ID and secret from environment variables, never from the code.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Load it</h3><p>Add the folder to <code>auto_path</code> and <code>package require oauth2</code>, or source the file directly.</p></div>
+    <div class="step"><div class="n">2</div><h3>Create a client</h3><p>Call <code>oauth2::new</code> with the provider's URLs, your client ID, a local redirect URI and a token file. Add <code>-pkce S256</code> if the provider wants PKCE.</p></div>
+    <div class="step"><div class="n">3</div><h3>Log in, then call</h3><p><code>oauth2::login</code> opens the browser the first time. After that, <code>oauth2::request</code> uses the saved tokens and refreshes them as needed.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Status</p>
+    <h2>In daily use, with tests</h2>
+    <p>The library already runs real logins and ships the pieces Tcllib expects:</p>
+    <ul class="ticks">
+      <li><b>In production</b>, driving logins against Intuit (QuickBooks Online) and Basecamp.</li>
+      <li><b>36 offline tests pass</b>: SHA-256 and PKCE test vectors, JSON, JWT, authorize URLs, option checks and <code>0600</code> token files.</li>
+      <li><b>A doctools manual</b> (<code>oauth2.man</code>) and a <code>tcltest</code> suite, ready for Tcllib as <code>modules/oauth2/</code>.</li>
+      <li><b>Extra grants and helpers</b>: Client Credentials, Token Introspection and <code>jwt_decode</code>.</li>
+    </ul>
+  </div>
+  <div class="hero-code"><div class="bar"><i></i><i></i><i></i></div><pre><span class="c"># run an example, plain Tcl or with a Tk UI</span>
+tclsh examples/basecamp_login.tcl
+tclsh examples/qbo_login.tcl -gui 1
+tclsh examples/twitter_login.tcl</pre></div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <p class="kicker">Technical details</p>
+  <div class="prose">
 <h2 id="what-it-is">What it is</h2>
 <p><strong>tcl_oauth2_library</strong> is a self-contained OAuth 2.0 client written in pure Tcl. It implements the <strong>Authorization Code</strong> flow: it opens the user's browser, catches the redirect on a one-shot local web server, exchanges the <code>code</code> for tokens, persists them to a <code>0600</code> JSON file, refreshes expired access tokens, and provides a one-liner for authenticated API calls.</p>
 <p>Dependencies: <code>http</code> (bundled with the core Tcl distribution) and <code>tls</code> (the standard Tcl TLS extension). JSON parsing and encoding are handled by a decoder included in the file, and base64 by core Tcl's <code>binary encode base64</code>, so nothing from Tcllib is required. <code>tls</code> is the one unavoidable extension: HTTPS cannot be done in pure Tcl, as there is no pure-Tcl TLS handshake.</p>
@@ -80,10 +158,33 @@ set json [oauth2::request $client GET https://api.example/v1/things]</code></pre
 </ul>
 <h2 id="repository">Repository</h2>
 <p>Source, examples, manual, and tests: <strong><a class="gh" href="https://github.com/johnbuckman/tcl_oauth2_library">https://github.com/johnbuckman/tcl_oauth2_library</a></strong></p>
-  </main>
-  <footer class="foot">
-    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>tcl_oauth2_library</h4>
+    <p>A self-contained OAuth 2.0 client in pure Tcl, licensed under the Tcl/Tk license (the same as Tcl/Tk and <a href="https://core.tcl-lang.org/tcllib/">Tcllib</a>) and structured to drop into Tcllib as <code>modules/oauth2/</code>.</p>
+    <p>Used for logins to QuickBooks Online and Basecamp. <span style="color:var(--muted)">— John Buckman</span></p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="#start">Get started</a></li>
+      <li><a href="https://github.com/johnbuckman/tcl_oauth2_library">Download from GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/tcl_oauth2_library/tree/main/examples">Examples</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/tcl_oauth2_library">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/tcl_oauth2_library/issues">Report a problem</a></li>
+      <li><a href="./">All Tcl/Tk projects</a></li>
+      <li><a href="https://github.com/johnbuckman">github.com/johnbuckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
 </body>
 </html>

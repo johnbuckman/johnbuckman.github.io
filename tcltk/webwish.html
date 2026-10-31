@@ -3,24 +3,72 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WebWish — Tcl/Tk projects — John Buckman</title>
-<link rel="stylesheet" href="../assets/style.css">
+<title>WebWish: Tk desktop apps in a web browser</title>
+<meta name="description" content="WebWish is an SDL2 video driver that runs an AndroWish, undroidwish or Tk app headless and streams its screen to a browser canvas, with mouse and keyboard sent back over a WebSocket.">
+<meta property="og:title" content="WebWish: Tk desktop apps in a web browser">
+<meta property="og:description" content="Run a Tk or SDL2 desktop app headless on a server and use it from a browser tab, with no changes to the app.">
+<meta property="og:image" content="https://johnbuckman.github.io/tcltk/img/webwish-demo.jpg">
+<link rel="stylesheet" href="tcltk.css">
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; WebWish</nav>
-  <header class="masthead">
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <nav>
+    <a href="#start">Get started</a>
+    <a href="#details">Details</a>
+    <a href="./" class="keep">All projects</a>
+    <a href="https://github.com/johnbuckman/WebWish">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
     <h1>WebWish</h1>
-    <p class="lede">An SDL2 video driver that runs an AndroWish, undroidwish or Tk app headless and streams its framebuffer to a browser canvas, with input sent back over a WebSocket.</p>
-  </header>
-  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/WebWish">WebWish on GitHub →</a></div>
-  <figure class="video">
-    <div class="video-frame">
-      <iframe src="https://www.youtube-nocookie.com/embed/QToyZKVbSVs" title="WebWish: Tcl/Tk apps inside a web browser" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <p class="lead">Use a Tk desktop app from a web browser, with no changes to the app.</p>
+    <p class="sub">WebWish runs the program headless on a server and streams its screen to a canvas in a browser tab. Your mouse and keyboard go back over a WebSocket. To the app, it's just another SDL2 video driver.</p>
+    <div class="tags"><span>Browser</span><span>WebSocket</span><span>SDL2</span><span>AV1</span><span>Docker</span></div>
+    <div class="btns">
+      <a class="btn" href="https://github.com/johnbuckman/WebWish">Get WebWish on GitHub</a>
+      <a class="btn ghost" href="https://github.com/johnbuckman/WebWish/releases">Docker images</a>
     </div>
-    <figcaption>Demo: WebWish streaming Tcl/Tk apps live into a browser tab.</figcaption>
-  </figure>
-  <main class="prose">
+    <div class="fine">Working alpha · zlib license · runs on arm64 macOS and in Linux containers</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-shot"><img src="img/webwish-demo.jpg" alt="WebWish: undroidwish Tk apps (the starDOM XML editor and a TkTable spreadsheet) rendered and driven live in a browser tab"></div>
+    <a class="watch" id="tour" href="https://youtu.be/QToyZKVbSVs"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Watch the demo video on YouTube</a>
+  </div>
+</div></div>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>A desktop app, served as a web page</h2>
+  <p class="intro">WebWish works for anything that draws through SDL's software framebuffer. It was built to run <a href="https://www.androwish.org/">undroidwish</a>, AndroWish's Tcl/Tk on SDL, inside a browser.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">🌐</div><h3>No changes to the app</h3><p>The app picks the driver with <code>SDL_VIDEODRIVER=wstiles</code> and draws as usual. The browser shows it, and the session resizes to fit the browser window.</p></div>
+    <div class="card"><div class="ic">🪶</div><h3>Light on bandwidth</h3><p>Only changed 64×64 tiles are sent, compressed. The first paint of a flat 1024×768 screen is about 19 KB instead of 3 MB. AV1 video is an option for busy, animated screens.</p></div>
+    <div class="card"><div class="ic">👥</div><h3>Many users, one port</h3><p>A reference NaviServer bridge gives each browser tab its own private process, started when it connects and cleaned up when it leaves.</p></div>
+    <div class="card"><div class="ic">🔒</div><h3>Made to be locked down</h3><p>Each session can run in a hardened container with no network. The stdio transport means no per-session port is opened. Read <code>SECURITY.md</code> before exposing it.</p></div>
+  </div>
+</div></section>
+
+<section id="start"><div class="wrap">
+  <p class="kicker">Get started</p>
+  <h2>Try it in three steps</h2>
+  <p class="intro">Prebuilt Docker images for x86-64 and arm64 are on the <a href="https://github.com/johnbuckman/WebWish/releases">GitHub release</a>. Building it yourself means patching the driver into AndroWish's SDL2 fork; see <code>docs/BUILDING.md</code>.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Load an image</h3><p>Pick the image for your machine, in the lossless-tiles or AV1 variant, and load it with <code>docker load</code>. No build needed.</p></div>
+    <div class="step"><div class="n">2</div><h3>Open it in a browser</h3><p>Given a binary, set <code>SDL_VIDEODRIVER=wstiles</code> and <code>SDL_VIDEO_WSTILES_PORT=8090</code>, run your Tcl app, then open <code>http://localhost:8090/</code>.</p></div>
+    <div class="step"><div class="n">3</div><h3>Serve many users</h3><p>Drop the <code>server/</code> bridge into a NaviServer docroot. Put an <code>app.tcl</code> beside it and that's the app every session runs. Add authentication and a session cap first.</p></div>
+  </div>
+</div></section>
+
+<section id="details" class="alt"><div class="wrap">
+  <p class="kicker">Technical details</p>
+  <div class="prose">
+<figure style="margin:0 0 36px">
+<iframe src="https://www.youtube-nocookie.com/embed/QToyZKVbSVs" title="WebWish: Tcl/Tk apps inside a web browser" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="width:100%;aspect-ratio:16/9;height:auto;margin-top:0"></iframe>
+<figcaption style="color:var(--muted);font-size:14.5px">Demo: WebWish streaming Tcl/Tk apps live into a browser tab.</figcaption>
+</figure>
 <h2 id="what-it-is">What it is</h2>
 <p><strong>WebWish</strong> serves any <a href="https://libsdl.org">SDL2</a> / Tk desktop application as a web app, with no changes to the app. It runs the program headless on a server and renders and controls it in a browser tab: the app's framebuffer is streamed to an HTML <code>&lt;canvas&gt;</code> over a WebSocket, and the viewer's mouse and keyboard travel back the same way. To the app, WebWish is another SDL video backend.</p>
 <p>The driver works for anything that renders through SDL's software framebuffer path. The original target is <a href="https://www.androwish.org/"><strong>undroidwish</strong></a>, AndroWish's Tcl/Tk-on-SDL runtime, run inside a browser.</p>
@@ -127,10 +175,34 @@ docker run --rm -i --network none --read-only --tmpfs /tmp \
 <h2 id="repository">Repository</h2>
 <p>Source, build recipes, wire-protocol spec, security model, and prebuilt images: <strong><a class="gh" href="https://github.com/johnbuckman/WebWish">github.com/johnbuckman/WebWish</a></strong>. Released under the <strong>zlib license</strong> (the same as SDL); <code>driver/SDL_wstiles.c</code> is derived from SDL's <code>SDL_jsmpeg.c</code>.</p>
 <p><code>docs/AGENT-BOOTSTRAP.md</code> documents current state, build recipes for both architectures, the bugs already solved (with the wrong theories that were ruled out), and the traps to avoid.</p>
-  </main>
-  <footer class="foot">
-    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>WebWish</h4>
+    <p>An SDL2 video driver for <a href="https://www.androwish.org/">AndroWish</a>'s SDL2 fork, built first for undroidwish (© Christian Werner and contributors). Released under the zlib license, like SDL; <code>driver/SDL_wstiles.c</code> is derived from SDL's <code>SDL_jsmpeg.c</code>.</p>
+    <p><span style="color:var(--muted)">— John Buckman</span></p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="#start">Get started</a></li>
+      <li><a href="https://github.com/johnbuckman/WebWish/releases">Docker images</a></li>
+      <li><a href="https://youtu.be/QToyZKVbSVs">Demo video</a></li>
+      <li><a href="https://github.com/johnbuckman/WebWish/blob/main/SECURITY.md">Security model</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/WebWish">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/WebWish/issues">Report a problem</a></li>
+      <li><a href="./">All Tcl/Tk projects</a></li>
+      <li><a href="https://github.com/johnbuckman">github.com/johnbuckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
 </body>
 </html>

@@ -3,18 +3,98 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tcl-ble-osx — Tcl/Tk projects — John Buckman</title>
-<link rel="stylesheet" href="../assets/style.css">
+<title>tcl-ble-osx: Bluetooth LE for Tcl on the Mac</title>
+<meta name="description" content="tcl-ble-osx gives Tcl/Tk on macOS the same ble command as AndroWish, built on Apple's CoreBluetooth, so AndroWish Bluetooth LE code runs unmodified on the Mac.">
+<meta property="og:title" content="tcl-ble-osx: Bluetooth LE for Tcl on the Mac">
+<meta property="og:description" content="The AndroWish ble command for macOS, built on CoreBluetooth. Works in tclsh, Aqua wish and undroidwish.">
+<link rel="stylesheet" href="tcltk.css">
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; tcl-ble-osx</nav>
-  <header class="masthead">
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <nav>
+    <a href="#start">Get started</a>
+    <a href="#details">Details</a>
+    <a href="./" class="keep">All projects</a>
+    <a href="https://github.com/johnbuckman/tcl-ble-osx">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
     <h1>tcl-ble-osx</h1>
-    <p class="lede">Bluetooth LE for Tcl/Tk on macOS via CoreBluetooth, exposing the same ble command as AndroWish.</p>
-  </header>
-  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/tcl-ble-osx">tcl-ble-osx on GitHub →</a></div>
-  <main class="prose">
+    <p class="lead">Bluetooth LE for Tcl/Tk on your Mac.</p>
+    <p class="sub">AndroWish has a built-in <b style="color:#fff">ble</b> command on Android and Linux, but macOS has none. This library adds the same command on top of Apple's CoreBluetooth, so Tcl code written for AndroWish talks to Bluetooth devices on the Mac without changes.</p>
+    <div class="tags"><span>macOS</span><span>Apple Silicon + Intel</span><span>CoreBluetooth</span><span>tclsh · wish · undroidwish</span><span>Tcl/Tk license</span></div>
+    <div class="btns">
+      <a class="btn" href="#start">Get started</a>
+      <a class="btn ghost" href="https://github.com/johnbuckman/tcl-ble-osx">Source on GitHub</a>
+    </div>
+    <div class="fine">Free and open source · Tcl/Tk license (BSD-style) · presented at EuroTcl 2026</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-code"><div class="bar"><i></i><i></i><i></i></div><pre><span class="c"># list Bluetooth LE devices nearby</span>
+package require ble
+
+proc cb {event data} {
+    if {$event eq "scan"} {
+        puts "[dict get $data rssi] dBm  [dict get $data name]"
+    }
+}
+ble scanner cb   <span class="c">;# cb fires for every device</span>
+vwait forever    <span class="c">;# tclsh needs the event loop</span></pre></div>
+    <span class="watch soon" id="tour"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Explainer video coming soon</span>
+  </div>
+</div></div>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>One Bluetooth API, now on the Mac too</h2>
+  <p class="intro">Code written against AndroWish's <code>ble</code> command, such as the Decent Espresso <code>de1app</code>, couldn't reach Bluetooth devices on macOS. With this package it can.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">🔁</div><h3>Same code as AndroWish</h3><p>The <code>ble</code> command matches AndroWish's API and its event dictionaries, so existing Bluetooth LE code runs unmodified.</p></div>
+    <div class="card"><div class="ic">🧰</div><h3>Works in any interpreter</h3><p>Runs under plain <code>tclsh</code> with no Tk, standard Aqua <code>wish</code>, and undroidwish, on Apple Silicon and Intel.</p></div>
+    <div class="card"><div class="ic">☕</div><h3>Tested on real hardware</h3><p>Checked end to end with a Decent Espresso DE1 and an Atomax Skale scale: scan, connect, discovery, notifications and reads.</p></div>
+    <div class="card"><div class="ic">🔐</div><h3>Handles macOS permissions</h3><p>It arranges the Bluetooth permission prompt so it appears on first run. You approve it once and the grant sticks.</p></div>
+  </div>
+</div></section>
+
+<section id="start"><div class="wrap">
+  <p class="kicker">Get started</p>
+  <h2>Three steps to Bluetooth from Tcl</h2>
+  <p class="intro">You need the Xcode command-line tools only if you want to rebuild the helper; a prebuilt one is included.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Get the code</h3><p>Clone <a href="https://github.com/johnbuckman/tcl-ble-osx">tcl-ble-osx</a> from GitHub. Keep the folder together: the package finds its helper program relative to <code>ble.tcl</code>.</p></div>
+    <div class="step"><div class="n">2</div><h3>Put it on the auto_path</h3><p>Symlink the folder into <code>/usr/local/lib</code>. That one link makes <code>package require ble</code> work in the system <code>tclsh</code>, <code>wish</code> and undroidwish.</p></div>
+    <div class="step"><div class="n">3</div><h3>Scan, then approve once</h3><p>Call <code>ble scanner</code> with a callback. macOS shows a one-time Bluetooth prompt; approve it and the grant persists.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">How it works</p>
+    <h2>A small helper does the Bluetooth work</h2>
+    <p><code>ble.tcl</code> installs the <code>ble</code> command and picks one of two CoreBluetooth backends automatically:</p>
+    <ul class="ticks">
+      <li><b>A helper program</b> (<code>bin/ble_helper.bin</code>, universal arm64 + x86_64 Swift) talks to Tcl over a pipe. It works on every interpreter, signed or not, and is the default.</li>
+      <li><b>A native extension</b> (<code>lib/libtclble.dylib</code>) drives CoreBluetooth in-process. It has lower overhead and is the only option on iOS, inside iWish.</li>
+      <li><b>No MAC addresses on macOS:</b> CoreBluetooth hides them, so the library uses the peripheral's stable UUID as its address.</li>
+      <li><b>Asynchronous:</b> callbacks fire from Tcl's event loop, so <code>tclsh</code> scripts end with <code>vwait forever</code>.</li>
+    </ul>
+  </div>
+  <div class="hero-code"><div class="bar"><i></i><i></i><i></i></div><pre><span class="c"># install once, from the clone</span>
+./build.sh   <span class="c"># optional: rebuild + sign the helper</span>
+ln -s /path/to/tcl-ble-osx \
+      /usr/local/lib/tcl-ble-osx
+
+<span class="c"># then, in any Tcl program</span>
+package require ble</pre></div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <p class="kicker">Technical details</p>
+  <div class="prose">
 <h2 id="what-it-is">What it is</h2>
 <p><code>tcl-ble-osx</code> is a Bluetooth Low Energy library for Tcl/Tk on macOS. It provides a <code>ble</code> command that is API-compatible with <a href="https://www.androwish.org/">AndroWish</a>, whose built-in <code>ble</code> command exists only on Android and Linux.</p>
 <p>macOS has no such command, so Tcl code written against the AndroWish BLE API — for example the <a class="gh" href="https://github.com/decentespresso/de1app">Decent Espresso <code>de1app</code></a> — cannot reach Bluetooth devices on the Mac. This library implements the API using Apple's CoreBluetooth, so that code runs unmodified.</p>
@@ -116,10 +196,34 @@ cd tcl-ble-osx
 <li>License: Tcl/Tk license (BSD-style).</li>
 </ul>
 <p>Presented at EuroTcl 2026 (Vienna) — "BLE for Tcl: one Bluetooth Low Energy API, from desktop to phone, wired into the Tcl event loop." Originally written to run the Decent Espresso <code>de1app</code> on macOS; usable by any Tcl program that needs Bluetooth LE on the Mac.</p>
-  </main>
-  <footer class="foot">
-    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>tcl-ble-osx</h4>
+    <p>A Bluetooth Low Energy library for Tcl/Tk on macOS, API-compatible with <a href="https://www.androwish.org/">AndroWish</a>'s <code>ble</code> command (AndroWish © Christian Werner and contributors). Built on Apple's CoreBluetooth.</p>
+    <p>Originally written to run the <a href="https://decentespresso.com/">Decent Espresso</a> <code>de1app</code> on macOS. <span style="color:var(--muted)">— John Buckman</span></p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="#start">Get started</a></li>
+      <li><a href="https://github.com/johnbuckman/tcl-ble-osx">Download from GitHub</a></li>
+      <li><a href="blz-ble-shim.html">Bluetooth LE on Linux</a></li>
+      <li><a href="iwish.html">iWish (uses the native backend)</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/tcl-ble-osx">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/tcl-ble-osx/issues">Report a problem</a></li>
+      <li><a href="./">All Tcl/Tk projects</a></li>
+      <li><a href="https://github.com/johnbuckman">github.com/johnbuckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
 </body>
 </html>

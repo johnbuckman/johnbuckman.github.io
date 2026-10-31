@@ -3,18 +3,88 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>iWish — Tcl/Tk for iOS — Tcl/Tk projects — John Buckman</title>
-<link rel="stylesheet" href="../assets/style.css">
+<title>iWish: Tcl/Tk on iPhone and iPad</title>
+<meta name="description" content="iWish runs real Tcl/Tk programs on an iPhone or iPad: the full AndroWish/undroidwish wish with over 100 bundled extensions, Bluetooth LE, and a one-click install with SideStep.">
+<meta property="og:title" content="iWish: Tcl/Tk on iPhone and iPad">
+<meta property="og:description" content="Real Tcl/Tk on iOS and iPadOS, with the full AndroWish extension set. Install it with one click using SideStep.">
+<meta property="og:image" content="https://johnbuckman.github.io/tcltk/img/iwish-ipad.jpg">
+<link rel="stylesheet" href="tcltk.css">
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; iWish — Tcl/Tk for iOS</nav>
-  <header class="masthead">
-    <h1>iWish — Tcl/Tk for iOS</h1>
-    <p class="lede">A port of Tcl/Tk (AndroWish / undroidwish, full extension set) to 64-bit iOS and iPadOS.</p>
-  </header>
-  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/iwish">iwish on GitHub →</a></div>
-  <main class="prose">
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <nav>
+    <a href="#install">Install</a>
+    <a href="#details">Details</a>
+    <a href="./" class="keep">All projects</a>
+    <a href="https://github.com/johnbuckman/iwish">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
+    <h1>iWish</h1>
+    <p class="lead">Tcl/Tk on your iPhone and iPad.</p>
+    <p class="sub">The real Tcl interpreter and the real Tk widgets, running on the device: AndroWish's batteries-included <b style="color:#fff">wish</b>, ported to iOS and iPadOS with more than 100 extensions, Bluetooth LE and a set of demo apps. No App Store, no Xcode: install it with <a href="https://johnbuckman.github.io/SideStep/">SideStep</a>.</p>
+    <div class="tags"><span>iOS 15+</span><span>iPadOS</span><span>arm64</span><span>Tcl/Tk 8.6</span><span>SDL2 + Metal</span></div>
+    <div class="btns">
+      <a class="btn" href="#install">Install iWish</a>
+      <a class="btn ghost" href="https://github.com/johnbuckman/iwish">Source on GitHub</a>
+    </div>
+    <div class="fine">Version 0.2.2 (alpha) · free and open source · installs from a Mac with SideStep</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-shot ipad"><img src="img/iwish-ipad.jpg" alt="iWish on an iPad: the borg device-bridge demo, the Bluetooth LE debugger connected to a scale, and the Tcl console"></div>
+    <span class="watch soon" id="tour"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Explainer video coming soon</span>
+  </div>
+</div></div>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>Tk programs, in your pocket</h2>
+  <p class="intro">Apple's App Store doesn't accept apps that run a scripting language, so Tcl/Tk has never been available on an iPhone. iWish is the whole thing, packaged as an app you install yourself.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">🖥️</div><h3>Run existing Tk apps</h3><p>The same Tk widgets and canvas you use on a desktop, drawn on the device. A large real-world Tk app, Decent's espresso tablet software, runs on it end to end.</p></div>
+    <div class="card"><div class="ic">🔋</div><h3>Batteries included</h3><p>About 115 packages come bundled: sqlite3, tls, TclCurl, tdom, Img, BLT and TkBLT plotting, Tktable, itcl, thread and more.</p></div>
+    <div class="card"><div class="ic">📡</div><h3>Talk to hardware</h3><p>The <code>ble</code> command scans, connects and reads Bluetooth LE devices through CoreBluetooth, and <code>borg</code> reaches the screen, speech and device info.</p></div>
+    <div class="card"><div class="ic">⌨️</div><h3>A console on the device</h3><p>Type Tcl straight into the iPad. Familiar commands like <code>ls</code>, <code>cat</code> and <code>grep</code> work, written in pure Tcl since iOS forbids running programs.</p></div>
+  </div>
+</div></section>
+
+<section id="install"><div class="wrap">
+  <p class="kicker">Install it</p>
+  <h2>One click, from a Mac</h2>
+  <p class="intro">iWish isn't on the App Store. <a href="https://johnbuckman.github.io/SideStep/">SideStep</a>, a free Mac app, signs it with your own Apple ID (a free one works) and keeps it signed and up to date.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Click the button</h3><p>On a Mac, click <b>Install iWish with SideStep</b> below. If SideStep is already installed it opens straight to iWish.</p></div>
+    <div class="step"><div class="n">2</div><h3>Or run the installer</h3><p>No SideStep yet? The button downloads the iWish installer instead. It installs SideStep, then walks you through plugging in your iPhone or iPad, tapping Trust and turning on Developer Mode.</p></div>
+    <div class="step"><div class="n">3</div><h3>Trust it once</h3><p>On the device, open Settings ▸ General ▸ VPN &amp; Device Management and trust your Apple ID. Then open iWish and pick a demo from <b>File ▸ Demos</b>.</p></div>
+  </div>
+  <div class="try">
+    <span class="sidestep-install" data-repo="johnbuckman/iwish" data-app="iWish" data-installer="https://github.com/johnbuckman/iwish/releases/download/v0.2.2/iwish-installer.zip"></span>
+    <p>Already use AltStore or SideStore? On the iPhone or iPad, tap <a href="altstore://source?url=https://raw.githubusercontent.com/johnbuckman/iwish/main/altstore.json">Add iWish to AltStore</a> or <a href="sidestore://source?url=https://raw.githubusercontent.com/johnbuckman/iwish/main/altstore.json">Add iWish to SideStore</a>, then tap Get. The <a href="https://github.com/johnbuckman/iwish/releases/tag/v0.2.2">iWish.ipa</a> on GitHub also installs with any sideloader; see <a href="https://github.com/johnbuckman/iwish/blob/main/INSTALL.md">INSTALL.md</a>.</p>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">How it works</p>
+    <h2>The actual Tk, not a look-alike</h2>
+    <p>There's no web view and no bridge to Apple's own buttons and menus. iWish runs AndroWish's <b>undroidwish</b> on the device:</p>
+    <ul class="ticks">
+      <li><b>Tcl 8.6 and Tk 8.6</b> compiled for <code>arm64-apple-ios</code>, in a single binary.</li>
+      <li><b>Drawn by SdlTk</b>, AndroWish's X11-on-SDL2 layer, with AGG anti-aliased graphics and FreeType text on a Metal surface.</li>
+      <li><b>iOS stand-ins</b> for AndroWish's Android commands: <code>borg</code> for the device, <code>ble</code> for Bluetooth, <code>hardexit</code> for a clean quit.</li>
+      <li><b>Every extension wrapped as a framework</b>, so sideloaders can re-sign all 60-odd native libraries.</li>
+    </ul>
+  </div>
+  <div class="shot"><img src="img/iwish-ipad.jpg" alt="The bundled demos: borg device bridge and the Bluetooth LE debugger"></div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <p class="kicker">Technical details</p>
+  <div class="prose">
 <h2 id="what-it-is">What it is</h2>
 <p><strong>iWish</strong> is a port of <a href="https://www.androwish.org/">AndroWish</a>'s <strong>undroidwish</strong> — the batteries-included, SDL2-rendered Tcl/Tk <code>wish</code> — to <strong>iOS and iPadOS</strong> (with a Mac Catalyst build alongside).</p>
 <p>It runs a real Tcl 8.6 interpreter and the real Tk 8.6 widget set on an iPhone or iPad. Tk is drawn through AndroWish's <code>SdlTk</code> — an X11-on-SDL2 emulation layer — using the <strong>AGG</strong> anti-aliased renderer for graphics and <strong>FreeType</strong> for text, composited onto an SDL2 <strong>Metal</strong> surface. There is no WebView and no native-UIKit-widget bridge: it is the actual Tk canvas and widgets, running on the device.</p>
@@ -25,7 +95,7 @@
 <li>The core port renders a Tk GUI on the <strong>iOS Simulator</strong>, <strong>Mac Catalyst</strong>, and a <strong>physical iPad</strong>, all screenshot-verified.</li>
 <li>Built with <code>TCL_UTF_MAX=6</code> (UCS-4) so astral-plane characters and arrows render correctly. Stock builds (UTF_MAX=3) garble them; the UTF6 rebuild is verified by the full Tcl and Tk regression suites.</li>
 <li>A Tcl/Tk espresso application (Decent's <code>de1app</code>) has been booted on a physical iPad and connected to a DE1 espresso machine over CoreBluetooth, on-device rather than in the simulator.</li>
-<li>Published as <strong>v0.2-alpha</strong>, then <strong>v0.2.2</strong> with the AltStore/SideStore <code>.framework</code> packaging fix.</li>
+<li>Published as <strong>v0.2-alpha</strong>, then <strong>v0.2.2</strong> with the AltStore/SideStore <code>.framework</code> packaging fix. v0.2.2 is in the SideStep catalog and has a one-click installer (checked by installing it through SideStep on an iPhone 14 Pro Max running iOS 27, October 2026).</li>
 </ul>
 <h2 id="whats-included-batteries">What's included (batteries)</h2>
 <p>Every build (device and Catalyst) bundles the AndroWish extension set plus built-in demo apps; the bare runtime is not shipped separately.</p>
@@ -70,10 +140,35 @@
 <h2 id="repository">Repository</h2>
 <p>Source, build scripts, and patches: <strong><a class="gh" href="https://github.com/johnbuckman/iwish">https://github.com/johnbuckman/iwish</a></strong></p>
 <p>Part of the <a href="https://johnbuckman.github.io/tcltk/">Tcl/Tk on modern platforms</a> collection. Sibling projects build the same stack as a native Apple-Silicon <strong>macOS</strong> binary and as a <strong>32-bit armv7 / iOS 9</strong> full-source snapshot for old jailbroken devices.</p>
-  </main>
-  <footer class="foot">
-    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>iWish</h4>
+    <p>A port of <a href="https://www.androwish.org/">AndroWish</a>'s undroidwish (© Christian Werner and contributors) to iOS and iPadOS. The repository is a recipe: build scripts, patches and iOS glue code; it doesn't redistribute AndroWish, SDL2 or Tcl/Tk.</p>
+    <p>Built to run the <a href="https://decentespresso.com/">Decent Espresso</a> tablet app on iPads. <span style="color:var(--muted)">— John Buckman</span></p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="#install">Install iWish</a></li>
+      <li><a href="https://github.com/johnbuckman/iwish/releases">Releases</a></li>
+      <li><a href="https://johnbuckman.github.io/SideStep/">SideStep</a></li>
+      <li><a href="iwish-ios9.html">iWish for iOS 9</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/iwish">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/iwish/issues">Report a problem</a></li>
+      <li><a href="./">All Tcl/Tk projects</a></li>
+      <li><a href="https://github.com/johnbuckman">github.com/johnbuckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
+<script src="install-button.js"></script>
 </body>
 </html>

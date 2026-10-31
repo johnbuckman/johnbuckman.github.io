@@ -3,18 +3,72 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>undroidwish for Apple Silicon — Tcl/Tk projects — John Buckman</title>
-<link rel="stylesheet" href="../assets/style.css">
+<title>undroidwish for Apple Silicon: Tcl/Tk without Rosetta</title>
+<meta name="description" content="undroidwish, the batteries-included SDL2 wish from AndroWish, built natively for arm64 macOS, in a shipped Tcl/Tk 8.6 build and a Tcl/Tk 9.1 port.">
+<meta property="og:title" content="undroidwish for Apple Silicon: Tcl/Tk without Rosetta">
+<meta property="og:description" content="AndroWish's desktop wish, built natively for Apple Silicon Macs in Tcl/Tk 8.6 and Tcl/Tk 9.1.">
+<meta property="og:image" content="https://johnbuckman.github.io/tcltk/img/undroidwish-arm64-widgetdemo-borg.jpg">
+<link rel="stylesheet" href="tcltk.css">
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; undroidwish for Apple Silicon</nav>
-  <header class="masthead">
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <nav>
+    <a href="#how">How it works</a>
+    <a href="#details">Details</a>
+    <a href="./" class="keep">All projects</a>
+    <a href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
     <h1>undroidwish for Apple Silicon</h1>
-    <p class="lede">undroidwish (SDL2 wish, full extension set) built natively for arm64 macOS, in both Tcl/Tk 8.6 and Tcl/Tk 9.1.</p>
-  </header>
-  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included">Tcl/Tk 8.6 build on GitHub →</a> <a class="btn gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included-tcltk91">Tcl/Tk 9.1 build on GitHub →</a></div>
-  <main class="prose">
+    <p class="lead">Tcl/Tk apps running natively on Apple Silicon Macs, without Rosetta.</p>
+    <p class="sub">undroidwish is AndroWish's desktop <b style="color:#fff">wish</b>: Tk drawn through SDL2, with a large set of extensions built in. The stock build is x86-64 and needs Rosetta 2, which Apple is retiring. These builds are native arm64, one on Tcl/Tk 8.6 and one on Tcl/Tk 9.1.</p>
+    <div class="tags"><span>macOS</span><span>Apple Silicon</span><span>arm64</span><span>Tcl/Tk 8.6</span><span>Tcl/Tk 9.1</span><span>SDL2</span></div>
+    <div class="btns">
+      <a class="btn" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included/releases">Download for Mac</a>
+      <a class="btn ghost" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included">Source on GitHub</a>
+    </div>
+    <div class="fine">Tcl/Tk 8.6 build: shipped, latest release notarized · Tcl/Tk 9.1 build: work in progress · free and open source</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-shot"><img src="img/undroidwish-arm64-widgetdemo-borg.jpg" alt="undroidwish running natively on Apple Silicon: the Tk widget demo, and the borg desktop bridge reporting manufacturer Apple, model Mac16,12, cpu_abi arm64"></div>
+    <span class="watch soon" id="tour"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Explainer video coming soon</span>
+  </div>
+</div></div>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>Keep your Tk apps running on the Mac</h2>
+  <p class="intro">Once Rosetta is gone, x86-only programs stop running on Apple Silicon. A native arm64 undroidwish keeps AndroWish and Tk apps, such as Decent's <a href="https://github.com/decentespresso/de1app">de1app</a>, working on the Mac.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">💻</div><h3>Native, and faster</h3><p>No Rosetta needed. On an M4 the arm64 build is about 1.5× faster on compute and 1.25× faster at cold startup than the same code under Rosetta.</p></div>
+    <div class="card"><div class="ic">🔋</div><h3>Batteries included</h3><p>About 60 extensions are built in: Img, tls, tdom, BLT, tkpath, itk, treectrl, mpexpr and more, plus the desktop <code>borg</code> command and a Bluetooth LE demo.</p></div>
+    <div class="card"><div class="ic">📦</div><h3>One notarized file</h3><p>The 8.6 build is a self-contained single-file program, notarized and stapled, so it passes Gatekeeper.</p></div>
+    <div class="card"><div class="ic">🧭</div><h3>A path to Tcl/Tk 9.1</h3><p>The 9.1 build ports the SDL2 backend to Tk 9.1. All 17 bare-launch demos work and 21 C-extension stacks are ported.</p></div>
+  </div>
+</div></section>
+
+<section id="how"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">How it works</p>
+    <h2>Tk on SDL2, built for arm64</h2>
+    <p>undroidwish doesn't draw Tk through Cocoa or a real X server. It uses <code>sdl2tk</code>, an X11 emulation layer on SDL2 with Anti-Grain Geometry for drawing. Two sibling repositories build it for Apple Silicon:</p>
+    <ul class="ticks">
+      <li><b><a href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included">Tcl/Tk 8.6 build</a></b>: Tcl/Tk 8.6.10, shipped as a notarized production build. The Tcl regression suite passes natively on arm64.</li>
+      <li><b><a href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included-tcltk91">Tcl/Tk 9.1 build</a></b>: ports <code>sdl2tk</code> forward to Tcl/Tk 9.1b0. Tk 9 breaks the 8.6 ABI, so this is a port, not a version bump.</li>
+      <li><b>Recipes, not copies</b>: both repos hold patches, new sources and documentation. You fetch AndroWish, Tcl, Tk, SDL2, FreeType and AGG yourself.</li>
+      <li><b>Run it as a .app</b>: on macOS a bare binary started from a terminal gets no window and draws nothing, so both builds run as an app bundle.</li>
+    </ul>
+  </div>
+  <div class="shot"><img src="img/undroidwish-arm64-widgetdemo-borg.jpg" alt="The Tk widget demo and the borg desktop bridge running natively on an Apple Silicon Mac"></div>
+</div></section>
+
+<section id="details" class="alt"><div class="wrap">
+  <p class="kicker">Technical details</p>
+  <div class="prose">
 <h2 id="what-it-is">What it is</h2>
 <p><strong>undroidwish</strong> is the desktop, batteries-included SDL2 <code>wish</code> from <a href="https://www.androwish.org/">AndroWish</a> — AndroWish without the Android. Instead of rendering Tk through a real X server, Cocoa, or Win32, it draws Tk via an X11-server emulation layer built on top of <strong>SDL2</strong> (with Anti-Grain-Geometry for rasterization). That backend, called <code>sdl2tk</code>, is a fork of Tk's Unix platform layer.</p>
 <p>This project builds undroidwish as a native Apple Silicon (arm64) macOS binary. The stock undroidwish is x86-64 and runs on Apple Silicon only through Rosetta 2, which Apple is retiring. A native arm64 binary allows AndroWish/Tk apps (for example, <a class="gh" href="https://github.com/decentespresso/de1app">de1app</a>) to keep running on the Mac after Rosetta is removed. On an M4 the arm64 build is about <strong>1.5× faster on compute</strong> and <strong>1.25× faster on cold startup</strong> than the same code under Rosetta.</p>
@@ -69,10 +123,34 @@
 <li><strong>Tcl/Tk 9.1 (work in progress):</strong> <a class="gh" href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included-tcltk91"><code>johnbuckman/undroidwish-arm64-batteries-included-tcltk91</code></a></li>
 </ul>
 <p>Part of <a href="https://johnbuckman.github.io/tcltk/">John Buckman's Tcl/Tk projects</a>.</p>
-  </main>
-  <footer class="foot">
-    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>undroidwish for Apple Silicon</h4>
+    <p>Native arm64 builds of <a href="https://www.androwish.org/">AndroWish</a>'s undroidwish (© Christian Werner and contributors). The repositories hold patches, new sources and documentation under the Tcl/Tk license; they don't redistribute AndroWish, Tcl, Tk, SDL2, FreeType or AGG.</p>
+    <p>Built to keep Tk apps such as <a href="https://github.com/decentespresso/de1app">de1app</a> running after Rosetta. <span style="color:var(--muted)">— John Buckman</span></p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included/releases">Download (Tcl/Tk 8.6)</a></li>
+      <li><a href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included">Tcl/Tk 8.6 build</a></li>
+      <li><a href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included-tcltk91">Tcl/Tk 9.1 build</a></li>
+      <li><a href="androwish-tcl91.html">AndroWish on Tcl/Tk 9.1</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/undroidwish-arm64-batteries-included/issues">Report a problem</a></li>
+      <li><a href="./">All Tcl/Tk projects</a></li>
+      <li><a href="https://github.com/johnbuckman">github.com/johnbuckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
 </body>
 </html>

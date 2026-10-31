@@ -3,18 +3,80 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>iWish for iOS 9 — Tcl/Tk projects — John Buckman</title>
-<link rel="stylesheet" href="../assets/style.css">
+<title>iWish for iOS 9: Tcl/Tk on old 32-bit iPads</title>
+<meta name="description" content="iWish for iOS 9 builds the AndroWish Tcl/Tk stack, with its native extensions, for 32-bit armv7 devices such as the first iPad mini that cannot run current iOS.">
+<meta property="og:title" content="iWish for iOS 9: Tcl/Tk on old 32-bit iPads">
+<meta property="og:description" content="Tcl/Tk with networking, TLS, Bluetooth LE and SQLite on 32-bit iPads stuck on iOS 9.">
+<link rel="stylesheet" href="tcltk.css">
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="../">John Buckman</a> &nbsp;/&nbsp; <a href="./">Tcl/Tk projects</a> &nbsp;/&nbsp; iWish for iOS 9</nav>
-  <header class="masthead">
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="feather">🪶</span>Tcl/Tk projects</a>
+  <nav>
+    <a href="#build">Build</a>
+    <a href="#details">Details</a>
+    <a href="./" class="keep">All projects</a>
+    <a href="https://github.com/johnbuckman/iwish-ios9">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
     <h1>iWish for iOS 9</h1>
-    <p class="lede">The undroidwish extension set built for 32-bit armv7 and iOS 9, for hardware that cannot run current iOS.</p>
-  </header>
-  <div class="meta"><a class="btn gh" href="https://github.com/johnbuckman/iwish-ios9">iwish-ios9 on GitHub →</a></div>
-  <main class="prose">
+    <p class="lead">Tcl/Tk on old 32-bit iPads that are stuck on iOS 9.</p>
+    <p class="sub">A 32-bit armv7 build of iWish, the AndroWish Tcl/Tk stack, for devices like the first iPad mini that current tools and app stores no longer support. With a jailbreak for signing, it gives you a full Tk widget toolkit with networking, TLS, Bluetooth LE and SQLite.</p>
+    <div class="tags"><span>iOS 9</span><span>armv7</span><span>32-bit</span><span>Tcl/Tk 8.6</span><span>SDL2 + GLES2</span></div>
+    <div class="btns">
+      <a class="btn" href="https://github.com/johnbuckman/iwish-ios9">Source on GitHub</a>
+      <a class="btn ghost" href="iwish.html">iWish for current iOS</a>
+    </div>
+    <div class="fine">Full-source snapshot you clone and build · needs a jailbroken device for signing</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-code"><div class="bar"><i></i><i></i><i></i></div><pre>cd "$IWISH_ROOT/src/androwish/ios9-build"
+
+<span class="c"># 1) Foundation: FreeType, SDL2 (GLES2, no Metal), Tcl 8.6, sdl2tk, sdl2wish</span>
+bash build-device-armv7.sh
+
+<span class="c"># 2) Batteries: tls, sqlite3, tdom, BLT, tkimg, zint, ...</span>
+bash build-libressl-armv7.sh
+bash build-tls-armv7.sh
+bash build-blt-armv7.sh
+bash build-allexts-armv7.sh
+bash build-batteries-armv7.sh
+
+<span class="c"># 3) assemble + ldid-sign a runnable .app bundle</span>
+bash build-app-armv7.sh</pre></div>
+    <span class="watch soon" id="tour"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Explainer video coming soon</span>
+  </div>
+</div></div>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>A second life for an old iPad</h2>
+  <p class="intro">No current SDK builds cleanly for armv7, and modern sideloading tools need iOS 12.2 or newer, so a first-generation iPad mini can't run current software. This port turns it into a single-purpose Tcl/Tk appliance.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">🕰️</div><h3>Made for old hardware</h3><p>Built for 32-bit Apple A-series devices such as the iPad mini 1 (A5 CPU, no Metal). It draws through SDL2's GLES2 path with AGG software rendering.</p></div>
+    <div class="card"><div class="ic">🔋</div><h3>Batteries included</h3><p>About 130 native packages load on the device, including tls, sqlite3, tdom, BLT, tkimg, zint, Thread, Itcl and treectrl. The demos menu is fully enabled.</p></div>
+    <div class="card"><div class="ic">📡</div><h3>Bluetooth and HTTPS</h3><p>Bluetooth LE scanning, connecting, GATT discovery and reads work on an A5 iPad, and a TLS 1.3 handshake to a live server succeeds.</p></div>
+    <div class="card"><div class="ic">☕</div><h3>Runs a real app</h3><p>Decent Espresso's de1app runs on top of it: the GUI, Bluetooth discovery of real hardware, and in-app self-update over HTTPS.</p></div>
+  </div>
+</div></section>
+
+<section id="build"><div class="wrap">
+  <p class="kicker">Get started</p>
+  <h2>Three build steps</h2>
+  <p class="intro">The repo is a full-source snapshot you clone and build. Shell scripts in its <code>ios9-build/</code> kit do the work; <a href="https://github.com/johnbuckman/iwish-ios9/blob/main/ios9-build/BUILD.md">ios9-build/BUILD.md</a> has the prerequisites, the tree layout and the exact commands.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Build the foundation</h3><p>FreeType, SDL2 (GLES2, Metal off), Tcl/Tk and sdl2tk are compiled into <code>sdl2wish</code>, targeting <code>armv7-apple-ios9.0</code> against an iOS 9.3 SDK.</p></div>
+    <div class="step"><div class="n">2</div><h3>Build the extensions</h3><p>Each native extension is cross-compiled into an ldid-signable loadable library, and a checker confirms every <code>pkgIndex</code> target resolves.</p></div>
+    <div class="step"><div class="n">3</div><h3>Make the app</h3><p>The last step assembles the <code>.app</code> and signs it with <code>ldid</code> and a platform-application entitlement set. This is for jailbroken devices, not the App Store.</p></div>
+  </div>
+</div></section>
+
+<section id="details" class="alt"><div class="wrap">
+  <p class="kicker">Technical details</p>
+  <div class="prose">
 <h2 id="what-it-is">What it is</h2>
 <p>iWish for iOS 9 is a 32-bit armv7 / iOS 9.3 port of iWish — the AndroWish stack that runs Tcl/Tk on SDL2 with batteries included. It builds a self-contained <code>sdl2wish</code> interpreter plus a set of loadable native extensions, all compiled for 32-bit Apple A-series devices (such as an iPad mini 1, A5 CPU, no Metal) not targeted by current toolchains and app stores.</p>
 <p>It is a separate build tree from the arm64 iOS/Catalyst iWish port: the two build trees do not share output, and shared C code is guarded by iOS-version macros rather than forked. Rendering uses SDL2's GLES2 path with AGG software rasterization, because these GPUs predate Metal.</p>
@@ -54,10 +116,34 @@
 <p>Source, build scripts, and build notes: <a class="gh" href="https://github.com/johnbuckman/iwish-ios9">https://github.com/johnbuckman/iwish-ios9</a></p>
 <p>This repo is a full-source, clone-and-build snapshot — a fork of <a href="https://www.androwish.org">AndroWish</a> (Tcl/Tk-on-SDL2 by Christian Werner) with the armv7 / iOS 9.3 source patches and build kit added. Upstream AndroWish, Tcl/Tk, and each bundled extension retain their own licenses.</p>
 <p>It has an arm64 sibling for modern iOS devices, <a class="gh" href="https://github.com/johnbuckman/iwish">iwish</a>.</p>
-  </main>
-  <footer class="foot">
-    <p><a href="./">← All Tcl/Tk projects</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>iWish for iOS 9</h4>
+    <p>A fork of <a href="https://www.androwish.org/">AndroWish</a> (Tcl/Tk on SDL2, by Christian Werner) with the armv7 / iOS 9.3 source patches and build kit added. Upstream AndroWish, Tcl/Tk and each bundled extension keep their own licenses.</p>
+    <p>The <a href="https://decentespresso.com/">Decent Espresso</a> de1app runs on it. <span style="color:var(--muted)">— John Buckman</span></p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="#build">Build it</a></li>
+      <li><a href="https://github.com/johnbuckman/iwish-ios9/releases">Releases</a></li>
+      <li><a href="https://github.com/johnbuckman/iwish-ios9/blob/main/ios9-build/BUILD.md">BUILD.md</a></li>
+      <li><a href="iwish.html">iWish for current iOS</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/iwish-ios9">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/iwish-ios9/issues">Report a problem</a></li>
+      <li><a href="./">All Tcl/Tk projects</a></li>
+      <li><a href="https://github.com/johnbuckman">github.com/johnbuckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
 </body>
 </html>
