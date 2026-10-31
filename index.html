@@ -3,84 +3,331 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>John Buckman — projects</title>
-<meta name="description" content="Open-source projects by John Buckman.">
-<link rel="stylesheet" href="assets/style.css">
+<title>John Buckman</title>
+<meta name="description" content="Free, open-source apps and tools by John Buckman: SideStep, Magnatune, Stay on Track, dcamp, MacCVS, Decent Timer and Tcl/Tk ports.">
+<meta property="og:title" content="John Buckman: apps and tools">
+<meta property="og:description" content="Free, open-source Mac, iPhone, Android and Tcl/Tk software.">
+<style>
+/* Same look as the SideStep, MacCVS and Decent Timer pages. */
+:root{
+  --bg:#fdf9f3; --panel:#fff; --ink:#1c1c1c; --ink-soft:#55524c; --muted:#8a8579;
+  --line:#ece6db; --line-strong:#ddd5c7; --accent:#e8902a; --accent-ink:#b8650c; --link:#1d64c2; --btn:#16a34a;
+  --hero1:#3d5aa8; --hero2:#24346e; --hero3:#141c3c;
+  --shadow:0 1px 2px rgba(40,30,10,.06), 0 8px 24px rgba(40,30,10,.07);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+    --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+  --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.top{position:absolute;inset:0 0 auto;z-index:3}
+.top .wrap{display:flex;align-items:center;gap:22px;padding-top:16px;padding-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:18px}
+.brand img{width:30px;height:30px}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:15px}
+.top nav a{color:rgba(255,255,255,.85)}
+
+/* hero */
+.hero{background:radial-gradient(120% 100% at 25% 15%,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%);color:#fff;padding:110px 0 80px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center}
+.hero-icon{width:96px;height:96px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.hero h1{font-size:64px;line-height:1.05;letter-spacing:-.02em;margin:18px 0 14px}
+.hero .lead{font-size:24px;line-height:1.35;margin:0 0 14px;color:#fff}
+.hero .sub{font-size:17px;color:rgba(255,255,255,.8);margin:0 0 26px;max-width:30em}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:650;font-size:16px;background:var(--btn);color:#fff}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3)}
+.fine{margin-top:16px;font-size:14px;color:rgba(255,255,255,.65)}
+.hero-shots{position:relative;height:440px}
+.hero-shots .mac{position:absolute;display:block;cursor:zoom-in;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;background:#fff}
+.hero-shots .back{right:0;top:0;width:430px}
+.hero-shots .front{left:0;top:140px;width:420px}
+
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:18px}
+.hero-right .hero-shots{width:100%}
+.watch{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:15px;font-weight:600}
+.watch:hover{text-decoration:none;background:rgba(0,0,0,.5)}
+.watch .play{width:30px;height:30px;border-radius:50%;background:#e62117;display:flex;align-items:center;justify-content:center;padding-left:2px}
+.watch .len{font-weight:500;color:rgba(255,255,255,.65);white-space:nowrap}
+
+/* sections */
+section{padding:70px 0}
+section.alt{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2{font-size:36px;letter-spacing:-.015em;line-height:1.15;margin:0 0 12px}
+.kicker{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 8px}
+.intro{color:var(--ink-soft);font-size:19px;max-width:44em;margin:0 0 34px}
+p{color:var(--ink-soft)}
+b,strong{color:var(--ink)}
+
+.video{border-radius:16px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#000;aspect-ratio:16/9}
+.video iframe{width:100%;height:100%;border:0;display:block}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.alt .card{background:var(--bg)}
+.card .ic{font-size:30px;line-height:1}
+.card h3{font-size:18px;margin:12px 0 6px}
+.card p{margin:0;font-size:15.5px}
+
+.steps{display:grid;gap:56px}
+.step{display:grid;grid-template-columns:1fr 1.5fr;grid-template-rows:auto auto 1fr;column-gap:48px;align-items:start}
+.step > .shot,.step > .dev{grid-column:2;grid-row:1/4}
+.step .n{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step h3{font-size:20px;margin:12px 0 4px}
+.step p{margin:0 0 16px;font-size:16px}
+.shot{display:block;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff;overflow:hidden;cursor:zoom-in;transition:transform .15s,box-shadow .15s}
+.shot:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(40,30,10,.08),0 14px 32px rgba(40,30,10,.12)}
+.shot img{width:100%}
+.shot + .shot{margin-top:18px}
+
+.split{display:grid;grid-template-columns:1fr 1.5fr;gap:48px;align-items:center}
+.split.rev{grid-template-columns:1.5fr 1fr}
+.split > *{min-width:0}
+.split.rev .txt{order:2}
+ul.ticks{list-style:none;padding:0;margin:18px 0 0}
+ul.ticks li{position:relative;padding-left:32px;margin:12px 0;color:var(--ink-soft)}
+ul.ticks li::before{content:"✓";position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,.14);color:var(--btn);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pills span{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:15px;color:var(--ink-soft)}
+.alt .pills span{background:var(--bg)}
+
+pre{background:#1d1b18;color:#ece7dd;border-radius:12px;padding:18px 20px;overflow-x:auto;font:14px/1.6 ui-monospace,Menlo,monospace;box-shadow:var(--shadow);margin:18px 0}
+pre .c{color:#8f897d}
+table.keys{border-collapse:collapse;width:100%;font-size:15.5px}
+table.keys td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+kbd{font:13px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:6px;padding:1px 7px;color:var(--ink)}
+.alt kbd{background:var(--bg)}
+
+footer{padding:44px 0 60px;color:var(--muted);font-size:14.5px}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+footer h4{color:var(--ink);font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+footer p{color:var(--muted);margin:0 0 8px}
+footer a{color:var(--ink-soft)}
+footer ul{list-style:none;padding:0;margin:0}
+footer li{margin:6px 0}
+code{font:14px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.alt code{background:var(--bg)}
+pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
+
+@media(max-width:900px){
+  ul.ticks{columns:1!important}
+  .hero .wrap,.split,.split.rev{grid-template-columns:1fr}
+  .split.rev .txt{order:0}
+  .hero-shots{display:none}
+  .hero-right{align-items:flex-start}
+  .hero h1{font-size:48px}
+  .cards{grid-template-columns:1fr 1fr}
+  .step{grid-template-columns:1fr;grid-template-rows:none}
+  .step > .shot,.step > .dev{grid-column:auto;grid-row:auto;margin-top:8px}
+  footer .cols{grid-template-columns:1fr}
+  .top nav a:not(.keep){display:none}
+  h2{font-size:30px}
+}
+@media(max-width:560px){ .watch .len{display:none} .cards{grid-template-columns:1fr} .wrap{padding:0 16px} }
+
+/* device frames around the Simulator screenshots */
+.dev{display:block;background:#0d0d0d;padding:10px;border-radius:26px;box-shadow:var(--shadow);cursor:zoom-in;transition:transform .15s}
+.dev:hover{transform:translateY(-2px)}
+.dev img{border-radius:16px;width:100%}
+.dev.phone{border-radius:40px;padding:9px;max-width:290px;margin:0 auto}
+.dev.phone img{border-radius:32px}
+.dev + .dev{margin-top:20px}
+.cards.three{grid-template-columns:repeat(3,1fr)}
+.cards.two{grid-template-columns:1fr 1fr}
+@media(max-width:900px){.cards.three{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.cards.three,.cards.two{grid-template-columns:1fr}}
+.shotrow{display:flex;gap:22px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.shotrow .dev.phone{width:250px;margin:0}
+.browser{display:block;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#fff;cursor:zoom-in;transition:transform .15s}
+.browser:hover{transform:translateY(-2px)}
+.browser .bar{height:30px;background:#ecebe8;display:flex;align-items:center;gap:7px;padding:0 12px;font:12px -apple-system,sans-serif;color:#77736b}
+.browser .bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}.browser .bar i+i{background:#febc2e}.browser .bar i+i+i{background:#28c840;margin-right:10px}
+.browser img{width:100%}
+.hero-shots .browser{position:absolute;right:0;top:20px;width:460px}
+.hero-shots .dev{position:absolute}
+.hero-shots .ipad{right:0;top:20px;width:470px}
+.hero-shots .phone{left:0;top:150px;width:190px;padding:7px;border-radius:30px}
+.hero-shots .phone img{border-radius:24px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.try{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;text-align:center;box-shadow:var(--shadow);margin-top:26px}
+.alt .try{background:var(--bg)}
+.try p,.try div{font-size:15px}
+.brand img,.hero-icon{border-radius:22%}
+
+/* lightbox: click a screenshot to see it full size; chevrons, arrow keys or swipe for the others */
+.lb{position:fixed;inset:0;z-index:20;background:rgba(12,10,8,.88);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px 70px}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:calc(100vh - 110px);width:auto;height:auto;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#fff}
+.lb .cap{color:rgba(255,255,255,.85);font-size:15px;text-align:center;max-width:46em}
+.lb .cap span{color:rgba(255,255,255,.5);margin-left:10px}
+.lb button{position:absolute;border:0;background:rgba(255,255,255,.12);color:#fff;width:48px;height:48px;border-radius:50%;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb button:hover{background:rgba(255,255,255,.24)}
+.lb .prev{left:12px;top:50%;transform:translateY(-50%)}
+.lb .next{right:12px;top:50%;transform:translateY(-50%)}
+.lb .close{right:12px;top:12px;width:40px;height:40px;font-size:22px}
+@media(max-width:560px){ .lb{padding:56px 10px 80px} .lb .prev,.lb .next{top:auto;bottom:16px;transform:none} .lb .prev{left:calc(50% - 60px)} .lb .next{right:calc(50% - 60px)} }
+</style>
+<style>
+.projects{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.proj{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;color:inherit;transition:transform .15s,box-shadow .15s}
+.proj:hover{text-decoration:none;transform:translateY(-3px);box-shadow:0 2px 4px rgba(40,30,10,.08),0 16px 36px rgba(40,30,10,.12)}
+.proj .pic{height:200px;background:linear-gradient(160deg,#dfe6f5,#c9d3ea);display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding-top:22px}
+.proj .pic img{width:auto;max-width:86%;height:auto;border-radius:12px 12px 0 0;box-shadow:0 10px 30px rgba(20,28,60,.25)}
+.proj .pic img.phone{width:150px;border-radius:22px 22px 0 0;border:6px solid #111;border-bottom:0}
+.proj .body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
+.proj .head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.proj .head img{width:44px;height:44px;border-radius:22%}
+.proj .head .emo{width:44px;height:44px;border-radius:22%;background:#24346e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px}
+.proj h3{margin:0;font-size:20px}
+.proj .plat{font-size:13px;color:var(--muted)}
+.proj p{margin:0 0 14px;font-size:15.5px;flex:1}
+.proj .go{font-weight:650;font-size:15px;color:var(--link)}
+.hero.home{padding:110px 0 70px}
+.hero.home .wrap{display:block}
+.hero.home h1{font-size:60px}
+.hero.home .lead{max-width:30em}
+@media(max-width:900px){ .projects{grid-template-columns:1fr 1fr} .hero.home h1{font-size:44px} }
+@media(max-width:600px){ .projects{grid-template-columns:1fr} }
+</style>
 </head>
 <body>
-<div class="wrap">
-  <header class="masthead">
-    <h1>John Buckman</h1>
-    <p class="lede">Open-source projects. Source, build instructions and issues are on GitHub.</p>
-    <p class="legend">The <span class="gh-ico"></span> mark links to an open-source repository on GitHub.</p>
-  </header>
 
-  <main>
-    <div class="section-label">Project collections</div>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./">John Buckman</a>
+  <nav>
+    <a href="#apps" class="keep">Apps</a>
+    <a href="tcltk/">Tcl/Tk</a>
+    <a href="https://github.com/johnbuckman">GitHub</a>
+  </nav>
+</div></header>
 
-    <a class="feature" href="tcltk/">
-      <h3>Tcl/Tk projects</h3>
-      <p>Ports of Tcl/Tk (AndroWish / undroidwish) to iOS, arm64&nbsp;macOS, Android&nbsp;(Tcl/Tk&nbsp;9.1)
-        and the browser, plus Bluetooth&nbsp;LE, OAuth&nbsp;2.0 and BLT graph-redraw libraries.</p>
-      <span class="more">Tcl/Tk projects&nbsp;→</span>
+<div class="hero home"><div class="wrap">
+  <h1>John Buckman</h1>
+  <p class="lead">Apps and tools I've made, all free and open source.</p>
+  <p class="sub">Mac and iPhone apps, an Android app, and a long line of Tcl/Tk ports. Each project page explains what it does, with screenshots; the source, releases and issues are on GitHub.</p>
+  <div class="btns">
+    <a class="btn" href="#apps">See the apps</a>
+    <a class="btn ghost" href="https://github.com/johnbuckman">github.com/johnbuckman</a>
+  </div>
+</div></div>
+
+<section class="alt" id="apps"><div class="wrap">
+  <p class="kicker">Apps and tools</p>
+  <h2>Things to install</h2>
+  <p class="intro">Most of the iPhone and iPad apps aren't on the App Store: SideStep installs them, from a Mac, with your own Apple ID.</p>
+  <div class="projects">
+    <a class="proj" href="https://johnbuckman.github.io/SideStep/">
+      <div class="pic"><img src="https://johnbuckman.github.io/SideStep/screenshots/panel-2026.jpg" alt="" loading="lazy"></div>
+      <div class="body">
+        <div class="head"><img src="https://johnbuckman.github.io/SideStep/screenshots/appicon.png" alt=""><div><h3>SideStep</h3><div class="plat">Mac app, for iPhone and iPad</div></div></div>
+        <p>Install iPhone and iPad apps on your own devices with your own Apple ID, and keep them signed and up to date. No Apple approval needed.</p>
+        <span class="go">Learn more →</span>
+      </div>
     </a>
-
-    <div class="section-label">Apps &amp; tools</div>
-    <div class="grid">
-
-      <div class="card">
-        <h3><a href="https://johnbuckman.github.io/SideStep/">SideStep</a></h3>
-        <p>macOS menu-bar sideloader for iOS apps: installs and keeps apps signed with a free Apple ID
-          (zsign, multi-account, auto-refresh). Built on SideStore/AltSign. The companion
-          <a href="https://johnbuckman.github.io/SideStepWizard/">SideStep Wizard</a> builds one-click
-          iOS-app installers.</p>
-        <div class="links"><a href="https://johnbuckman.github.io/SideStep/">Website</a><a class="gh" href="https://github.com/johnbuckman/SideStep">GitHub</a></div>
+    <a class="proj" href="magnatune.html">
+      <div class="pic"><img class="phone" src="assets/magnatune/popular-280.avif" alt="" loading="lazy"></div>
+      <div class="body">
+        <div class="head"><img src="assets/magnatune/appicon.png" alt=""><div><h3>Magnatune</h3><div class="plat">iPhone, iPad, Mac, Android, web</div></div></div>
+        <p>Apps and a rebuilt website for the Magnatune catalog of independent music: browse, stream, playlists and offline favorites.</p>
+        <span class="go">Learn more →</span>
       </div>
-
-      <div class="card">
-        <h3><a href="magnatune.html">Magnatune</a></h3>
-        <p>Native iOS and Android clients and a rebuilt website for the <a href="https://magnatune.com">magnatune.com</a>
-          music service — a SwiftUI app for iOS/iPadOS/Mac and a Kotlin/Compose app for Android.</p>
-        <div class="links"><a href="magnatune.html">Details</a><a href="https://magnatune.com">magnatune.com</a></div>
+    </a>
+    <a class="proj" href="stayontrack.html">
+      <div class="pic"><img class="phone" src="assets/stayontrack/following-280.avif" alt="" loading="lazy"></div>
+      <div class="body">
+        <div class="head"><img src="assets/stayontrack/appicon.png" alt=""><div><h3>Stay on Track</h3><div class="plat">iPhone</div></div></div>
+        <p>An offline hiking app that speaks at every trail junction, “Left”, “Right” or “Straight”, and tells you when you stray.</p>
+        <span class="go">Learn more →</span>
       </div>
-
-      <div class="card">
-        <h3><a href="stayontrack.html">Stay on Track</a></h3>
-        <p>A fully-offline hiking companion that keeps you on your intended trail: a British voice calls
-          out <em>&ldquo;Left / Right / Straight&rdquo;</em> at every trail junction, a rising tone warns
-          when you stray off-trail, and OpenStreetMap maps work in airplane mode. SwiftUI, for iPhone and
-          Mac&nbsp;Catalyst.</p>
-        <div class="links"><a href="stayontrack.html">Details</a><a class="gh" href="https://github.com/johnbuckman/stayontrack">GitHub</a></div>
+    </a>
+    <a class="proj" href="dcamp-ios.html">
+      <div class="pic"><img class="phone" src="assets/dcamp/home-280.avif" alt="" loading="lazy"></div>
+      <div class="body">
+        <div class="head"><img src="assets/dcamp/appicon.png" alt=""><div><h3>dcamp</h3><div class="plat">iPhone, iPad and Mac</div></div></div>
+        <p>A native app for dcamp, the Decent Espresso community forum: threads, chat, messages, notifications and AI summaries.</p>
+        <span class="go">Learn more →</span>
       </div>
-
-      <div class="card">
-        <h3><a href="dcamp-ios.html">dcamp for iOS</a></h3>
-        <p>Native SwiftUI (iOS/iPadOS/Mac Catalyst) client for dcamp, the Decent Espresso community
-          forum.</p>
-        <div class="links"><a href="dcamp-ios.html">Details</a><a class="gh" href="https://github.com/johnbuckman/dcamp-ios">GitHub</a></div>
+    </a>
+    <a class="proj" href="maccvs.html">
+      <div class="pic"><img src="assets/maccvs/modified-600.avif" alt="" loading="lazy"></div>
+      <div class="body">
+        <div class="head"><img src="assets/maccvs/appicon.png" alt=""><div><h3>MacCVS</h3><div class="plat">Mac</div></div></div>
+        <p>A native CVS client for the Mac, successor to the Carbon MacCVS: see changes as you save, readable diffs, discard, commit and history.</p>
+        <span class="go">Learn more →</span>
       </div>
-
-      <div class="card">
-        <h3><a href="maccvs.html">MacCVS</a></h3>
-        <p>A native SwiftUI CVS client for macOS — a successor to the discontinued Carbon cvsgui
-          MacCVS.</p>
-        <div class="links"><a href="maccvs.html">Details</a><a class="gh" href="https://github.com/johnbuckman/MacCVS">GitHub</a></div>
+    </a>
+    <a class="proj" href="kitchen-timer.html">
+      <div class="pic"><img src="assets/kitchen-timer/running-600.avif" alt="" loading="lazy"></div>
+      <div class="body">
+        <div class="head"><img src="assets/kitchen-timer/appicon.png" alt=""><div><h3>Decent Timer</h3><div class="plat">iPad and iPhone</div></div></div>
+        <p>Four big kitchen timers on one screen, two counting up and two down, readable from across the room. Runs on old iPads too.</p>
+        <span class="go">Learn more →</span>
       </div>
+    </a>
+  </div>
+</div></section>
 
-      <div class="card">
-        <h3><a href="kitchen-timer.html">Decent Timer</a></h3>
-        <p>A counter-top kitchen timer for iPad — four timers and a clock/screensaver. One Objective-C
-          codebase built for both modern iPads (and Mac Catalyst) and the original 32-bit iPad mini on
-          iOS&nbsp;9.</p>
-        <div class="links"><a href="kitchen-timer.html">Details</a><a class="gh" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">GitHub</a></div>
-      </div>
+<section><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">For developers</p>
+    <h2>Tcl/Tk projects</h2>
+    <p>Ports of Tcl/Tk (AndroWish and undroidwish) to iOS, Apple-silicon macOS, Android (Tcl/Tk&nbsp;9.1) and the browser, plus Bluetooth&nbsp;LE, OAuth&nbsp;2.0 and BLT graph-drawing libraries. Much of it powers the Decent espresso machine's app.</p>
+    <p><a class="btn" href="tcltk/" style="margin-top:8px">Tcl/Tk projects →</a></p>
+  </div>
+  <div class="cards two">
+    <div class="card"><div class="ic">📱</div><h3>Tcl/Tk on iOS</h3><p>The full Tk toolkit running as a native iPhone and iPad app.</p></div>
+    <div class="card"><div class="ic">🤖</div><h3>Android, Tcl/Tk 9.1</h3><p>AndroWish brought up to the current Tcl release.</p></div>
+    <div class="card"><div class="ic">🌐</div><h3>In the browser</h3><p>Tcl/Tk apps running in a web page.</p></div>
+    <div class="card"><div class="ic">🔌</div><h3>Libraries</h3><p>Bluetooth LE, OAuth 2.0 and faster BLT graphs.</p></div>
+  </div>
+</div></section>
 
-    </div>
-  </main>
+<footer><div class="wrap cols">
+  <div>
+    <h4>John Buckman</h4>
+    <p>Founder of Magnatune and Decent Espresso. These pages describe software I've written; each links to its source on GitHub.</p>
+  </div>
+  <div>
+    <h4>Apps</h4>
+    <ul>
+      <li><a href="https://johnbuckman.github.io/SideStep/">SideStep</a></li>
+      <li><a href="magnatune.html">Magnatune</a></li>
+      <li><a href="stayontrack.html">Stay on Track</a></li>
+      <li><a href="dcamp-ios.html">dcamp</a></li>
+      <li><a href="maccvs.html">MacCVS</a></li>
+      <li><a href="kitchen-timer.html">Decent Timer</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="tcltk/">Tcl/Tk projects</a></li>
+      <li><a href="https://github.com/johnbuckman">GitHub</a></li>
+    </ul>
+  </div>
+</div></footer>
 
-  <footer class="foot">
-    <p>© John Buckman · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+
 </body>
 </html>

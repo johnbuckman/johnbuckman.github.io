@@ -154,6 +154,10 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
 .dev.phone{border-radius:40px;padding:9px;max-width:290px;margin:0 auto}
 .dev.phone img{border-radius:32px}
 .dev + .dev{margin-top:20px}
+.cards.three{grid-template-columns:repeat(3,1fr)}
+.cards.two{grid-template-columns:1fr 1fr}
+@media(max-width:900px){.cards.three{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.cards.three,.cards.two{grid-template-columns:1fr}}
 .shotrow{display:flex;gap:22px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
 .shotrow .dev.phone{width:250px;margin:0}
 .browser{display:block;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#fff;cursor:zoom-in;transition:transform .15s}
@@ -265,7 +269,7 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
 <section><div class="wrap">
   <p class="kicker">Everything else</p>
   <h2>The details that matter on a long walk</h2>
-  <div class="cards" style="grid-template-columns:repeat(3,1fr)">
+  <div class="cards three">
     <div class="card"><div class="ic">⏱️</div><h3>Live stats and two ETAs</h3><p>Time walked and left, distance, climb, and two finish times: one from the terrain, one from your own pace once you've walked 10 minutes.</p></div>
     <div class="card"><div class="ic">🗺️</div><h3>A map that reads well</h3><p>The route thickens on steep ground and fades beyond the next kilometre. Kilometre markers, START and STOP signs, and a faint trail of where you've been.</p></div>
     <div class="card"><div class="ic">🔒</div><h3>On the Lock Screen</h3><p>A Live Activity shows the next junction and its distance on the Lock Screen and in the Dynamic Island.</p></div>
