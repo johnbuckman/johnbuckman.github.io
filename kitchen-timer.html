@@ -133,6 +133,7 @@ code{font:14px ui-monospace,Menlo,monospace;background:var(--panel);border:1px s
 pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
 
 @media(max-width:900px){
+  ul.ticks{columns:1!important}
   .hero .wrap,.split,.split.rev{grid-template-columns:1fr}
   .split.rev .txt{order:0}
   .hero-shots{display:none}
@@ -194,7 +195,7 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
     <img class="hero-icon" src="assets/kitchen-timer/appicon.png" alt="The Decent Timer app icon">
     <h1>Decent Timer</h1>
     <p class="lead">Four big timers on one screen.<br>Readable from across the kitchen.</p>
-    <p class="sub">Two timers count up and two count down, under a large clock. Big buttons for messy hands, a screen that never sleeps, and a full-screen clock when nothing is running. Made for an iPad on the counter top, and it works on an iPhone too.</p>
+    <p class="sub">Two timers count up and two count down, under a large clock. Each running timer shows when it started and when it'll be done. Big buttons for messy hands, a screen that never sleeps, and a full-screen clock when nothing is running. Made for an iPad on the counter top, and it works on an iPhone too.</p>
     <div class="btns">
       <a class="btn" href="#install">Install it</a>
       <a class="btn ghost" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">Source on GitHub</a>
@@ -228,7 +229,7 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
   <div class="steps">
     <div class="step"><div class="n">1</div><h3>Count up</h3><p>Tap <b>Up</b> and the card starts counting from zero, showing the time you started. <b>Stop</b> pauses it and <b>Up</b> carries on; <b>Reset</b> puts it back to 0:00.</p>
       <a class="dev ipad" href="assets/kitchen-timer/idle.avif" data-w="1133"><img src="assets/kitchen-timer/idle-1200.avif" srcset="assets/kitchen-timer/idle-600.avif 600w, assets/kitchen-timer/idle-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="All four timers idle, under the clock and the day of the week" loading="lazy"></a></div>
-    <div class="step"><div class="n">2</div><h3>Count down</h3><p>Choose a time with <b>–</b> and <b>+</b>, one minute a tap. Hold either button and it changes fast, speeding up the longer you hold. Then tap <b>Down</b>. While it runs, the card shows when it started and, where there's room, when it will finish. And <b>+</b> and <b>–</b> still work, to add a few minutes.</p>
+    <div class="step"><div class="n">2</div><h3>Count down</h3><p>Choose a time with <b>–</b> and <b>+</b>, one minute a tap. Hold either button and it changes fast, speeding up the longer you hold. Then tap <b>Down</b>. While it runs, the card shows when it started and its ETA, the time it will be done. And <b>+</b> and <b>–</b> still work, to add a few minutes.</p>
       <a class="dev ipad" href="assets/kitchen-timer/running.avif" data-w="1133"><img src="assets/kitchen-timer/running-1200.avif" srcset="assets/kitchen-timer/running-600.avif 600w, assets/kitchen-timer/running-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="A count-up and a count-down running, and a count-down that has finished, in orange" loading="lazy"></a></div>
     <div class="step"><div class="n">3</div><h3>Or just type it</h3><p>Tap the time on a count-down that isn't running and a keypad fills the screen. Type a number and pick <b>hours</b>, <b>mins</b> or <b>secs</b>, or type it as you'd say it: <code>1.5h</code>, <code>90s</code>, <code>1:30</code>, or just <code>5</code> for five minutes.</p>
       <a class="dev ipad" href="assets/kitchen-timer/keypad.avif" data-w="1133"><img src="assets/kitchen-timer/keypad-1200.avif" srcset="assets/kitchen-timer/keypad-600.avif 600w, assets/kitchen-timer/keypad-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="The full-screen keypad, with 12 minutes entered" loading="lazy"></a></div>
@@ -260,30 +261,62 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
 
 <section class="alt"><div class="wrap split">
   <div class="txt">
-    <p class="kicker">iPad, iPhone and Mac</p>
-    <h2>Fits whatever you've got</h2>
-    <ul class="ticks">
-      <li><b>iPad, either way up.</b> In landscape each card puts its buttons beside the time; in portrait the cards stand taller, with bigger numbers.</li>
-      <li><b>iPhone</b>, in portrait or landscape, with the start and finish times on each card.</li>
-      <li><b>Mac</b>, as the same app running natively (Mac Catalyst), if you build it yourself.</li>
-      <li><b>The original iPad mini</b> from 2012, still on iOS 9. A separate 32-bit build gives an old iPad a job on the kitchen counter (it needs a jailbroken iPad).</li>
-    </ul>
+    <p class="kicker">Started at, ready at</p>
+    <h2>Know when it'll be ready</h2>
+    <p>A running timer shows the time you started it, so "how long has the oven been on?" has an answer even if you forgot to look.</p>
+    <p>A running count-down also shows its <b>ETA</b>: the clock time it will reach zero. "ETA 10:44" is easier to plan around than "4:57 left", and it moves when you add or take off minutes with <b>+</b> and <b>–</b>.</p>
   </div>
   <div><a class="dev phone" href="assets/kitchen-timer/phone.avif" data-w="390"><img src="assets/kitchen-timer/phone-560.avif" srcset="assets/kitchen-timer/phone-280.avif 280w, assets/kitchen-timer/phone-560.avif 560w" sizes="280px" width="560" height="1212" alt="Decent Timer on an iPhone: one count-up and one count-down running, with the start time and ETA" loading="lazy"></a></div>
 </div></section>
 
-<section id="install"><div class="wrap split">
+<section><div class="wrap">
+  <p class="kicker">iPad, iPhone and Mac</p>
+  <h2>Fits whatever you've got</h2>
+  <ul class="ticks" style="columns:2;column-gap:48px">
+      <li><b>iPad, either way up.</b> In landscape each card puts its buttons beside the time; in portrait the cards stand taller, with bigger numbers.</li>
+      <li><b>iPhone</b>, in portrait or landscape, with the start and finish times on each card.</li>
+      <li><b>Mac</b>, as the same app running natively (Mac Catalyst), if you build it yourself.</li>
+      <li><b>The original iPad mini</b> from 2012, still on iOS 9. A separate 32-bit build gives an old iPad a job on the kitchen counter (it needs a jailbroken iPad: <a href="#ios9">how to install it</a>).</li>
+    </ul>
+</div></section>
+
+<section class="alt" id="install"><div class="wrap split">
   <div class="txt">
     <p class="kicker">Install</p>
-    <h2>Get it onto your iPad</h2>
-    <p>Decent Timer is installed with <a href="https://johnbuckman.github.io/SideStep/">SideStep</a>, a free Mac app that puts apps on your own iPad or iPhone with your own Apple ID and keeps them signed. Click the button on a Mac with the iPad plugged in. If you don't have SideStep yet, the button offers an installer that sets it up first and walks you through it.</p>
-    <p>Prefer another sideloader? Each <a href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases">GitHub release</a> has an <code>.ipa</code> for AltStore, SideStore and similar apps, and a separate armv7 build for the jailbroken iOS 9 iPad mini.</p>
+    <h2>Get it onto your iPad or iPhone</h2>
+    <p>Decent Timer is installed with <a href="https://johnbuckman.github.io/SideStep/">SideStep</a>, a free Mac app that puts apps on your own iPad or iPhone with your own Apple ID and keeps them signed. Click the button on a Mac with the iPad or iPhone plugged in. If you don't have SideStep yet, the button offers an installer that sets it up first and walks you through it.</p>
+    <p>Prefer another sideloader? Download <a href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases/download/v1.3/DecentTimer-1.3.ipa">DecentTimer-1.3.ipa</a> and open it in AltStore, SideStore or a similar app.</p>
+    <p>Have an old iPad on iOS 9? See <a href="#ios9">installing on iOS 9</a>.</p>
   </div>
   <div class="try">
     <div class="sidestep-install"
          data-repo="johnbuckman/Kitchen-timer-for-old-iPads"
          data-installer="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases/download/installer/decent-timer-installer.zip"></div>
     <p>Version 1.3 · iOS 15 or newer · iPad and iPhone</p>
+  </div>
+</div></section>
+
+<section id="ios9"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Old iPads</p>
+    <h2>Installing on iOS 9</h2>
+    <p>A separate 32-bit build runs on first-generation iPads that are stuck on iOS 9: the iPad mini 1 and the iPad 2, 3 and 4. It was built and tested on an iPad mini 1 on iOS 9.3.5.</p>
+    <p>The iPad has to be <b>jailbroken</b>, because the app installs as a system app rather than through the App Store or a sideloader. It won't run on a current iPad: use the install button above for those.</p>
+    <div class="btns" style="margin-top:20px">
+      <a class="btn" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases/download/v1.0-ios9/KitchenTimer-1.0-ios9-armv7.tar.gz">Download the iOS 9 build</a>
+      <a class="btn" style="background:var(--panel);color:var(--ink);border:1px solid var(--line-strong)" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases/tag/v1.0-ios9">Release notes</a>
+    </div>
+  </div>
+  <div>
+    <h3>Over SSH</h3>
+    <p>Unpack the download on your computer, copy the app to the iPad, then refresh the home screen:</p>
+<pre><code>tar xzf KitchenTimer-1.0-ios9-armv7.tar.gz
+scp -r KitchenTimer.app root@&lt;ipad-ip&gt;:/Applications/
+ssh root@&lt;ipad-ip&gt; 'chmod -R 755 /Applications/KitchenTimer.app &amp;&amp;
+  uicache -p /Applications/KitchenTimer.app &amp;&amp; killall SpringBoard'</code></pre>
+    <p>A freshly jailbroken iPad's root password is <code>alpine</code>; change it.</p>
+    <h3>With Filza</h3>
+    <p>Copy the download to the iPad, extract it in Filza, move <code>KitchenTimer.app</code> into <code>/Applications/</code>, set its permissions to 755, and respring. <b>Decent Timer</b> then appears on the home screen.</p>
   </div>
 </div></section>
 
@@ -297,6 +330,7 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
     <h4>Use it</h4>
     <ul>
       <li><a href="#install">Install</a></li>
+      <li><a href="#ios9">Installing on iOS 9</a></li>
       <li><a href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases">Releases</a></li>
       <li><a href="https://johnbuckman.github.io/SideStep/">SideStep</a></li>
     </ul>
