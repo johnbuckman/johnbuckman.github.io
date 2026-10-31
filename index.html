@@ -86,7 +86,7 @@ b,strong{color:var(--ink)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
 .alt .card{background:var(--bg)}
 .card .ic{font-size:30px;line-height:1}
-.card h3{font-size:18px;margin:12px 0 6px}
+.card h3{font-size:18px;margin:0 0 6px}
 .card p{margin:0;font-size:15.5px}
 
 .steps{display:grid;gap:56px}
@@ -203,6 +203,10 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
 .proj .plat{font-size:13px;color:var(--muted)}
 .proj p{margin:0 0 14px;font-size:15.5px;flex:1}
 .proj .go{font-weight:650;font-size:15px;color:var(--link)}
+a.linkcard{display:flex;flex-direction:column;color:inherit;transition:transform .15s,box-shadow .15s}
+a.linkcard:hover{text-decoration:none;transform:translateY(-3px);box-shadow:0 2px 4px rgba(40,30,10,.08),0 16px 36px rgba(40,30,10,.12)}
+a.linkcard p{flex:1;margin-bottom:12px}
+a.linkcard .go{font-weight:650;font-size:15px;color:var(--link)}
 .hero.home{padding:110px 0 70px}
 .hero.home .wrap{display:block}
 .hero.home h1{font-size:60px}
@@ -288,18 +292,20 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
   </div>
 </div></section>
 
-<section><div class="wrap split">
-  <div class="txt">
-    <p class="kicker">For developers</p>
-    <h2>Tcl/Tk projects</h2>
-    <p>Ports of Tcl/Tk (AndroWish and undroidwish) to iOS, Apple-silicon macOS, Android (Tcl/Tk&nbsp;9.1) and the browser, plus Bluetooth&nbsp;LE, OAuth&nbsp;2.0 and BLT graph-drawing libraries. Much of it powers the Decent espresso machine's app.</p>
-    <p><a class="btn" href="tcltk/" style="margin-top:8px">Tcl/Tk projects →</a></p>
-  </div>
-  <div class="cards two">
-    <div class="card"><div class="ic">📱</div><h3>Tcl/Tk on iOS</h3><p>The full Tk toolkit running as a native iPhone and iPad app.</p></div>
-    <div class="card"><div class="ic">🤖</div><h3>Android, Tcl/Tk 9.1</h3><p>AndroWish brought up to the current Tcl release.</p></div>
-    <div class="card"><div class="ic">🌐</div><h3>In the browser</h3><p>Tcl/Tk apps running in a web page.</p></div>
-    <div class="card"><div class="ic">🔌</div><h3>Libraries</h3><p>Bluetooth LE, OAuth 2.0 and faster BLT graphs.</p></div>
+<section><div class="wrap">
+  <p class="kicker">For developers</p>
+  <h2>Tcl/Tk projects</h2>
+  <p class="intro">Ports of Tcl/Tk (AndroWish and undroidwish) to iOS, Apple-silicon macOS, Android and the browser, plus Bluetooth&nbsp;LE, OAuth&nbsp;2.0 and BLT graph libraries. Much of it powers the Decent espresso machine's app. <a href="tcltk/">All Tcl/Tk projects →</a></p>
+  <div class="cards three">
+    <a class="card linkcard" href="tcltk/iwish.html"><h3>iWish</h3><p>Tcl/Tk on iPhone and iPad: the full Tk toolkit as a native app.</p><span class="go">Learn more →</span></a>
+    <a class="card linkcard" href="tcltk/androwish-tcl91.html"><h3>AndroWish on Tcl/Tk 9.1</h3><p>AndroWish brought up to Tcl 9 on Android.</p><span class="go">Learn more →</span></a>
+    <a class="card linkcard" href="tcltk/undroidwish-arm64.html"><h3>undroidwish for Apple silicon</h3><p>Tcl/Tk on M-series Macs, without Rosetta.</p><span class="go">Learn more →</span></a>
+    <a class="card linkcard" href="tcltk/webwish.html"><h3>WebWish</h3><p>Tk desktop apps running in a web browser.</p><span class="go">Learn more →</span></a>
+    <a class="card linkcard" href="tcltk/iwish-ios9.html"><h3>iWish for iOS 9</h3><p>Tcl/Tk on old 32-bit iPads.</p><span class="go">Learn more →</span></a>
+    <a class="card linkcard" href="tcltk/tcl-ble-osx.html"><h3>tcl-ble-osx</h3><p>Bluetooth LE for Tcl on the Mac.</p><span class="go">Learn more →</span></a>
+    <a class="card linkcard" href="tcltk/blz-ble-shim.html"><h3>blz_ble_shim</h3><p>AndroWish Bluetooth LE apps on Linux.</p><span class="go">Learn more →</span></a>
+    <a class="card linkcard" href="tcltk/tcl-oauth2.html"><h3>tcl_oauth2_library</h3><p>OAuth 2.0 logins in pure Tcl.</p><span class="go">Learn more →</span></a>
+    <a class="card linkcard" href="tcltk/blt-faster.html"><h3>BLT-faster</h3><p>Quicker BLT graph redraws.</p><span class="go">Learn more →</span></a>
   </div>
 </div></section>
 
