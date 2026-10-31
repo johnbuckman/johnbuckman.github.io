@@ -60,10 +60,10 @@ img{max-width:100%;height:auto;display:block}
 .btn:hover{text-decoration:none;filter:brightness(1.08)}
 .btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3)}
 .fine{margin-top:16px;font-size:14px;color:rgba(255,255,255,.65)}
-.hero-shots{position:relative;height:420px}
-.hero-shots .mac{position:absolute;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;background:#fff}
+.hero-shots{position:relative;height:500px}
+.hero-shots .mac{position:absolute;display:block;cursor:zoom-in;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;background:#fff}
 .hero-shots .back{right:0;top:0;width:430px}
-.hero-shots .front{left:0;top:150px;width:400px}
+.hero-shots .front{left:0;top:140px;width:420px}
 
 .hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:18px}
 .hero-right .hero-shots{width:100%}
@@ -91,20 +91,19 @@ b,strong{color:var(--ink)}
 .card h3{font-size:18px;margin:12px 0 6px}
 .card p{margin:0;font-size:15.5px}
 
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.step{display:flex;flex-direction:column}
+.steps{display:grid;gap:56px}
+.step{display:grid;grid-template-columns:1fr 1.5fr;grid-template-rows:auto auto 1fr;column-gap:48px;align-items:start}
+.step > .shot{grid-column:2;grid-row:1/4}
 .step .n{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
 .step h3{font-size:20px;margin:12px 0 4px}
 .step p{margin:0 0 16px;font-size:16px}
-.shot{border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff;overflow:hidden;margin-top:auto}
-.shot.crop{max-height:300px}
-.shot.crop img{width:100%}
+.shot{display:block;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff;overflow:hidden;cursor:zoom-in;transition:transform .15s,box-shadow .15s}
+.shot:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(40,30,10,.08),0 14px 32px rgba(40,30,10,.12)}
+.shot img{width:100%}
 .shot + .shot{margin-top:18px}
-.steps .shot{height:230px}
-.steps .shot img{width:100%;height:100%;object-fit:cover;object-position:top left}
 
-.split{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center}
-.split.rev{grid-template-columns:1.1fr 1fr}
+.split{display:grid;grid-template-columns:1fr 1.5fr;gap:48px;align-items:center}
+.split.rev{grid-template-columns:1.5fr 1fr}
 .split > *{min-width:0}
 .split.rev .txt{order:2}
 ul.ticks{list-style:none;padding:0;margin:18px 0 0}
@@ -140,12 +139,26 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
   .hero-right{align-items:flex-start}
   .hero h1{font-size:48px}
   .cards{grid-template-columns:1fr 1fr}
-  .steps{grid-template-columns:1fr}
+  .step{grid-template-columns:1fr;grid-template-rows:none}
+  .step > .shot{grid-column:auto;grid-row:auto}
   footer .cols{grid-template-columns:1fr}
   .top nav a:not(.keep){display:none}
   h2{font-size:30px}
 }
 @media(max-width:560px){ .watch .len{display:none} .cards{grid-template-columns:1fr} .wrap{padding:0 16px} }
+
+/* lightbox: click a screenshot to see it full size; chevrons, arrow keys or swipe for the others */
+.lb{position:fixed;inset:0;z-index:20;background:rgba(12,10,8,.88);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px 70px}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:calc(100vh - 110px);width:auto;height:auto;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#fff}
+.lb .cap{color:rgba(255,255,255,.85);font-size:15px;text-align:center;max-width:46em}
+.lb .cap span{color:rgba(255,255,255,.5);margin-left:10px}
+.lb button{position:absolute;border:0;background:rgba(255,255,255,.12);color:#fff;width:48px;height:48px;border-radius:50%;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb button:hover{background:rgba(255,255,255,.24)}
+.lb .prev{left:12px;top:50%;transform:translateY(-50%)}
+.lb .next{right:12px;top:50%;transform:translateY(-50%)}
+.lb .close{right:12px;top:12px;width:40px;height:40px;font-size:22px}
+@media(max-width:560px){ .lb{padding:56px 10px 80px} .lb .prev,.lb .next{top:auto;bottom:16px;transform:none} .lb .prev{left:calc(50% - 60px)} .lb .next{right:calc(50% - 60px)} }
 </style>
 </head>
 <body>
@@ -173,9 +186,9 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
     <div class="fine">macOS 14 or newer · Apple silicon and Intel · notarized · free and open source (GPL-3.0)</div>
   </div>
   <div class="hero-right">
-    <div class="hero-shots" aria-hidden="true">
-      <div class="mac back"><img src="assets/maccvs/main.png" alt=""></div>
-      <div class="mac front"><img src="assets/maccvs/diff.png" alt=""></div>
+    <div class="hero-shots">
+      <a class="mac back shot-hero" href="assets/maccvs/modified.avif" tabindex="-1"><img src="assets/maccvs/modified-1200.avif" srcset="assets/maccvs/modified-600.avif 600w, assets/maccvs/modified-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="600" alt="The MacCVS main window"></a>
+      <a class="mac front shot-hero" href="assets/maccvs/diff.avif" tabindex="-1"><img src="assets/maccvs/diff-1200.avif" srcset="assets/maccvs/diff-600.avif 600w, assets/maccvs/diff-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="987" alt="The MacCVS diff window"></a>
     </div>
     <a class="watch" href="https://youtu.be/MQ6-EnU0xs0"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Watch the explainer video on YouTube <span class="len">2 min</span></a>
   </div>
@@ -207,11 +220,11 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
   <p class="intro">MacCVS works on folders you've already checked out with <code>cvs checkout</code>. Your login and server settings come from the working copy itself and from <code>~/.cvspass</code>.</p>
   <div class="steps">
     <div class="step"><div class="n">1</div><h3>Open it</h3><p><b>File ▸ Open Working Copy…</b> (<kbd>⌘O</kbd>) and choose the module's top folder. It joins the list of projects in the left-hand column, and comes back next time you start.</p>
-      <div class="shot"><img src="assets/maccvs/projects.jpg" alt="The MacCVS main window: projects in the first column, folders in the second" loading="lazy"></div></div>
+      <a class="shot" href="assets/maccvs/projects.avif"><img src="assets/maccvs/projects-1200.avif" srcset="assets/maccvs/projects-600.avif 600w, assets/maccvs/projects-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="600" alt="The MacCVS main window: projects in the first column, folders in the second" loading="lazy"></a></div>
     <div class="step"><div class="n">2</div><h3>Find your changes</h3><p>Click through folders in the column browser. Each file shows its status and revision, coloured so changed files stand out. Sort by status to put them at the top.</p>
-      <div class="shot"><img src="assets/maccvs/main.png" alt="Three modified files in the lib folder, shown in orange" loading="lazy"></div></div>
+      <a class="shot" href="assets/maccvs/modified.avif"><img src="assets/maccvs/modified-1200.avif" srcset="assets/maccvs/modified-600.avif 600w, assets/maccvs/modified-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="600" alt="Two modified files in the lib folder, shown in orange" loading="lazy"></a></div>
     <div class="step"><div class="n">3</div><h3>Diff, then commit</h3><p>Double-click a file for its diff. When it looks right, press <b>Commit</b> (<kbd>⌘K</kbd>), tick the files to include, write a message, and send it.</p>
-      <div class="shot"><img src="assets/maccvs/commit.png" alt="The commit sheet: a message and the files to commit" loading="lazy"></div></div>
+      <a class="shot" href="assets/maccvs/commit.avif"><img src="assets/maccvs/commit-1200.avif" srcset="assets/maccvs/commit-600.avif 600w, assets/maccvs/commit-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="963" alt="The commit sheet: a message and the files to commit" loading="lazy"></a></div>
   </div>
 </div></section>
 
@@ -228,8 +241,8 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
     </ul>
   </div>
   <div>
-    <div class="shot"><img src="assets/maccvs/diff.png" alt="Side-by-side diff of orders.tcl with three changes" loading="lazy"></div>
-    <div class="shot"><img src="assets/maccvs/word.png" alt="Word mode: only the changed prices are highlighted" loading="lazy"></div>
+    <a class="shot" href="assets/maccvs/diff.avif"><img src="assets/maccvs/diff-1200.avif" srcset="assets/maccvs/diff-600.avif 600w, assets/maccvs/diff-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="987" alt="Side-by-side diff of orders.tcl with three changes" loading="lazy"></a>
+    <a class="shot" href="assets/maccvs/word.avif"><img src="assets/maccvs/word-1200.avif" srcset="assets/maccvs/word-600.avif 600w, assets/maccvs/word-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="810" alt="Word mode: only the changed prices are highlighted" loading="lazy"></a>
   </div>
 </div></section>
 
@@ -242,7 +255,7 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
     <p><a href="maccvs-help.html#discard">More about discarding →</a></p>
   </div>
   <div>
-    <div class="shot"><img src="assets/maccvs/discard.jpg" alt="The diff after one change was discarded: two changes remain" loading="lazy"></div>
+    <a class="shot" href="assets/maccvs/discard.avif"><img src="assets/maccvs/discard-1200.avif" srcset="assets/maccvs/discard-600.avif 600w, assets/maccvs/discard-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="987" alt="The diff after one change was discarded: two changes remain" loading="lazy"></a>
   </div>
 </div></section>
 
@@ -259,8 +272,8 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
     </ul>
   </div>
   <div>
-    <div class="shot"><img src="assets/maccvs/update.jpg" alt="index.html shows Needs update after a colleague committed a newer version" loading="lazy"></div>
-    <div class="shot"><img src="assets/maccvs/add.jpg" alt="A new file, coupons.tcl, not yet under CVS" loading="lazy"></div>
+    <a class="shot" href="assets/maccvs/update.avif"><img src="assets/maccvs/update-1200.avif" srcset="assets/maccvs/update-600.avif 600w, assets/maccvs/update-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="600" alt="index.html shows Needs update after a colleague committed a newer version" loading="lazy"></a>
+    <a class="shot" href="assets/maccvs/add.avif"><img src="assets/maccvs/add-1200.avif" srcset="assets/maccvs/add-600.avif 600w, assets/maccvs/add-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="600" alt="A new file, coupons.tcl, not yet under CVS" loading="lazy"></a>
   </div>
 </div></section>
 
@@ -272,7 +285,7 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
     <p>Turn on <b>Show diffs</b> to see the change each revision made, right under its message. Diffs load as you scroll, so long histories stay quick.</p>
   </div>
   <div>
-    <div class="shot"><img src="assets/maccvs/log.png" alt="The history window with each revision's diff shown" loading="lazy"></div>
+    <a class="shot" href="assets/maccvs/log.avif"><img src="assets/maccvs/log-1200.avif" srcset="assets/maccvs/log-600.avif 600w, assets/maccvs/log-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="1185" alt="The history window with each revision's diff shown" loading="lazy"></a>
   </div>
 </div></section>
 
@@ -348,5 +361,44 @@ MacCVS=/Applications/MacCVS.app/Contents/MacOS/MacCVS
   </div>
 </div></footer>
 
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screenshot">
+  <button class="close" aria-label="Close">✕</button>
+  <button class="prev" aria-label="Previous screenshot">‹</button>
+  <img alt="">
+  <div class="cap"></div>
+  <button class="next" aria-label="Next screenshot">›</button>
+</div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll("a.shot")), lb=document.getElementById("lb"),
+      img=lb.querySelector("img"), cap=lb.querySelector(".cap"), i=0, last=null, x0=null;
+  function show(n){
+    i=(n+links.length)%links.length;
+    var a=links[i], alt=a.querySelector("img").alt;
+    img.removeAttribute("style"); img.src=a.href; img.alt=alt;
+    cap.textContent=alt; var s=document.createElement("span"); s.textContent=(i+1)+" / "+links.length; cap.appendChild(s);
+  }
+  // the AVIFs are 2x: show them at their real on-screen size, smaller if the window is
+  img.onload=function(){ img.style.width=Math.round(img.naturalWidth/2)+"px"; };
+  function open(n){ last=document.activeElement; show(n); lb.classList.add("on"); document.body.style.overflow="hidden"; lb.querySelector(".next").focus(); }
+  function close(){ lb.classList.remove("on"); document.body.style.overflow=""; if(last) last.focus(); }
+  links.forEach(function(a,n){ a.addEventListener("click",function(e){ e.preventDefault(); open(n); }); });
+  [].forEach.call(document.querySelectorAll("a.shot-hero"),function(a){
+    a.addEventListener("click",function(e){ e.preventDefault();
+      var n=links.findIndex(function(l){ return l.href===a.href; }); open(n<0?0:n); }); });
+  lb.querySelector(".prev").onclick=function(){ show(i-1); };
+  lb.querySelector(".next").onclick=function(){ show(i+1); };
+  lb.querySelector(".close").onclick=close;
+  lb.addEventListener("click",function(e){ if(e.target===lb) close(); });
+  document.addEventListener("keydown",function(e){
+    if(!lb.classList.contains("on")) return;
+    if(e.key==="Escape") close(); else if(e.key==="ArrowLeft") show(i-1); else if(e.key==="ArrowRight") show(i+1);
+  });
+  lb.addEventListener("touchstart",function(e){ x0=e.touches[0].clientX; },{passive:true});
+  lb.addEventListener("touchend",function(e){ if(x0===null) return; var d=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(d)>50) show(d<0?i+1:i-1); });
+})();
+</script>
 </body>
 </html>
