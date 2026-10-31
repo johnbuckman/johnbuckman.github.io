@@ -3,84 +3,313 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Decent Timer — John Buckman</title>
-<meta name="description" content="A counter-top kitchen timer app for iPad, built for both modern iPads and the original 32-bit iPad mini on iOS 9.">
-<link rel="stylesheet" href="assets/style.css">
+<title>Decent Timer</title>
+<meta name="description" content="Decent Timer is a free kitchen timer for iPad and iPhone: four big timers on one screen, two counting up and two counting down, and a full-screen clock when it's idle.">
+<link rel="icon" href="assets/kitchen-timer/appicon.png">
+<meta property="og:title" content="Decent Timer: four big kitchen timers on one screen">
+<meta property="og:description" content="A free kitchen timer for iPad and iPhone, made for the counter top.">
+<meta property="og:image" content="https://johnbuckman.github.io/assets/kitchen-timer-main.png">
+<style>
+/* Same look as the SideStep and MacCVS pages. */
+:root{
+  --bg:#fdf9f3; --panel:#fff; --ink:#1c1c1c; --ink-soft:#55524c; --muted:#8a8579;
+  --line:#ece6db; --line-strong:#ddd5c7; --accent:#e8902a; --accent-ink:#b8650c; --link:#1d64c2; --btn:#16a34a;
+  --hero1:#3d5aa8; --hero2:#24346e; --hero3:#141c3c;
+  --shadow:0 1px 2px rgba(40,30,10,.06), 0 8px 24px rgba(40,30,10,.07);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+    --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+  --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.top{position:absolute;inset:0 0 auto;z-index:3}
+.top .wrap{display:flex;align-items:center;gap:22px;padding-top:16px;padding-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:18px}
+.brand img{width:30px;height:30px}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:15px}
+.top nav a{color:rgba(255,255,255,.85)}
+
+/* hero */
+.hero{background:radial-gradient(120% 100% at 25% 15%,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%);color:#fff;padding:110px 0 80px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center}
+.hero-icon{width:96px;height:96px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.hero h1{font-size:64px;line-height:1.05;letter-spacing:-.02em;margin:18px 0 14px}
+.hero .lead{font-size:24px;line-height:1.35;margin:0 0 14px;color:#fff}
+.hero .sub{font-size:17px;color:rgba(255,255,255,.8);margin:0 0 26px;max-width:30em}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:650;font-size:16px;background:var(--btn);color:#fff}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3)}
+.fine{margin-top:16px;font-size:14px;color:rgba(255,255,255,.65)}
+.hero-shots{position:relative;height:440px}
+.hero-shots .mac{position:absolute;display:block;cursor:zoom-in;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;background:#fff}
+.hero-shots .back{right:0;top:0;width:430px}
+.hero-shots .front{left:0;top:140px;width:420px}
+
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:18px}
+.hero-right .hero-shots{width:100%}
+.watch{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:15px;font-weight:600}
+.watch:hover{text-decoration:none;background:rgba(0,0,0,.5)}
+.watch .play{width:30px;height:30px;border-radius:50%;background:#e62117;display:flex;align-items:center;justify-content:center;padding-left:2px}
+.watch .len{font-weight:500;color:rgba(255,255,255,.65);white-space:nowrap}
+
+/* sections */
+section{padding:70px 0}
+section.alt{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2{font-size:36px;letter-spacing:-.015em;line-height:1.15;margin:0 0 12px}
+.kicker{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 8px}
+.intro{color:var(--ink-soft);font-size:19px;max-width:44em;margin:0 0 34px}
+p{color:var(--ink-soft)}
+b,strong{color:var(--ink)}
+
+.video{border-radius:16px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#000;aspect-ratio:16/9}
+.video iframe{width:100%;height:100%;border:0;display:block}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.alt .card{background:var(--bg)}
+.card .ic{font-size:30px;line-height:1}
+.card h3{font-size:18px;margin:12px 0 6px}
+.card p{margin:0;font-size:15.5px}
+
+.steps{display:grid;gap:56px}
+.step{display:grid;grid-template-columns:1fr 1.5fr;grid-template-rows:auto auto 1fr;column-gap:48px;align-items:start}
+.step > .shot,.step > .dev{grid-column:2;grid-row:1/4}
+.step .n{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step h3{font-size:20px;margin:12px 0 4px}
+.step p{margin:0 0 16px;font-size:16px}
+.shot{display:block;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff;overflow:hidden;cursor:zoom-in;transition:transform .15s,box-shadow .15s}
+.shot:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(40,30,10,.08),0 14px 32px rgba(40,30,10,.12)}
+.shot img{width:100%}
+.shot + .shot{margin-top:18px}
+
+.split{display:grid;grid-template-columns:1fr 1.5fr;gap:48px;align-items:center}
+.split.rev{grid-template-columns:1.5fr 1fr}
+.split > *{min-width:0}
+.split.rev .txt{order:2}
+ul.ticks{list-style:none;padding:0;margin:18px 0 0}
+ul.ticks li{position:relative;padding-left:32px;margin:12px 0;color:var(--ink-soft)}
+ul.ticks li::before{content:"✓";position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,.14);color:var(--btn);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pills span{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:15px;color:var(--ink-soft)}
+.alt .pills span{background:var(--bg)}
+
+pre{background:#1d1b18;color:#ece7dd;border-radius:12px;padding:18px 20px;overflow-x:auto;font:14px/1.6 ui-monospace,Menlo,monospace;box-shadow:var(--shadow);margin:18px 0}
+pre .c{color:#8f897d}
+table.keys{border-collapse:collapse;width:100%;font-size:15.5px}
+table.keys td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+kbd{font:13px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:6px;padding:1px 7px;color:var(--ink)}
+.alt kbd{background:var(--bg)}
+
+footer{padding:44px 0 60px;color:var(--muted);font-size:14.5px}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+footer h4{color:var(--ink);font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+footer p{color:var(--muted);margin:0 0 8px}
+footer a{color:var(--ink-soft)}
+footer ul{list-style:none;padding:0;margin:0}
+footer li{margin:6px 0}
+code{font:14px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.alt code{background:var(--bg)}
+pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
+
+@media(max-width:900px){
+  .hero .wrap,.split,.split.rev{grid-template-columns:1fr}
+  .split.rev .txt{order:0}
+  .hero-shots{display:none}
+  .hero-right{align-items:flex-start}
+  .hero h1{font-size:48px}
+  .cards{grid-template-columns:1fr 1fr}
+  .step{grid-template-columns:1fr;grid-template-rows:none}
+  .step > .shot,.step > .dev{grid-column:auto;grid-row:auto;margin-top:8px}
+  footer .cols{grid-template-columns:1fr}
+  .top nav a:not(.keep){display:none}
+  h2{font-size:30px}
+}
+@media(max-width:560px){ .watch .len{display:none} .cards{grid-template-columns:1fr} .wrap{padding:0 16px} }
+
+/* device frames around the Simulator screenshots */
+.dev{display:block;background:#0d0d0d;padding:10px;border-radius:26px;box-shadow:var(--shadow);cursor:zoom-in;transition:transform .15s}
+.dev:hover{transform:translateY(-2px)}
+.dev img{border-radius:16px;width:100%}
+.dev.phone{border-radius:40px;padding:9px;max-width:290px;margin:0 auto}
+.dev.phone img{border-radius:32px}
+.dev + .dev{margin-top:20px}
+.hero-shots .dev{position:absolute}
+.hero-shots .ipad{right:0;top:20px;width:470px}
+.hero-shots .phone{left:0;top:150px;width:190px;padding:7px;border-radius:30px}
+.hero-shots .phone img{border-radius:24px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.try{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;text-align:center;box-shadow:var(--shadow);margin-top:26px}
+.alt .try{background:var(--bg)}
+.try p,.try div{font-size:15px}
+.brand img,.hero-icon{border-radius:22%}
+
+/* lightbox: click a screenshot to see it full size; chevrons, arrow keys or swipe for the others */
+.lb{position:fixed;inset:0;z-index:20;background:rgba(12,10,8,.88);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px 70px}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:calc(100vh - 110px);width:auto;height:auto;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#fff}
+.lb .cap{color:rgba(255,255,255,.85);font-size:15px;text-align:center;max-width:46em}
+.lb .cap span{color:rgba(255,255,255,.5);margin-left:10px}
+.lb button{position:absolute;border:0;background:rgba(255,255,255,.12);color:#fff;width:48px;height:48px;border-radius:50%;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb button:hover{background:rgba(255,255,255,.24)}
+.lb .prev{left:12px;top:50%;transform:translateY(-50%)}
+.lb .next{right:12px;top:50%;transform:translateY(-50%)}
+.lb .close{right:12px;top:12px;width:40px;height:40px;font-size:22px}
+@media(max-width:560px){ .lb{padding:56px 10px 80px} .lb .prev,.lb .next{top:auto;bottom:16px;transform:none} .lb .prev{left:calc(50% - 60px)} .lb .next{right:calc(50% - 60px)} }
+</style>
 </head>
 <body>
-<div class="wrap narrow">
-  <nav class="crumbs"><a href="./">John Buckman</a> &nbsp;/&nbsp; Decent Timer</nav>
-  <header class="masthead">
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="assets/kitchen-timer/appicon.png" alt="">Decent Timer</a>
+  <nav>
+    <a href="#install" class="keep">Install</a>
+    <a href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">GitHub</a>
+    <a href="./">John Buckman</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
+    <img class="hero-icon" src="assets/kitchen-timer/appicon.png" alt="The Decent Timer app icon">
     <h1>Decent Timer</h1>
-    <p class="lede">A large, glanceable counter-top timer app for iPad — two count-up and two count-down
-      timers on one screen, plus a full-screen clock/screensaver when idle.</p>
-  </header>
-  <div class="meta">
-    <a class="btn gh" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">Kitchen-timer-for-old-iPads on GitHub →</a>
-  </div>
-  <main class="prose">
-
-    <h2>What it is</h2>
-    <p>A kitchen counter-top timer for iPad: four timers on one screen (two count up, two count down), a
-      large always-on clock with the weekday, and a full-screen clock/screensaver for when it is idle.
-      Large numbers, large buttons, and the screen never sleeps.</p>
-
-    <h2>Two builds, one codebase</h2>
-    <p>Objective-C, programmatic UIKit (no storyboards). One source tree with two build targets; the
-      modern-only scene lifecycle is <code>#if</code>-guarded so the same files compile for both:</p>
-    <ul>
-      <li><strong>iOS 9 / 32-bit (armv7)</strong> — for the original iPad mini 1 (iPad2,5, iOS 9.3.5),
-        distributed by jailbreak sideload.</li>
-      <li><strong>Modern (arm64)</strong> — for any current iPad, plus Mac Catalyst; App Store or sideload
-        (AltStore / SideStore / SideStep).</li>
-    </ul>
-
-    <h2>Features</h2>
-    <ul>
-      <li>Live clock (<code>H:mm</code>) and weekday at the top, auto-shrinking to fit.</li>
-      <li>Four timers: two count up, two count down. A running count-up shows "Started at H:mm"; a
-        count-down shows "Started at H:mm, ETA H:mm", with the ETA recomputed each tick. Values read
-        <code>MM:SS</code>, rolling to <code>H:MM:SS</code> past an hour; grey when idle, white when
-        running, orange in overtime.</li>
-      <li>Set a duration two ways: the <code>–</code>/<code>+</code> buttons (press and hold to change
-        faster), or tap an un-started timer to open a full-screen keypad with smart parsing
-        ("1.5h" &rarr; 1:30:00, "90s" &rarr; 1:30).</li>
-      <li>Overtime counts negative, the background pulses, and it dings every 5 seconds until stopped.</li>
-      <li>Screensaver: tap the clock, or automatically after an hour idle (never while a timer is
-        running); shows the time, weekday, and a faint logo that drifts to avoid burn-in.</li>
-    </ul>
-
-    <h2>Screenshots</h2>
-    <div class="gallery">
-      <figure>
-        <img src="assets/kitchen-timer-main.png" alt="Decent Timer main screen: clock and 2x2 timer grid">
-        <figcaption>Main screen — clock and the four timers.</figcaption>
-      </figure>
-      <figure>
-        <img src="assets/kitchen-timer-screensaver.png" alt="Decent Timer full-screen clock screensaver">
-        <figcaption>Idle screensaver — full-screen clock.</figcaption>
-      </figure>
+    <p class="lead">Four big timers on one screen.<br>Readable from across the kitchen.</p>
+    <p class="sub">Two timers count up and two count down, under a large clock. Big buttons for messy hands, a screen that never sleeps, and a full-screen clock when nothing is running. Made for an iPad on the counter top, and it works on an iPhone too.</p>
+    <div class="btns">
+      <a class="btn" href="#install">Install it</a>
+      <a class="btn ghost" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">Source on GitHub</a>
     </div>
+    <div class="fine">iPad and iPhone, iOS 15 or newer · plus a build for the original iPad mini on iOS 9 · free and open source</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-shots">
+      <a class="dev ipad hero" tabindex="-1" href="assets/kitchen-timer/running.avif" data-w="1133"><img src="assets/kitchen-timer/running-1200.avif" srcset="assets/kitchen-timer/running-600.avif 600w, assets/kitchen-timer/running-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="Decent Timer on an iPad in landscape, three timers running"></a>
+      <a class="dev phone hero" tabindex="-1" href="assets/kitchen-timer/phone.avif" data-w="390"><img src="assets/kitchen-timer/phone-560.avif" srcset="assets/kitchen-timer/phone-280.avif 280w, assets/kitchen-timer/phone-560.avif 560w" sizes="280px" width="560" height="1212" alt="Decent Timer on an iPhone: one count-up and one count-down running, with the start time and ETA"></a>
+    </div>
+  </div>
+</div></div>
 
-    <h2>Install</h2>
-    <p>Install the modern (arm64) build onto an iPad directly from a Mac. The button installs
-      <a class="gh" href="https://github.com/johnbuckman/SideStep">SideStep</a> if it isn't already, then
-      sideloads Decent Timer over USB. SideStep is a Mac app, so run this on a Mac with the iPad plugged
-      in.</p>
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>A timer for real cooking</h2>
+  <p class="intro">Cooking rarely needs just one timer. Decent Timer keeps four on screen at once, big enough to read without walking over, so the bread, the rice and the sauce each get their own.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">⏱️</div><h3>Four at once</h3><p>Two count up, for "how long has this been going?". Two count down, for "tell me when it's done".</p></div>
+    <div class="card"><div class="ic">👀</div><h3>Readable from afar</h3><p>Huge numbers, grey when idle, white when running, orange when a count-down has finished.</p></div>
+    <div class="card"><div class="ic">🔔</div><h3>Hard to miss</h3><p>When a count-down reaches zero it keeps counting, dings every few seconds and pulses the screen.</p></div>
+    <div class="card"><div class="ic">🔒</div><h3>Nothing to sign up for</h3><p>No account, no ads, no tracking. It never touches the network.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <p class="kicker">How it works</p>
+  <h2>Tap, and it's timing</h2>
+  <p class="intro">There's nothing to set up. Each timer is one card with one big button.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Count up</h3><p>Tap <b>Up</b> and the card starts counting from zero, showing the time you started. <b>Stop</b> pauses it and <b>Up</b> carries on; <b>Reset</b> puts it back to 0:00.</p>
+      <a class="dev ipad" href="assets/kitchen-timer/idle.avif" data-w="1133"><img src="assets/kitchen-timer/idle-1200.avif" srcset="assets/kitchen-timer/idle-600.avif 600w, assets/kitchen-timer/idle-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="All four timers idle, under the clock and the day of the week" loading="lazy"></a></div>
+    <div class="step"><div class="n">2</div><h3>Count down</h3><p>Choose a time with <b>–</b> and <b>+</b>, one minute a tap. Hold either button and it changes fast, speeding up the longer you hold. Then tap <b>Down</b>. While it runs, the card shows when it started and, where there's room, when it will finish. And <b>+</b> and <b>–</b> still work, to add a few minutes.</p>
+      <a class="dev ipad" href="assets/kitchen-timer/running.avif" data-w="1133"><img src="assets/kitchen-timer/running-1200.avif" srcset="assets/kitchen-timer/running-600.avif 600w, assets/kitchen-timer/running-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="A count-up and a count-down running, and a count-down that has finished, in orange" loading="lazy"></a></div>
+    <div class="step"><div class="n">3</div><h3>Or just type it</h3><p>Tap the time on a count-down that isn't running and a keypad fills the screen. Type a number and pick <b>hours</b>, <b>mins</b> or <b>secs</b>, or type it as you'd say it: <code>1.5h</code>, <code>90s</code>, <code>1:30</code>, or just <code>5</code> for five minutes.</p>
+      <a class="dev ipad" href="assets/kitchen-timer/keypad.avif" data-w="1133"><img src="assets/kitchen-timer/keypad-1200.avif" srcset="assets/kitchen-timer/keypad-600.avif 600w, assets/kitchen-timer/keypad-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="The full-screen keypad, with 12 minutes entered" loading="lazy"></a></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">When time is up</p>
+    <h2>It keeps counting</h2>
+    <p>A finished count-down doesn't stop at zero and wait for you. It turns orange and counts on, below zero, so when you come back you can see how long ago it finished.</p>
+    <ul class="ticks">
+      <li><b>A ding every 5 seconds</b> until you tap Stop or Reset.</li>
+      <li><b>The whole screen pulses</b>, so you notice it from the other side of the room even with the sound off.</li>
+    </ul>
+  </div>
+  <div><a class="dev ipad" href="assets/kitchen-timer/overtime.avif" data-w="1133"><img src="assets/kitchen-timer/overtime-1200.avif" srcset="assets/kitchen-timer/overtime-600.avif 600w, assets/kitchen-timer/overtime-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="A count-down in overtime at minus 0:15 while the screen pulses" loading="lazy"></a></div>
+</div></section>
+
+<section><div class="wrap split rev">
+  <div class="txt">
+    <p class="kicker">When nothing's running</p>
+    <h2>A clock for the counter</h2>
+    <p>After an hour with no timers running and nobody touching it, Decent Timer switches to a full-screen clock with the day of the week. To get there straight away, tap the clock at the top.</p>
+    <p>The clock drifts a little every minute so it doesn't burn into the screen. It never takes over while a timer is running. Tap anywhere to get the timers back.</p>
+  </div>
+  <div><a class="dev ipad" href="assets/kitchen-timer/clock.avif" data-w="1133"><img src="assets/kitchen-timer/clock-1200.avif" srcset="assets/kitchen-timer/clock-600.avif 600w, assets/kitchen-timer/clock-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 60px), 580px" width="1200" height="788" alt="The full-screen clock: the time, the day, and the Decent Espresso logo" loading="lazy"></a></div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">iPad, iPhone and Mac</p>
+    <h2>Fits whatever you've got</h2>
+    <ul class="ticks">
+      <li><b>iPad, either way up.</b> In landscape each card puts its buttons beside the time; in portrait the cards stand taller, with bigger numbers.</li>
+      <li><b>iPhone</b>, in portrait or landscape, with the start and finish times on each card.</li>
+      <li><b>Mac</b>, as the same app running natively (Mac Catalyst), if you build it yourself.</li>
+      <li><b>The original iPad mini</b> from 2012, still on iOS 9. A separate 32-bit build gives an old iPad a job on the kitchen counter (it needs a jailbroken iPad).</li>
+    </ul>
+  </div>
+  <div><a class="dev phone" href="assets/kitchen-timer/phone.avif" data-w="390"><img src="assets/kitchen-timer/phone-560.avif" srcset="assets/kitchen-timer/phone-280.avif 280w, assets/kitchen-timer/phone-560.avif 560w" sizes="280px" width="560" height="1212" alt="Decent Timer on an iPhone: one count-up and one count-down running, with the start time and ETA" loading="lazy"></a></div>
+</div></section>
+
+<section id="install"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Install</p>
+    <h2>Get it onto your iPad</h2>
+    <p>Decent Timer is installed with <a href="https://johnbuckman.github.io/SideStep/">SideStep</a>, a free Mac app that puts apps on your own iPad or iPhone with your own Apple ID and keeps them signed. Click the button on a Mac with the iPad plugged in. If you don't have SideStep yet, the button offers an installer that sets it up first and walks you through it.</p>
+    <p>Prefer another sideloader? Each <a href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases">GitHub release</a> has an <code>.ipa</code> for AltStore, SideStore and similar apps, and a separate armv7 build for the jailbroken iOS 9 iPad mini.</p>
+  </div>
+  <div class="try">
     <div class="sidestep-install"
          data-repo="johnbuckman/Kitchen-timer-for-old-iPads"
          data-installer="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases/download/installer/decent-timer-installer.zip"></div>
+    <p>Version 1.3 · iOS 15 or newer · iPad and iPhone</p>
+  </div>
+</div></section>
 
-    <h2>Repository</h2>
-    <p>Source: <a class="gh" href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">github.com/johnbuckman/Kitchen-timer-for-old-iPads</a>.
-      Prebuilt installers are attached as GitHub releases: an arm64 sideload <code>.ipa</code> for modern
-      iPads, and an armv7 tarball for the jailbroken iOS 9 build.</p>
-
-  </main>
-  <footer class="foot">
-    <p><a href="./">← John Buckman</a> · <a class="gh" href="https://github.com/johnbuckman">github.com/johnbuckman</a></p>
-  </footer>
-</div>
+<footer><div class="wrap cols">
+  <div>
+    <h4>Decent Timer</h4>
+    <p>A kitchen timer for iPad and iPhone by John Buckman, made at Decent Espresso. Objective-C and UIKit, one source tree that builds for current iPads and iPhones, the Mac, and a 32-bit iPad mini on iOS 9.</p>
+    <p>It collects nothing and makes no network connections.</p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="#install">Install</a></li>
+      <li><a href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/releases">Releases</a></li>
+      <li><a href="https://johnbuckman.github.io/SideStep/">SideStep</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Build it</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/Kitchen-timer-for-old-iPads/issues">Report a problem</a></li>
+      <li><a href="./">← John Buckman</a></li>
+    </ul>
+  </div>
+</div></footer>
 
 <script>
 /* "Install with SideStep" button. If SideStep is installed, opens it on the app's Install
@@ -156,6 +385,44 @@
   function init() { document.querySelectorAll(".sidestep-install").forEach(mount); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
+})();
+</script>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screenshot">
+  <button class="close" aria-label="Close">✕</button>
+  <button class="prev" aria-label="Previous screenshot">‹</button>
+  <img alt="">
+  <div class="cap"></div>
+  <button class="next" aria-label="Next screenshot">›</button>
+</div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll("a.shot,a.dev:not(.hero)")), lb=document.getElementById("lb"),
+      img=lb.querySelector("img"), cap=lb.querySelector(".cap"), i=0, last=null, x0=null;
+  function show(n){
+    i=(n+links.length)%links.length;
+    var a=links[i], alt=a.querySelector("img").alt;
+    img.removeAttribute("style"); img.src=a.href; img.alt=alt;
+    cap.textContent=alt; var s=document.createElement("span"); s.textContent=(i+1)+" / "+links.length; cap.appendChild(s);
+  }
+  // show each at its real on-screen size (data-w points, else half the 2x image), smaller if the window is
+  img.onload=function(){ var w=links[i].getAttribute("data-w"); img.style.width=(w||Math.round(img.naturalWidth/2))+"px"; };
+  function open(n){ last=document.activeElement; show(n); lb.classList.add("on"); document.body.style.overflow="hidden"; lb.querySelector(".next").focus(); }
+  function close(){ lb.classList.remove("on"); document.body.style.overflow=""; if(last) last.focus(); }
+  links.forEach(function(a,n){ a.addEventListener("click",function(e){ e.preventDefault(); open(n); }); });
+  [].forEach.call(document.querySelectorAll("a.dev.hero"),function(a){
+    a.addEventListener("click",function(e){ e.preventDefault();
+      var n=links.findIndex(function(l){ return l.href===a.href; }); open(n<0?0:n); }); });
+  lb.querySelector(".prev").onclick=function(){ show(i-1); };
+  lb.querySelector(".next").onclick=function(){ show(i+1); };
+  lb.querySelector(".close").onclick=close;
+  lb.addEventListener("click",function(e){ if(e.target===lb) close(); });
+  document.addEventListener("keydown",function(e){
+    if(!lb.classList.contains("on")) return;
+    if(e.key==="Escape") close(); else if(e.key==="ArrowLeft") show(i-1); else if(e.key==="ArrowRight") show(i+1);
+  });
+  lb.addEventListener("touchstart",function(e){ x0=e.touches[0].clientX; },{passive:true});
+  lb.addEventListener("touchend",function(e){ if(x0===null) return; var d=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(d)>50) show(d<0?i+1:i-1); });
 })();
 </script>
 </body>
