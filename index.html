@@ -208,11 +208,12 @@ a.linkcard:hover{text-decoration:none;transform:translateY(-3px);box-shadow:0 2p
 a.linkcard p{flex:1;margin-bottom:12px}
 a.linkcard .go{font-weight:650;font-size:15px;color:var(--link)}
 .hero.home{padding:110px 0 70px}
-.hero.home .wrap{display:block}
+.hero.home .wrap{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:start}
+.hero.home .me{width:230px;height:auto;transform:rotate(2.5deg);box-shadow:0 18px 40px rgba(0,0,0,.45);margin-top:-10px}
 .hero.home h1{font-size:60px}
 .hero.home .lead{max-width:30em}
-@media(max-width:900px){ .projects{grid-template-columns:1fr 1fr} .hero.home h1{font-size:44px} }
-@media(max-width:600px){ .projects{grid-template-columns:1fr} }
+@media(max-width:900px){ .projects{grid-template-columns:1fr 1fr} .hero.home h1{font-size:44px} .hero.home .me{width:150px} }
+@media(max-width:600px){ .projects{grid-template-columns:1fr} .hero.home .wrap{grid-template-columns:1fr} .hero.home .me{order:-1;width:120px;margin:0} }
 </style>
 </head>
 <body>
@@ -227,6 +228,7 @@ a.linkcard .go{font-weight:650;font-size:15px;color:var(--link)}
 </div></header>
 
 <div class="hero home"><div class="wrap">
+  <div>
   <h1>John Buckman</h1>
   <p class="lead">Apps and tools I've made, all free and open source.</p>
   <p class="sub">Mac and iPhone apps, an Android app, and a long line of Tcl/Tk ports. Each project page explains what it does, with screenshots; the source, releases and issues are on GitHub.</p>
@@ -234,6 +236,8 @@ a.linkcard .go{font-weight:650;font-size:15px;color:var(--link)}
     <a class="btn" href="#apps">See the apps</a>
     <a class="btn ghost" href="https://github.com/johnbuckman">github.com/johnbuckman</a>
   </div>
+  </div>
+  <img class="me" src="assets/john-buckman.jpg" width="354" height="360" alt="John Buckman, in headphones">
 </div></div>
 
 <section class="alt" id="apps"><div class="wrap">
