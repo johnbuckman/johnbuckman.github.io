@@ -99,7 +99,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
 
 <main class="wrap">
   <aside class="help-apps">
-    <div class="help-apps-title">📦 Get MacCVS</div>
+    <div class="help-apps-title">Get MacCVS</div>
     <div class="help-apps-sub">Free and open source (GPL-3). For Macs running macOS 14 (Sonoma) or newer, Apple silicon or Intel.</div>
     <div class="help-apps-btns">
       <a class="btn" href="https://github.com/johnbuckman/MacCVS/releases"> Download for Mac</a>
@@ -136,7 +136,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
     <div class="help-content">
 
       <section class="help-sec" id="getting-started">
-        <h2>🚀 Getting started</h2>
+        <h2>Getting started</h2>
         <p>Download the latest zip from the <a href="https://github.com/johnbuckman/MacCVS/releases">Releases page</a>, unzip it and drag <b>MacCVS</b> to Applications. It's signed with an Apple Developer ID and notarized by Apple, so it opens like any other app.</p>
         <ul>
           <li><b>Nothing else to install</b> — MacCVS has its own copy of <code>cvs</code> inside the app (CVS 1.11.23, Apple silicon and Intel) and always uses that one. You don't need CVS on your Mac.</li>
@@ -148,7 +148,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="opening">
-        <h2>📂 Opening a working copy</h2>
+        <h2>Opening a working copy</h2>
         <ul>
           <li><b>File ▸ Open Working Copy…</b> (<kbd>⌘O</kbd>) or the <b>Open</b> toolbar button — choose the top folder of a checked-out module (the one with a <code>CVS</code> folder inside).</li>
           <li><b>File ▸ Open Recent</b> — the working copies you've opened before.</li>
@@ -157,7 +157,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="projects">
-        <h2>🗂️ Projects and folders</h2>
+        <h2>Projects and folders</h2>
         <p>The top half of the window is a Finder-style column browser.</p>
         <ul>
           <li><b>The first column lists your projects</b> — every working copy you've opened. Click one to switch to it.</li>
@@ -169,7 +169,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="files">
-        <h2>📄 The file list</h2>
+        <h2>The file list</h2>
         <p>The bottom half lists the files in the chosen folder with their <b>Status</b> and <b>Rev</b> (the revision you have). Click a column heading to sort by it; click again to reverse. Sorting by Status puts the files that need attention at the top.</p>
         <table class="keys">
           <tr><td><span class="status" style="color:#e08a00">M</span> Modified</td><td>You've changed it since your last update or commit.</td></tr>
@@ -190,7 +190,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="changes">
-        <h2>⚡ Seeing what changed</h2>
+        <h2>Seeing what changed</h2>
         <ul>
           <li><b>The moment you save</b> — MacCVS watches the folder you're looking at. Save a file in any editor and it turns to <b>Modified</b> straight away. It decides this the way CVS itself does, by comparing the file's date with the one recorded in <code>CVS/Entries</code>, so there's no wait for the server.</li>
           <li><b>Instant diffs</b> — as soon as a file changes, MacCVS quietly fetches the version you started from and keeps it, so opening the diff later is immediate.</li>
@@ -200,7 +200,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="diff">
-        <h2>🔍 The diff window</h2>
+        <h2>The diff window</h2>
         <p>Select a file and press <b>Diff</b> (<kbd>⌘D</kbd>), or double-click it. Select several files to see all their diffs in one window.</p>
         <img class="help-shot" src="assets/maccvs/diff.png" alt="The MacCVS diff window, side by side">
         <p class="help-shot-cap">Before on the left, after on the right, with the added and removed lines counted in the header.</p>
@@ -215,13 +215,13 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="discard">
-        <h2>↩️ Discarding changes</h2>
+        <h2>Discarding changes</h2>
         <p>Every change (hunk) in the diff window has a <b>Discard</b> button, and every file has <b>Discard all</b>. Discard puts just that part of the file back the way it was in the repository and leaves your other changes alone. The diff redraws at once, and a window with nothing left in it closes by itself.</p>
         <p class="help-note">Discarding changes the file on disk. There's no undo, so look at the hunk first.</p>
       </section>
 
       <section class="help-sec" id="commit">
-        <h2>⬆️ Committing</h2>
+        <h2>Committing</h2>
         <ul>
           <li><b>From the main window</b> — press the <b>Commit</b> button at the top right (<kbd>⌘K</kbd>). The sheet lists every modified, added and removed file in the folder, each with a checkbox. It ticks the files you had selected, or all of them if you hadn't selected any. Write a message and press <b>Commit</b>.</li>
           <li><b>From the diff window</b> — once you've checked the changes, press <b>Commit</b> in the diff window's header to commit exactly the files it shows. The window closes when the commit is done.</li>
@@ -231,7 +231,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="update">
-        <h2>⬇️ Updating</h2>
+        <h2>Updating</h2>
         <ul>
           <li><b>Update</b> (<kbd>⌘U</kbd> or the toolbar button) with <b>nothing selected</b> updates the folder you're looking at (not its sub-folders), picking up new folders and pruning empty ones.</li>
           <li>With <b>files or folders selected</b>, it updates just those (folders with everything inside).</li>
@@ -240,7 +240,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="add-revert">
-        <h2>➕ Adding and reverting</h2>
+        <h2>Adding and reverting</h2>
         <ul>
           <li><b>Add</b> — schedules the selected new files or folders to be added; they go into the repository at your next commit. Turn on Show Non-CVS Files to see new files.</li>
           <li><b>Revert (discard local changes)</b> — throws away your changes to the selected files and replaces them with the repository's copy (<code>cvs update -C</code>; CVS keeps a backup named <code>.#file.revision</code>).</li>
@@ -249,7 +249,7 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="history">
-        <h2>🕘 File history</h2>
+        <h2>File history</h2>
         <p>Select a file and choose <b>Log</b> (<kbd>⌘L</kbd>). The history window lists every revision, newest first: revision number, author, date, lines added and removed, and the commit message.</p>
         <img class="help-shot" src="assets/maccvs/log.png" alt="The MacCVS history window with diffs shown">
         <p class="help-shot-cap">Show diffs adds what each revision changed, under its message.</p>
@@ -257,12 +257,12 @@ pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--panel);border:1p
       </section>
 
       <section class="help-sec" id="console">
-        <h2>🖥️ The console</h2>
+        <h2>The console</h2>
         <p>Every <code>cvs</code> command MacCVS runs is shown at the bottom of the window with its output, so you can see exactly what happened. <b>Clear</b> empties it. Errors from the server (a wrong password, a lock, a conflict) appear here too.</p>
       </section>
 
       <section class="help-sec" id="cli">
-        <h2>⌨️ Command line and difftool</h2>
+        <h2>Command line and difftool</h2>
         <p>MacCVS can be started from Terminal or from other programs:</p>
 <pre>MacCVS=/Applications/MacCVS.app/Contents/MacOS/MacCVS
 "$MacCVS" /path/to/workingcopy     # open a working copy
@@ -276,12 +276,12 @@ git difftool -t maccvs</pre>
       </section>
 
       <section class="help-sec" id="updates">
-        <h2>🔄 Keeping MacCVS up to date</h2>
+        <h2>Keeping MacCVS up to date</h2>
         <p>Once a day MacCVS checks GitHub for a newer release. If there is one it asks you; press <b>Update</b> and it downloads it, checks that Apple notarized it, swaps it in and relaunches. You can also check any time with <b>MacCVS ▸ Check for Updates…</b>.</p>
       </section>
 
       <section class="help-sec" id="keys">
-        <h2>⌨️ Keyboard shortcuts</h2>
+        <h2>Keyboard shortcuts</h2>
         <table class="keys">
           <tr><td><kbd>⌘O</kbd></td><td>Open a working copy</td></tr>
           <tr><td><kbd>⌘R</kbd></td><td>Refresh status (asks the server)</td></tr>
@@ -297,7 +297,7 @@ git difftool -t maccvs</pre>
       </section>
 
       <section class="help-sec" id="limits">
-        <h2>🚧 What it doesn't do</h2>
+        <h2>What it doesn't do</h2>
         <ul>
           <li>No checkout of new modules, no <code>cvs login</code>: do those once in Terminal, then open the working copy.</li>
           <li>No remove, tag, branch, annotate or import commands yet. The console shows what MacCVS runs, so you can do anything else with <code>cvs</code> in Terminal in the same folder.</li>
@@ -306,7 +306,7 @@ git difftool -t maccvs</pre>
       </section>
 
       <section class="help-sec" id="how">
-        <h2>🔧 How it works</h2>
+        <h2>How it works</h2>
         <ul>
           <li><b>A native app over real CVS</b> — MacCVS is written in SwiftUI with AppKit where it matters (the column browser is a real <code>NSBrowser</code>). Every operation runs the bundled <code>cvs</code> program, so your working copies stay ordinary CVS working copies.</li>
           <li><b>Why it exists</b> — the original MacCVS (cvsgui) was a Carbon app that stopped running when macOS dropped Carbon and 32-bit apps, and the other graphical clients are either hard to build on a modern Mac or not native. Plenty of long-lived code still lives in CVS.</li>
