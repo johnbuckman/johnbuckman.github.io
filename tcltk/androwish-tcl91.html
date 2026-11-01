@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AndroWish on Tcl/Tk 9.1: Tcl 9 on Android</title>
-<meta name="description" content="A port of AndroWish, Tcl/Tk on Android, to the Tcl/Tk 9.1.0 release, with all 84 native libraries and the full batteries-included extension set. A signed beta APK (1.0b1) is available.">
+<meta name="description" content="A port of AndroWish, Tcl/Tk on Android, to the Tcl/Tk 9.1.0 release, with all 84 native libraries and the full batteries-included extension set. A signed beta APK (1.0b2) is available.">
 <meta property="og:title" content="AndroWish on Tcl/Tk 9.1: Tcl 9 on Android">
 <meta property="og:description" content="AndroWish rebuilt on Tcl/Tk 9.1.0: a signed arm64 beta APK that installs alongside stock AndroWish.">
 <link rel="stylesheet" href="tcltk.css">
@@ -32,7 +32,7 @@
       <a class="btn" href="https://github.com/johnbuckman/androwish-tcl91/releases">Get the beta APK</a>
       <a class="btn ghost" href="https://github.com/johnbuckman/androwish-tcl91">Source on GitHub</a>
     </div>
-    <div class="fine">Version 1.0b1 (beta) · Tcl/Tk 9.1.0 · arm64 only · well tested in production use by a number of people. Let us know if you find anything still broken or needing improvement.</div>
+    <div class="fine">Version 1.0b2 (beta) · Tcl/Tk 9.1.0 · arm64 only · well tested in production use by a number of people. Let us know if you find anything still broken or needing improvement.</div>
   </div>
   <div class="hero-right">
     <div class="hero-code"><div class="bar"><i></i><i></i><i></i></div><pre>export ANDROID_NDK_HOME=.../ndk/27.3.13750724
@@ -84,10 +84,10 @@ export PATH="$ANDROID_NDK_HOME:$PATH"
   <p class="kicker">Technical details</p>
   <div class="prose">
 <h2 id="what-it-is">What it is</h2>
-<p>A port of <a href="https://www.androwish.org/">AndroWish</a> — Tcl/Tk on Android, via an SDL2 + AGG X11-emulation backend — rebuilt on <strong>Tcl/Tk 9.1.0</strong>, the 9.1 release. It was first built on the 9.1b0 beta (0.1-alpha); 1.0b0 moved it to 9.1.0, and 1.0b1 makes the demos and most of the bundled packages work.</p>
+<p>A port of <a href="https://www.androwish.org/">AndroWish</a> — Tcl/Tk on Android, via an SDL2 + AGG X11-emulation backend — rebuilt on <strong>Tcl/Tk 9.1.0</strong>, the 9.1 release. It was first built on the 9.1b0 beta (0.1-alpha); 1.0b0 moved it to 9.1.0, 1.0b1 made the demos and most of the bundled packages work, and 1.0b2 fixes BLT and Expect.</p>
 <p>Upstream AndroWish ships <strong>Tcl/Tk 8.6.10</strong> on both its <code>trunk</code> and <code>wtf-8-experiment</code> Fossil branches, and there is no Tk-9-on-SDL upstream. The method: take <strong>stock Tk 9.1 <code>generic/</code></strong> and re-insert the SDL-specific regions that Christian Werner guards behind <code>#ifdef PLATFORM_SDL</code> — about 177 markers across 37 files — then port the self-contained <code>sdl/</code> backend (~49k lines) and <code>xlib/</code> (~1.8k lines) to Tk 9.1 internals (<code>Tcl_Size</code>, changed structs, and the Tcl 9 object-based widget-option APIs). It is not a three-way merge: the sdl2tk <code>generic/</code> is forked from an older 8.6.x, so diffing against 8.6.10 is misleading.</p>
 <h2 id="status">Status</h2>
-<p><strong>1.0b1 (beta), on Tcl/Tk 9.1.0.</strong> A signed arm64 APK boots on Android to an interactive Tcl console (File/Edit menu, <code>%</code> prompt) plus a main window with a <strong>Demos</strong> menu whose eight demos all run: borg, Bluetooth LE, the Tk widget demo, Goldberg, Tkzinc, tkpath, zint and vu. All 84 native libraries build against Tcl/Tk 9.1.0 with zero errors. An on-device sweep loads 754 bundled packages, and Tcl's and Tk's own test suites run on the device. Some packages still need porting: Expect crashes when loaded, and nsf/XOTcl, Itcl, Thread, Tclx and Tix don't load yet.</p>
+<p><strong>1.0b2 (beta), on Tcl/Tk 9.1.0.</strong> A signed arm64 APK boots on Android to an interactive Tcl console (File/Edit menu, <code>%</code> prompt) plus a main window with a <strong>Demos</strong> menu whose eight demos all run: borg, Bluetooth LE, the Tk widget demo, Goldberg, Tkzinc, tkpath, zint and vu. All 84 native libraries build against Tcl/Tk 9.1.0 with zero errors. An on-device sweep loads 755 bundled packages and none crashes the app; BLT graphs and Expect work as of 1.0b2. Tcl's and Tk's own test suites run on the device. Some packages still need porting: nsf/XOTcl, Itcl, Thread, Tclx and Tix don't load yet.</p>
 <p>A correction: 1.0b0 and 0.1-alpha said their demos launched. Run one at a time, only the widget demo worked. 1.0b1 fixes the rest.</p>
 <p>Runtime is verified end to end: the Tcl 9.1.0 interpreter runs on Android arm64 (<code>tcl_patchLevel</code> = 9.1.0, bignum arithmetic via libtommath), and the signed APK installs, launches, and renders the Tk root window. Outstanding: a default icon, and the empty placeholder <code>.</code> window.</p>
 <p>A signed build is attached to the project's <a class="gh" href="https://github.com/johnbuckman/androwish-tcl91/releases">Releases</a>.</p>
@@ -115,7 +115,7 @@ export PATH=&quot;$ANDROID_NDK_HOME:$PATH&quot;
 <li><strong>Stale <code>.so</code> repackaging.</strong> Gradle can skip repackaging when a native <code>.so</code> changes outside its task tracking, packaging a stale library. Run the <code>ndk-build</code> step first, then <code>./gradlew --no-daemon assembleRelease --rerun-tasks</code>, and verify the <code>.so</code> inside the APK matches the built one.</li>
 </ul>
 <h2 id="packaging-apk">Packaging (APK)</h2>
-<p>The APK is Tcl/Tk 9.1.0, <strong>arm64-v8a only</strong>, <code>minSdkVersion 21</code>, <code>targetSdkVersion 36</code>, <code>versionName 1.0b1</code>, with <strong>84 native libraries</strong> and the full batteries-included extension set. Its <code>applicationId</code> is <code>tk.tcl.wish.tcl91</code>, so it installs <strong>alongside</strong> stock AndroWish (<code>tk.tcl.wish</code>) rather than replacing it. The release build is 32,452,095 bytes (sha256 <code>bebac259b7…9a6f6</code>), signed with the same key as the earlier releases, so it installs over them.</p>
+<p>The APK is Tcl/Tk 9.1.0, <strong>arm64-v8a only</strong>, <code>minSdkVersion 21</code>, <code>targetSdkVersion 36</code>, <code>versionName 1.0b2</code>, with <strong>84 native libraries</strong> and the full batteries-included extension set. Its <code>applicationId</code> is <code>tk.tcl.wish.tcl91</code>, so it installs <strong>alongside</strong> stock AndroWish (<code>tk.tcl.wish</code>) rather than replacing it. The release build is 32,451,745 bytes (sha256 <code>e0e91ad911…8ad80f</code>), signed with the same key as the earlier releases, so it installs over them.</p>
 <p>Two Android packaging facts:</p>
 <ul>
 <li><strong>Fonts must be staged.</strong> Stock Tk 9.1 omits AndroWish's bundled DejaVu/Symbola faces, so they must be copied into <code>assets/sdl2tk9.1/fonts/</code> (13 files) or font setup fails at first draw.</li>
