@@ -33,7 +33,7 @@
       <a class="btn" href="#install">Install iWish</a>
       <a class="btn ghost" href="https://github.com/johnbuckman/iwish">Source on GitHub</a>
     </div>
-    <div class="fine">Version 0.2.2 (alpha) · free and open source · installs from a Mac with SideStep</div>
+    <div class="fine">Version 0.2.3 (alpha) · free and open source · installs from a Mac with SideStep</div>
   </div>
   <div class="hero-right">
     <div class="hero-shot ipad"><img src="img/iwish-ipad-1120.avif" srcset="img/iwish-ipad-560.avif 560w, img/iwish-ipad-1120.avif 1120w" sizes="(max-width:900px) calc(100vw - 40px), 560px" width="1120" height="783" data-full="img/iwish-ipad.avif" alt="iWish on an iPad: the borg device-bridge demo, the Bluetooth LE debugger connected to a scale, and the Tcl console"></div>
@@ -71,8 +71,8 @@
     <div class="step"><div class="n">3</div><h3>Trust it once</h3><p>On the device, open Settings ▸ General ▸ VPN &amp; Device Management and trust your Apple ID. Then open iWish and pick a demo from <b>File ▸ Demos</b>.</p></div>
   </div>
   <div class="try">
-    <span class="sidestep-install" data-repo="johnbuckman/iwish" data-app="iWish" data-installer="https://github.com/johnbuckman/iwish/releases/download/v0.2.2/iwish-installer.zip"></span>
-    <p>Already use AltStore or SideStore? On the iPhone or iPad, tap <a href="altstore://source?url=https://raw.githubusercontent.com/johnbuckman/iwish/main/altstore.json">Add iWish to AltStore</a> or <a href="sidestore://source?url=https://raw.githubusercontent.com/johnbuckman/iwish/main/altstore.json">Add iWish to SideStore</a>, then tap Get. The <a href="https://github.com/johnbuckman/iwish/releases/tag/v0.2.2">iWish.ipa</a> on GitHub also installs with any sideloader; see <a href="https://github.com/johnbuckman/iwish/blob/main/INSTALL.md">INSTALL.md</a>.</p>
+    <span class="sidestep-install" data-repo="johnbuckman/iwish" data-app="iWish" data-installer="https://github.com/johnbuckman/iwish/releases/download/v0.2.3/iwish-installer.zip"></span>
+    <p>Already use AltStore or SideStore? On the iPhone or iPad, tap <a href="altstore://source?url=https://raw.githubusercontent.com/johnbuckman/iwish/main/altstore.json">Add iWish to AltStore</a> or <a href="sidestore://source?url=https://raw.githubusercontent.com/johnbuckman/iwish/main/altstore.json">Add iWish to SideStore</a>, then tap Get. The <a href="https://github.com/johnbuckman/iwish/releases/tag/v0.2.3">iWish.ipa</a> on GitHub also installs with any sideloader; see <a href="https://github.com/johnbuckman/iwish/blob/main/INSTALL.md">INSTALL.md</a>.</p>
   </div>
 </div></section>
 
@@ -104,7 +104,8 @@
 <li>The core port renders a Tk GUI on the <strong>iOS Simulator</strong>, <strong>Mac Catalyst</strong>, and a <strong>physical iPad</strong>, all screenshot-verified.</li>
 <li>Built with <code>TCL_UTF_MAX=6</code> (UCS-4) so astral-plane characters and arrows render correctly. Stock builds (UTF_MAX=3) garble them; the UTF6 rebuild is verified by the full Tcl and Tk regression suites.</li>
 <li>A Tcl/Tk espresso application (Decent's <code>de1app</code>) has been booted on a physical iPad and connected to a DE1 espresso machine over CoreBluetooth, on-device rather than in the simulator.</li>
-<li>Published as <strong>v0.2-alpha</strong>, then <strong>v0.2.2</strong> with the AltStore/SideStore <code>.framework</code> packaging fix. v0.2.2 is in the SideStep catalog and has a one-click installer (checked by installing it through SideStep on an iPhone 14 Pro Max running iOS 27, October 2026).</li>
+<li>Published as <strong>v0.2-alpha</strong>, then <strong>v0.2.2</strong> with the AltStore/SideStore <code>.framework</code> packaging fix. v0.2.2 went into the SideStep catalog with a one-click installer (checked by installing it through SideStep on an iPhone 14 Pro Max running iOS 27, October 2026).</li>
+<li><strong>v0.2.3</strong> (November 2026) runs <code>Documents/autostart.tcl</code> at launch if there is one; it is now the version SideStep installs.</li>
 </ul>
 <h2 id="whats-included-batteries">What's included (batteries)</h2>
 <p>Every build (device and Catalyst) bundles the AndroWish extension set plus built-in demo apps; the bare runtime is not shipped separately.</p>
