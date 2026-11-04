@@ -86,7 +86,6 @@ b,strong{color:var(--ink)}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
 .alt .card{background:var(--bg)}
-.card .ic{font-size:30px;line-height:1}
 .card h3{font-size:18px;margin:0 0 6px}
 .card p{margin:0;font-size:15.5px}
 
@@ -202,7 +201,6 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
 
 <div class="hero"><div class="wrap">
   <div>
-    <img class="hero-icon" src="assets/decently-fluent/appicon.png" alt="The Decently Fluent app icon">
     <h1>Decently Fluent</h1>
     <p class="lead">Learn a language by reading<br>real books at your level.</p>
     <p class="sub">Pick a classic, or open your own EPUB, PDF or text file, and read it rewritten for your level, from beginner (A1) to the author's own words. English, French, German, Spanish and Italian, with your own language beside it.</p>
@@ -214,7 +212,7 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
   </div>
   <div class="hero-right">
     <div class="hero-shots">
-      <a class="dev phone hero" style="right:60px;left:auto;top:0;width:220px;padding:8px;border-radius:34px" href="assets/decently-fluent/reader.avif" data-w="390" tabindex="-1"><img src="assets/decently-fluent/reader-560.avif" srcset="assets/decently-fluent/reader-280.avif 280w, assets/decently-fluent/reader-560.avif 560w" sizes="280px" width="560" height="1212" alt="Reading in French at B1, with new words highlighted and their meanings underneath"></a>
+      <a class="dev phone hero" style="right:60px;left:auto;top:0;width:220px;padding:8px;border-radius:34px" href="assets/decently-fluent/words.avif" data-w="390" tabindex="-1"><img src="assets/decently-fluent/words-560.avif" srcset="assets/decently-fluent/words-280.avif 280w, assets/decently-fluent/words-560.avif 560w" sizes="280px" width="560" height="1212" alt="Reading a German novella at B1, with new words highlighted and their meanings underneath"></a>
     </div>
   </div>
 </div></div>
@@ -223,19 +221,57 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
   <p class="kicker">How it works</p>
   <h2>A graded reader made from any book</h2>
   <div class="cards">
-    <div class="card"><div class="ic">📚</div><h3>Your level</h3><p>Each page is rewritten following the rules graded-reader publishers use: the words, tenses and sentence lengths of your CEFR level. Change the level at any time, even for one paragraph.</p></div>
-    <div class="card"><div class="ic">🌍</div><h3>Five languages</h3><p>Learn English, French, German, Spanish or Italian, from any of the others. Read books written in the language, or books from your own language retold in it.</p></div>
-    <div class="card"><div class="ic">✍️</div><h3>Real translators first</h3><p>Where Project Gutenberg has a published translation, the app lines it up paragraph by paragraph and uses the translator's words instead of a machine's.</p></div>
-    <div class="card"><div class="ic">🔁</div><h3>Words that come back</h3><p>Tap a word for its meaning. Double-tap one you don't know, and later pages bring it back until you've met it enough times to know it.</p></div>
+    <div class="card"><h3>Your level</h3><p>Each page is rewritten following the rules graded-reader publishers use: the words, tenses and sentence lengths of your CEFR level. Change the level at any time, even for one paragraph.</p></div>
+    <div class="card"><h3>Five languages</h3><p>Learn English, French, German, Spanish or Italian, from any of the others. Read books written in the language, or books from your own language retold in it.</p></div>
+    <div class="card"><h3>Real translators first</h3><p>Where Project Gutenberg has a published translation, the app lines it up paragraph by paragraph and uses the translator's words instead of a machine's.</p></div>
+    <div class="card"><h3>Words that come back</h3><p>Tap a word for its meaning. Double-tap one you don't know, and later pages bring it back until you've met it enough times to know it.</p></div>
   </div>
+</div></section>
+
+<section><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Ready to read</p>
+    <h2>Books already prepared for you</h2>
+    <p>The books the guide recommends most to English speakers learning French or German come with their opening pages already written at A1, A2 and B1. Open <b>Recommended books</b>, pick one, and start reading straight away: no waiting, and no AI key needed for those pages.</p>
+    <p>Each book has a short description, so you can tell what it's about before you choose. A book you already have opens where you left off.</p>
+  </div>
+  <div><a class="dev phone" href="assets/decently-fluent/clip-recommended.avif" data-w="390"><img src="assets/decently-fluent/clip-recommended.avif" width="560" height="1212" alt="Opening Recommended books, choosing a German novella, and reading it at once" loading="lazy"></a></div>
+</div></section>
+
+<section class="alt"><div class="wrap split rev">
+  <div class="txt">
+    <p class="kicker">New words</p>
+    <h2>Meanings where you need them</h2>
+    <p>Show new words and each one is highlighted, with its meaning in small type underneath, so you keep reading instead of reaching for a dictionary. Tap any highlighted word for a card with its meaning; tap a sentence to shade it.</p>
+    <p>Double-tap a word you don't know and it goes on your list of words: later pages use it again until you've learned it.</p>
+  </div>
+  <div><a class="dev phone" href="assets/decently-fluent/clip-words.avif" data-w="390"><img src="assets/decently-fluent/clip-words.avif" width="560" height="1212" alt="Showing new words with their meanings, tapping a sentence, and tapping a word for its meaning" loading="lazy"></a></div>
+</div></section>
+
+<section><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Your level</p>
+    <h2>Change level in a tap</h2>
+    <p>The level menu shows a ticked box beside each level whose next pages are already written, and an hourglass beside those still to be written. Pick one and the page changes at once: here, the same story at B1 and then at A1, with simpler sentences and new words explained.</p>
+  </div>
+  <div><a class="dev phone" href="assets/decently-fluent/clip-levels.avif" data-w="390"><img src="assets/decently-fluent/clip-levels.avif" width="560" height="1212" alt="Choosing A1 from the level menu: the page is rewritten more simply at once" loading="lazy"></a></div>
+</div></section>
+
+<section class="alt"><div class="wrap split rev">
+  <div class="txt">
+    <p class="kicker">Pages</p>
+    <h2>Turns like a book</h2>
+    <p>Swipe, tap the right side of the page, or use the arrow keys and the space bar. Pinch to make the text larger or smaller; on a Mac, use the text size buttons or ⌘+ and ⌘−.</p>
+    <p>Only the next few pages are rewritten as you read, so changing level is cheap and nothing is spent on pages you never reach.</p>
+  </div>
+  <div><a class="dev phone" href="assets/decently-fluent/clip-pages.avif" data-w="390"><img src="assets/decently-fluent/clip-pages.avif" width="560" height="1212" alt="Turning pages by swiping and tapping" loading="lazy"></a></div>
 </div></section>
 
 <section><div class="wrap split">
   <div class="txt">
     <p class="kicker">Side by side</p>
     <h2>Your own language beside it</h2>
-    <p>Turn your phone sideways, or read on an iPad or Mac, and each paragraph has your own language beside it, sized to line up. Tap a sentence and it lights up in both columns.</p>
-    <p>Pages turn like a book: tap the right side, swipe, or use the arrow keys. Pinch to make the text bigger.</p>
+    <p>Turn your phone sideways, or read on an iPad or Mac, and each paragraph has your own language beside it, sized to line up. Tap a sentence on either side and it lights up in both columns, so you can see exactly what it says.</p>
   </div>
   <div><a class="browser" href="assets/decently-fluent/mac.avif" data-w="950" style="border-radius:12px"><img src="assets/decently-fluent/mac-950.avif" srcset="assets/decently-fluent/mac-475.avif 475w, assets/decently-fluent/mac-950.avif 950w" sizes="(max-width:900px) calc(100vw - 40px), 475px" width="950" height="242" alt="Decently Fluent on a Mac: French on the left, English on the right" loading="lazy"></a></div>
 </div></section>
@@ -245,9 +281,9 @@ pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
     <p class="kicker">Finding a book</p>
     <h2>Recommendations grounded in research</h2>
     <p>A short guide asks your language, your level, the stories you like and how long you read each day. It then ranks 38,000 Project Gutenberg books by what research on learning from reading says helps: everyday vocabulary, a length you can finish, short chapters, plenty of dialogue. Mostly Paul Nation's work, with every reason shown and its source.</p>
-    <p>Every recommended book has a short description, and its page shows the plot from Wikipedia. The most recommended books for French and German learners open ready to read: their first pages are already written at A1, A2 and B1. Beyond that, only the next few pages are rewritten as you read, so changing level is cheap and nothing is spent on pages you never reach.</p>
+    <p>Every book has a short description, and its page adds the plot from Wikipedia.</p>
   </div>
-  <div><img src="assets/decently-fluent/ladder.avif" alt="" loading="lazy" style="border-radius:16px;box-shadow:var(--shadow)"></div>
+  <div><a class="dev phone" href="assets/decently-fluent/clip-guide.avif" data-w="390"><img src="assets/decently-fluent/clip-guide.avif" width="560" height="1212" alt="Books for you: recommendations with descriptions and the reasons each one fits" loading="lazy"></a></div>
 </div></section>
 
 <section id="install"><div class="wrap split">
