@@ -188,7 +188,7 @@ table.speed td.b{color:var(--ink);font-weight:650}
     <h1>Blink</h1>
     <p class="lead">A file viewer that's open before you've finished double-clicking.</p>
     <p class="sub">Pictures, PDFs, spreadsheets, Word documents, email, GPS routes, video, audio, text and Markdown, each in its own window. Zoom in, zoom out, fit to the window. That's all it does, so it starts in about half the time Preview takes.</p>
-    <p class="sub"><b style="color:#fff">Built for showing an AI what you mean.</b> Crop a picture or a paused video frame, point at things with labelled arrows and boxes, and save. The saved file tells the AI, in plain words, what you marked, where each mark points and exactly which file (and which video frame) it came from.</p>
+    <p class="sub"><b style="color:#fff">Built for showing an AI what you mean.</b> Crop a picture or a paused video frame, point at things with labelled arrows and boxes, and save. Blink writes a plain-words note into the saved image&rsquo;s metadata (its EXIF, IPTC and PNG description fields), telling the AI what you marked, where each mark points and exactly which file (and which video frame) it came from.</p>
     <div class="btns">
       <a class="btn" href="https://github.com/johnbuckman/blink/releases/latest"> Download for Mac</a>
       <a class="btn ghost" href="#formats">What it opens</a>
@@ -275,13 +275,13 @@ table.speed td.b{color:var(--ink);font-weight:650}
   <div class="txt">
     <p class="kicker">Crop, arrows and boxes</p>
     <h2>Show an AI what you mean</h2>
-    <p>Blink is made for annotating pictures and video stills for AI models to read. A screenshot with a labelled arrow says far more to an AI than the same screenshot with a paragraph of explanation, and Blink also writes down what you marked inside the file. Drag on a picture to choose an area, and <b>Crop</b> (<kbd>⌘K</kbd>) saves just that part next to the original. Turn on <b>Arrow</b> (<kbd>⇧⌘A</kbd>) or <b>Box</b> (<kbd>⇧⌘B</kbd>), drag to draw one, then type to label it. <b>Save</b> (<kbd>⌘S</kbd>) writes a copy with your marks on it.</p>
+    <p>Blink is made for annotating pictures and video stills for AI models to read. A screenshot with a labelled arrow says far more to an AI than the same screenshot with a paragraph of explanation, and Blink also writes what you marked into the image&rsquo;s metadata. Drag on a picture to choose an area, and <b>Crop</b> (<kbd>⌘K</kbd>) saves just that part next to the original. Turn on <b>Arrow</b> (<kbd>⇧⌘A</kbd>) or <b>Box</b> (<kbd>⇧⌘B</kbd>), drag to draw one, then type to label it. <b>Save</b> (<kbd>⌘S</kbd>) writes a copy with your marks on it.</p>
     <ul class="ticks">
       <li><b>Arrows that stand out:</b> each arrow's colour is chosen to show up against the picture and to differ from the other arrows. Arrows curve gently and are slightly see-through.</li>
       <li><b>Labels on the line:</b> an arrow's label follows its curve, and a box's label sits on its top edge. Both shrink or wrap to fit.</li>
       <li><b>Mark up video:</b> while a video plays, choose Arrow or Box and it pauses on that frame. Save keeps the marked still next to the video, noting the exact time, frame number and timecode. Keep the tool chosen and drag on the video again for the next one.</li>
       <li><b>Change it later:</b> drag an arrow's ends (even off the edge of the picture) or a box's corners. Reopen a saved copy and its marks are still editable.</li>
-      <li><b>Ready for AI:</b> the saved file says in plain words what was cropped and where each arrow or box is, with its label and the original's path. The new file's path is copied, ready to paste into a chat.</li>
+      <li><b>Ready for AI:</b> the note goes in the saved image&rsquo;s metadata, not in the picture: the EXIF User Comment, the TIFF Image Description, the IPTC Caption and, for PNGs, the PNG Description. It says what was cropped and where each arrow or box is, with its label, the original&rsquo;s full path and, for a video still, the time, frame number and timecode. The new file&rsquo;s path is copied, ready to paste into a chat. An AI reads the note when it opens the file itself (as Claude Code does). Pasting just the picture into a chat may drop the metadata, but the marks drawn on the picture still show.</li>
     </ul>
   </div>
   <div>
