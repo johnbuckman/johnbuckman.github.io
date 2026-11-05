@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blink</title>
+<meta name="description" content="Blink is a free Mac file viewer that opens instantly: images (animated GIF and AVIF too), PDF, CSV, Excel, email, GPX routes on OpenStreetMap, video, audio, text and Markdown. One window per file, zoom in, out and to fit.">
+<link rel="icon" href="assets/blink/appicon.png">
+<meta property="og:title" content="Blink: a Mac file viewer that opens instantly">
+<meta property="og:description" content="A free, open-source viewer for images, PDF, CSV, Excel, email, GPX, video, audio, text and Markdown.">
+<meta property="og:image" content="https://johnbuckman.github.io/assets/blink/photo_fit-1200.avif">
+<style>
+/* Same look as the MacCVS and SideStep pages; hero in Blink's indigo. */
+:root{
+  --bg:#fdf9f3; --panel:#fff; --ink:#1c1c1c; --ink-soft:#55524c; --muted:#8a8579;
+  --line:#ece6db; --line-strong:#ddd5c7; --accent:#e8902a; --accent-ink:#b8650c; --link:#1d64c2; --btn:#16a34a;
+  --hero1:#5c48ee; --hero2:#34249f; --hero3:#161254;
+  --shadow:0 1px 2px rgba(40,30,10,.06), 0 8px 24px rgba(40,30,10,.07);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+    --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+  --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.top{position:absolute;inset:0 0 auto;z-index:3}
+.top .wrap{display:flex;align-items:center;gap:22px;padding-top:16px;padding-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:18px}
+.brand img{width:30px;height:30px}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:15px}
+.top nav a{color:rgba(255,255,255,.85)}
+
+/* hero */
+.hero{background:radial-gradient(120% 100% at 25% 15%,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%);color:#fff;padding:110px 0 80px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center}
+.hero-icon{width:96px;height:96px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.hero h1{font-size:64px;line-height:1.05;letter-spacing:-.02em;margin:18px 0 14px}
+.hero .lead{font-size:24px;line-height:1.35;margin:0 0 14px;color:#fff}
+.hero .sub{font-size:17px;color:rgba(255,255,255,.8);margin:0 0 26px;max-width:30em}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:650;font-size:16px;background:var(--btn);color:#fff}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3)}
+.fine{margin-top:16px;font-size:14px;color:rgba(255,255,255,.65)}
+.hero-shots{position:relative;height:500px}
+.hero-shots .mac{position:absolute;display:block;cursor:zoom-in;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;background:#fff}
+.hero-shots .back{right:0;top:0;width:430px}
+.hero-shots .front{left:0;top:140px;width:420px}
+
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:18px}
+.hero-right .hero-shots{width:100%}
+.watch{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:15px;font-weight:600}
+.watch:hover{text-decoration:none;background:rgba(0,0,0,.5)}
+.watch .play{width:30px;height:30px;border-radius:50%;background:#e62117;display:flex;align-items:center;justify-content:center;padding-left:2px}
+.watch .len{font-weight:500;color:rgba(255,255,255,.65);white-space:nowrap}
+
+/* sections */
+section{padding:70px 0}
+section.alt{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2{font-size:36px;letter-spacing:-.015em;line-height:1.15;margin:0 0 12px}
+.kicker{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 8px}
+.intro{color:var(--ink-soft);font-size:19px;max-width:44em;margin:0 0 34px}
+p{color:var(--ink-soft)}
+b,strong{color:var(--ink)}
+
+.video{border-radius:16px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#000;aspect-ratio:16/9}
+.video iframe{width:100%;height:100%;border:0;display:block}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.alt .card{background:var(--bg)}
+.card .ic{font-size:30px;line-height:1}
+.card h3{font-size:18px;margin:0 0 6px}
+.card p{margin:0;font-size:15.5px}
+
+.steps{display:grid;gap:56px}
+.step{display:grid;grid-template-columns:1fr 1.5fr;grid-template-rows:auto auto 1fr;column-gap:48px;align-items:start}
+.step > .shot{grid-column:2;grid-row:1/4}
+.step .n{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step h3{font-size:20px;margin:12px 0 4px}
+.step p{margin:0 0 16px;font-size:16px}
+.shot{display:block;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff;overflow:hidden;cursor:zoom-in;transition:transform .15s,box-shadow .15s}
+.shot:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(40,30,10,.08),0 14px 32px rgba(40,30,10,.12)}
+.shot img{width:100%}
+.shot + .shot{margin-top:18px}
+
+.split{display:grid;grid-template-columns:1fr 1.5fr;gap:48px;align-items:center}
+.split.rev{grid-template-columns:1.5fr 1fr}
+.split > *{min-width:0}
+.split.rev .txt{order:2}
+ul.ticks{list-style:none;padding:0;margin:18px 0 0}
+ul.ticks li{position:relative;padding-left:32px;margin:12px 0;color:var(--ink-soft)}
+ul.ticks li::before{content:"✓";position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,.14);color:var(--btn);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pills span{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:15px;color:var(--ink-soft)}
+.alt .pills span{background:var(--bg)}
+
+pre{background:#1d1b18;color:#ece7dd;border-radius:12px;padding:18px 20px;overflow-x:auto;font:14px/1.6 ui-monospace,Menlo,monospace;box-shadow:var(--shadow);margin:18px 0}
+pre .c{color:#8f897d}
+table.keys{border-collapse:collapse;width:100%;font-size:15.5px}
+table.keys td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+kbd{font:13px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:6px;padding:1px 7px;color:var(--ink)}
+.alt kbd{background:var(--bg)}
+
+footer{padding:44px 0 60px;color:var(--muted);font-size:14.5px}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+footer h4{color:var(--ink);font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+footer p{color:var(--muted);margin:0 0 8px}
+footer a{color:var(--ink-soft)}
+footer ul{list-style:none;padding:0;margin:0}
+footer li{margin:6px 0}
+code{font:14px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.alt code{background:var(--bg)}
+pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
+
+@media(max-width:900px){
+  .hero .wrap,.split,.split.rev{grid-template-columns:1fr}
+  .split.rev .txt{order:0}
+  .hero-shots{display:none}
+  .hero-right{align-items:flex-start}
+  .hero h1{font-size:48px}
+  .cards{grid-template-columns:1fr 1fr}
+  .step{grid-template-columns:1fr;grid-template-rows:none}
+  .step > .shot{grid-column:auto;grid-row:auto}
+  footer .cols{grid-template-columns:1fr}
+  .top nav a:not(.keep){display:none}
+  h2{font-size:30px}
+}
+@media(max-width:560px){ .watch .len{display:none} .cards{grid-template-columns:1fr} .wrap{padding:0 16px} }
+
+/* lightbox: click a screenshot to see it full size; chevrons, arrow keys or swipe for the others */
+.lb{position:fixed;inset:0;z-index:20;background:rgba(12,10,8,.88);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px 70px}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:calc(100vh - 110px);width:auto;height:auto;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#fff}
+.lb .cap{color:rgba(255,255,255,.85);font-size:15px;text-align:center;max-width:46em}
+.lb .cap span{color:rgba(255,255,255,.5);margin-left:10px}
+.lb button{position:absolute;border:0;background:rgba(255,255,255,.12);color:#fff;width:48px;height:48px;border-radius:50%;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb button:hover{background:rgba(255,255,255,.24)}
+.lb .prev{left:12px;top:50%;transform:translateY(-50%)}
+.lb .next{right:12px;top:50%;transform:translateY(-50%)}
+.lb .close{right:12px;top:12px;width:40px;height:40px;font-size:22px}
+@media(max-width:560px){ .lb{padding:56px 10px 80px} .lb .prev,.lb .next{top:auto;bottom:16px;transform:none} .lb .prev{left:calc(50% - 60px)} .lb .next{right:calc(50% - 60px)} }
+.formats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+.formats .card h3{display:flex;gap:8px;align-items:baseline}
+.formats .card h3 small{font-weight:500;color:var(--muted);font-size:13px}
+table.speed{border-collapse:collapse;width:100%;font-size:16px;margin-top:6px}
+table.speed th,table.speed td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;color:var(--ink-soft)}
+table.speed th{color:var(--ink);font-weight:650}
+table.speed td.b{color:var(--ink);font-weight:650}
+@media(max-width:900px){ .formats{grid-template-columns:1fr 1fr} }
+@media(max-width:560px){ .formats{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="assets/blink/appicon.png" alt="">Blink</a>
+  <nav>
+    <a href="#video">Video</a>
+    <a href="#formats" class="keep">Formats</a>
+    <a href="https://github.com/johnbuckman/blink">GitHub</a>
+    <a href="./">John Buckman</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
+    <img class="hero-icon" src="assets/blink/appicon.png" alt="The Blink app icon">
+    <h1>Blink</h1>
+    <p class="lead">A file viewer that's open before you've finished double-clicking.</p>
+    <p class="sub">Pictures, PDFs, spreadsheets, email, GPS routes, video, audio, text and Markdown, each in its own window. Zoom in, zoom out, fit to the window. That's all it does, so it starts in about half the time Preview takes.</p>
+    <div class="btns">
+      <a class="btn" href="https://github.com/johnbuckman/blink/releases/latest"> Download for Mac</a>
+      <a class="btn ghost" href="#formats">What it opens</a>
+    </div>
+    <div class="fine">macOS 14 or newer · Apple silicon · notarized · free and open source (GPL-3.0)</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-shots">
+      <a class="mac back shot-hero" href="assets/blink/md.avif" tabindex="-1"><img src="assets/blink/md-1200.avif" srcset="assets/blink/md-600.avif 600w, assets/blink/md-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="675" alt="A Markdown file: the source on the left, the formatted page on the right"></a>
+      <a class="mac front shot-hero" href="assets/blink/photo_fit.avif" tabindex="-1"><img src="assets/blink/photo_fit-1200.avif" srcset="assets/blink/photo_fit-600.avif 600w, assets/blink/photo_fit-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="A photo fitted to its window"></a>
+    </div>
+    <a class="watch" href="https://youtu.be/Z-NQ1eq2bOM"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Watch the explainer video on YouTube <span class="len">1.5 min</span></a>
+  </div>
+</div></div>
+
+<section class="alt"><div class="wrap">
+  <p class="kicker">What it's for</p>
+  <h2>Look at a file, then get on with it</h2>
+  <p class="intro">Preview, QuickTime, Excel and Mail each take a second or more to start, just to show you something. Blink shows it straight away.</p>
+  <div class="cards">
+    <div class="card"><h3>Fast to open</h3><p>About 0.6 s from a double-click to the picture when Blink isn't running, and about 0.2 s when it is. Preview takes 1 to 1.2 s.</p></div>
+    <div class="card"><h3>One window per file</h3><p>Open five files and you get five windows, each named after its file. Opening a file that's already open brings its window forward.</p></div>
+    <div class="card"><h3>Zoom in, out and to fit</h3><p>The same four buttons and keys in every window: <kbd>⌘+</kbd> <kbd>⌘−</kbd> <kbd>⌘0</kbd> <kbd>⌘1</kbd>.</p></div>
+    <div class="card"><h3>Out of the way</h3><p>Close the last window and Blink leaves the Dock and waits as an eye in the menu bar, ready for the next file.</p></div>
+  </div>
+</div></section>
+
+<section id="video"><div class="wrap">
+  <p class="kicker">90-second tour</p>
+  <h2>See it working</h2>
+  <p class="intro">Opening files, zoom, animations, PDF, CSV and Excel, email, GPS routes, Markdown, video and sound, and the menu bar.</p>
+  <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/Z-NQ1eq2bOM" title="Blink explainer video" loading="lazy"
+    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+</div></section>
+
+<section id="formats"><div class="wrap">
+  <p class="kicker">Formats</p>
+  <h2>What it opens</h2>
+  <p class="intro">Each kind of file gets the view that suits it. Blink can be the default app for all of them, so a double-click in Finder opens Blink.</p>
+  <div class="formats">
+    <div class="card"><h3>Pictures <small>jpg png heic avif tiff webp</small></h3><p>Opens at a size that fits the screen. Rotated phone photos come up the right way round. Multi-page TIFFs show every page.</p></div>
+    <div class="card"><h3>Animations <small>gif avif</small></h3><p>Animated GIF and AVIF play, each frame for as long as the file says.</p></div>
+    <div class="card"><h3>PDF</h3><p>Every page in one scrolling column, with text you can select and copy.</p></div>
+    <div class="card"><h3>Tables <small>csv xlsx</small></h3><p>A grid with row numbers. Excel files show their values and one tab per sheet.</p></div>
+    <div class="card"><h3>Email <small>eml</small></h3><p>The message, its pictures and its attachments. Images from the internet stay blocked until you ask for them.</p></div>
+    <div class="card"><h3>GPS routes <small>gpx</small></h3><p>The route on OpenStreetMap or a topographic map, with distance, climb and time.</p></div>
+    <div class="card"><h3>Markdown <small>md</small></h3><p>The text and the formatted page side by side. Both update when the file is saved.</p></div>
+    <div class="card"><h3>Video and audio <small>mp4 m4a</small></h3><p>Apple's standard player controls. Space plays and pauses.</p></div>
+    <div class="card"><h3>Text <small>txt and anything else</small></h3><p>Plain text in a fixed-width font, in whatever encoding the file uses.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Pictures</p>
+    <h2>Fit, zoom, actual size</h2>
+    <p>A picture opens fitted to its window and keeps fitting as you resize the window. Zoom in and you can scroll around it; <b>1:1</b> shows it at its real size.</p>
+    <ul class="ticks">
+      <li><b>Zoom steps</b> like Preview's, up to 32×, with sharp pixels when you're close in.</li>
+      <li><b>Pinch</b> on a trackpad to zoom smoothly.</li>
+      <li><b>Animated GIF and AVIF</b> play as soon as they open.</li>
+    </ul>
+  </div>
+  <div>
+    <a class="shot" href="assets/blink/photo_zoomed.avif"><img src="assets/blink/photo_zoomed-1200.avif" srcset="assets/blink/photo_zoomed-600.avif 600w, assets/blink/photo_zoomed-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="The same photo zoomed in, with scroll bars" loading="lazy"></a>
+    <a class="shot" href="assets/blink/gif-window.webp"><img src="assets/blink/gif-window.webp" width="900" height="640" alt="An animated GIF playing in Blink" loading="lazy"></a>
+  </div>
+</div></section>
+
+<section><div class="wrap split rev">
+  <div class="txt">
+    <p class="kicker">Markdown</p>
+    <h2>The text and the page, side by side</h2>
+    <p>On the left, the Markdown as written. On the right, the page it makes, with tables, task lists and code blocks the way GitHub shows them.</p>
+    <p>Scroll either side and the other follows. Save the file in your editor and both sides update, keeping your place. Drag the divider to give either side more room.</p>
+  </div>
+  <div>
+    <a class="shot" href="assets/blink/md.avif"><img src="assets/blink/md-1200.avif" srcset="assets/blink/md-600.avif 600w, assets/blink/md-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="675" alt="Markdown source and formatted page side by side" loading="lazy"></a>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">GPS routes</p>
+    <h2>Where the walk went</h2>
+    <p>A GPX file opens as a map, zoomed to fit the route. Start and end are flagged, and named waypoints are pinned. Along the bottom: the route's name, distance, total climb and time taken.</p>
+    <ul class="ticks">
+      <li><b>Map</b> is OpenStreetMap; <b>Topo</b> is OpenTopoMap, with contour lines and hill shading.</li>
+      <li>Map tiles are kept on disk, so a route you've opened before shows at once.</li>
+    </ul>
+  </div>
+  <div>
+    <a class="shot" href="assets/blink/gpx_topo.avif"><img src="assets/blink/gpx_topo-1200.avif" srcset="assets/blink/gpx_topo-600.avif 600w, assets/blink/gpx_topo-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="A walk round a reservoir on the topographic map, with waypoints and the route summary" loading="lazy"></a>
+  </div>
+</div></section>
+
+<section><div class="wrap split rev">
+  <div class="txt">
+    <p class="kicker">Email</p>
+    <h2>Read a saved message without opening Mail</h2>
+    <p>From, to, date and subject at the top, then the message as it was sent, with the pictures that came with it. Click an attachment to open it.</p>
+    <p>Pictures linked from the internet, the kind used to tell a sender you opened their message, stay blocked. Press <b>Load Remote Images</b> if you want them.</p>
+  </div>
+  <div>
+    <a class="shot" href="assets/blink/email.avif"><img src="assets/blink/email-1200.avif" srcset="assets/blink/email-600.avif 600w, assets/blink/email-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="An email with its headers, a picture and an attachment button" loading="lazy"></a>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Tables</p>
+    <h2>CSV and Excel files</h2>
+    <p>CSV files open as a grid with the first line as column headings. Commas, semicolons and tabs all work, and quoted text can hold any of them.</p>
+    <p>Excel files show column letters and row numbers like Excel, with a tab for each sheet. Zoom makes the text bigger or smaller.</p>
+  </div>
+  <div>
+    <a class="shot" href="assets/blink/csv.avif"><img src="assets/blink/csv-1200.avif" srcset="assets/blink/csv-600.avif 600w, assets/blink/csv-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="A CSV file of bakery sales as a grid" loading="lazy"></a>
+    <a class="shot" href="assets/blink/xlsx.avif"><img src="assets/blink/xlsx-1200.avif" srcset="assets/blink/xlsx-600.avif 600w, assets/blink/xlsx-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="An Excel price list with column letters and row numbers" loading="lazy"></a>
+  </div>
+</div></section>
+
+<section><div class="wrap split rev">
+  <div class="txt">
+    <p class="kicker">PDF and video</p>
+    <h2>Documents and movies</h2>
+    <p>PDFs scroll as one long column of pages, fitted to the window's width. Videos open at their own size, shrunk if they're bigger than the screen; zooming makes the window bigger or smaller.</p>
+  </div>
+  <div>
+    <a class="shot" href="assets/blink/pdf.avif"><img src="assets/blink/pdf-1200.avif" srcset="assets/blink/pdf-600.avif 600w, assets/blink/pdf-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="A two-page PDF menu" loading="lazy"></a>
+    <a class="shot" href="assets/blink/video.avif"><img src="assets/blink/video-1200.avif" srcset="assets/blink/video-600.avif 600w, assets/blink/video-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="703" alt="A video in Blink" loading="lazy"></a>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Speed</p>
+    <h2>How fast is fast</h2>
+    <p>Time from opening a file to its window appearing, on a MacBook Air M4 with macOS 26.</p>
+    <table class="speed">
+      <tr><th></th><th>Blink</th><th>Preview</th></tr>
+      <tr><td>Picture, app not running</td><td class="b">0.6 s</td><td>1.0 s</td></tr>
+      <tr><td>PDF, app not running</td><td class="b">0.6 s</td><td>1.2 s</td></tr>
+      <tr><td>Picture, app already running</td><td class="b">0.23 s</td><td>0.64 s</td></tr>
+    </table>
+    <p>An app that does nothing at all takes about 0.5 s to show a window on the same Mac, so there isn't much left to save on a cold start. Blink stays running instead: it starts at login and waits in the menu bar.</p>
+  </div>
+  <div>
+    <p class="kicker">How</p>
+    <h2>Why it starts quickly</h2>
+    <ul class="ticks">
+      <li>A plain AppKit app: no document framework, no saved window state to restore.</li>
+      <li>The program itself only knows pictures, text and tables. PDF, web pages, maps and video live in a separate library that loads the first time you open one of those.</li>
+      <li>The zoom buttons are text, not icons: loading the icon font cost 70 ms.</li>
+    </ul>
+  </div>
+</div></section>
+
+<section><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Keyboard</p>
+    <h2>Shortcuts</h2>
+    <table class="keys">
+      <tr><td><kbd>⌘+</kbd> or <kbd>⌘=</kbd></td><td>Zoom in</td></tr>
+      <tr><td><kbd>⌘−</kbd></td><td>Zoom out</td></tr>
+      <tr><td><kbd>⌘0</kbd></td><td>Zoom to fit</td></tr>
+      <tr><td><kbd>⌘1</kbd></td><td>Actual size</td></tr>
+      <tr><td><kbd>⌘O</kbd></td><td>Open a file</td></tr>
+      <tr><td><kbd>⇧⌘R</kbd></td><td>Show the file in Finder</td></tr>
+      <tr><td><kbd>⌃⌘F</kbd></td><td>Full screen</td></tr>
+      <tr><td><kbd>Space</kbd></td><td>Play or pause (video and audio)</td></tr>
+    </table>
+  </div>
+  <div>
+    <p class="kicker">Good to know</p>
+    <h2>What it doesn't do</h2>
+    <p>Blink only shows files. It doesn't edit, mark up, rotate, crop, export or print; use Preview for those. <b>File ▸ Open in Preview</b> hands the file over.</p>
+    <p>Excel files show cell values, not colours, charts or formatting. Other Office files (Word, PowerPoint, Numbers) open in Apple's Quick Look view. To make Blink the default for a kind of file, use Finder's <b>Get Info ▸ Open with ▸ Change All</b>.</p>
+    <div class="pills"><span>One window per file</span><span>Menu-bar icon</span><span>Opens at login</span><span>Offline except maps and images you ask for</span></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h4>Blink</h4>
+    <p>A native macOS file viewer, written in Swift with AppKit, by John Buckman. Markdown is rendered with cmark-gfm. Map data © OpenStreetMap contributors; topographic style © OpenTopoMap (CC-BY-SA).</p>
+    <p>Open source under the GNU GPL v3.0. Screenshots use made-up demo files.</p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/blink/releases/latest">Download</a></li>
+      <li><a href="https://youtu.be/Z-NQ1eq2bOM">The video tour</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Build it</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/blink">Source on GitHub</a></li>
+      <li><a href="https://github.com/johnbuckman/blink/issues">Report a problem</a></li>
+      <li><a href="./">← John Buckman</a></li>
+    </ul>
+  </div>
+</div></footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screenshot">
+  <button class="close" aria-label="Close">✕</button>
+  <button class="prev" aria-label="Previous screenshot">‹</button>
+  <img alt="">
+  <div class="cap"></div>
+  <button class="next" aria-label="Next screenshot">›</button>
+</div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll("a.shot")), lb=document.getElementById("lb"),
+      img=lb.querySelector("img"), cap=lb.querySelector(".cap"), i=0, last=null, x0=null;
+  function show(n){
+    i=(n+links.length)%links.length;
+    var a=links[i], alt=a.querySelector("img").alt;
+    img.removeAttribute("style"); img.src=a.href; img.alt=alt;
+    cap.textContent=alt; var s=document.createElement("span"); s.textContent=(i+1)+" / "+links.length; cap.appendChild(s);
+  }
+  // the AVIFs are 2x: show them at their real on-screen size, smaller if the window is
+  img.onload=function(){ img.style.width=Math.round(img.naturalWidth/2)+"px"; };
+  function open(n){ last=document.activeElement; show(n); lb.classList.add("on"); document.body.style.overflow="hidden"; lb.querySelector(".next").focus(); }
+  function close(){ lb.classList.remove("on"); document.body.style.overflow=""; if(last) last.focus(); }
+  links.forEach(function(a,n){ a.addEventListener("click",function(e){ e.preventDefault(); open(n); }); });
+  [].forEach.call(document.querySelectorAll("a.shot-hero"),function(a){
+    a.addEventListener("click",function(e){ e.preventDefault();
+      var n=links.findIndex(function(l){ return l.href===a.href; }); open(n<0?0:n); }); });
+  lb.querySelector(".prev").onclick=function(){ show(i-1); };
+  lb.querySelector(".next").onclick=function(){ show(i+1); };
+  lb.querySelector(".close").onclick=close;
+  lb.addEventListener("click",function(e){ if(e.target===lb) close(); });
+  document.addEventListener("keydown",function(e){
+    if(!lb.classList.contains("on")) return;
+    if(e.key==="Escape") close(); else if(e.key==="ArrowLeft") show(i-1); else if(e.key==="ArrowRight") show(i+1);
+  });
+  lb.addEventListener("touchstart",function(e){ x0=e.touches[0].clientX; },{passive:true});
+  lb.addEventListener("touchend",function(e){ if(x0===null) return; var d=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(d)>50) show(d<0?i+1:i-1); });
+})();
+</script>
+</body>
+</html>
