@@ -279,7 +279,7 @@ table.speed td.b{color:var(--ink);font-weight:650}
     <ul class="ticks">
       <li><b>Arrows that stand out:</b> each arrow's colour is chosen to show up against the picture and to differ from the other arrows. Arrows curve gently and are slightly see-through.</li>
       <li><b>Labels on the line:</b> an arrow's label follows its curve, and a box's label sits on its top edge. Both shrink or wrap to fit.</li>
-      <li><b>Mark up video:</b> while a video plays, choose Arrow or Box and it pauses on that frame. Save keeps the marked still next to the video, noting the exact time, frame number and timecode. Keep the tool chosen and drag on the video again for the next one.</li>
+      <li><b>Mark up video:</b> pause a video and the frame comes up ready to mark up, with Arrow chosen. Use <kbd>←</kbd> <kbd>→</kbd> to step a second (<kbd>⇧</kbd> a tenth, <kbd>⌥</kbd> ten seconds) to find the exact frame. Save keeps the marked still next to the video, noting the exact time, frame number and timecode, then carries on playing.</li>
       <li><b>Change it later:</b> drag an arrow's ends (even off the edge of the picture) or a box's corners. Reopen a saved copy and its marks are still editable.</li>
       <li><b>Ready for AI:</b> the note goes in the saved image&rsquo;s metadata, not in the picture: the EXIF User Comment, the TIFF Image Description, the IPTC Caption and, for PNGs, the PNG Description. It says what was cropped and where each arrow or box is, with its label, the original&rsquo;s full path and, for a video still, the time, frame number and timecode. The new file&rsquo;s path is copied, ready to paste into a chat. An AI reads the note when it opens the file itself (as Claude Code does). Pasting just the picture into a chat may drop the metadata, but the marks drawn on the picture still show.</li>
     </ul>
@@ -382,6 +382,9 @@ table.speed td.b{color:var(--ink);font-weight:650}
       <tr><td><kbd>⇧⌘A</kbd></td><td>Draw arrows on a picture; type to label one</td></tr>
       <tr><td><kbd>⇧⌘B</kbd></td><td>Draw boxes on a picture; type to label one</td></tr>
       <tr><td><kbd>⌘S</kbd></td><td>Save a copy of the picture with its arrows and boxes</td></tr>
+      <tr><td><kbd>⇧⌘P</kbd></td><td>Open the picture or PDF in Preview</td></tr>
+      <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Step a paused video 1 s (with <kbd>⇧</kbd> 0.1 s, with <kbd>⌥</kbd> 10 s)</td></tr>
+      <tr><td><kbd>⌘</kbd> held</td><td>Show each button's shortcut on it</td></tr>
       <tr><td><kbd>⌘O</kbd></td><td>Open a file</td></tr>
       <tr><td><kbd>⌘Q</kbd></td><td>Close all Blink windows. Blink keeps waiting in the menu bar; to really quit, use Quit in the eye icon's menu.</td></tr>
       <tr><td><kbd>⇧⌘R</kbd></td><td>Show the file in Finder</td></tr>
