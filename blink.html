@@ -187,7 +187,7 @@ table.speed td.b{color:var(--ink);font-weight:650}
     <img class="hero-icon" src="assets/blink/appicon.png" alt="The Blink app icon">
     <h1>Blink</h1>
     <p class="lead">A file viewer that's open before you've finished double-clicking.</p>
-    <p class="sub">Pictures, PDFs, spreadsheets, email, GPS routes, video, audio, text and Markdown, each in its own window. Zoom in, zoom out, fit to the window. That's all it does, so it starts in about half the time Preview takes.</p>
+    <p class="sub">Pictures, PDFs, spreadsheets, Word documents, email, GPS routes, video, audio, text and Markdown, each in its own window. Zoom in, zoom out, fit to the window. That's all it does, so it starts in about half the time Preview takes.</p>
     <div class="btns">
       <a class="btn" href="https://github.com/johnbuckman/blink/releases/latest"> Download for Mac</a>
       <a class="btn ghost" href="#formats">What it opens</a>
@@ -235,8 +235,9 @@ table.speed td.b{color:var(--ink);font-weight:650}
     <div class="card"><h3>Email <small>eml</small></h3><p>The message, its pictures and its attachments. Images from the internet stay blocked until you ask for them.</p></div>
     <div class="card"><h3>GPS routes <small>gpx</small></h3><p>The route on OpenStreetMap or a topographic map, with distance, climb and time.</p></div>
     <div class="card"><h3>Markdown <small>md</small></h3><p>The text and the formatted page side by side. Both update when the file is saved.</p></div>
-    <div class="card"><h3>Video and audio <small>mp4 m4a</small></h3><p>Apple's standard player controls. Space plays and pauses.</p></div>
-    <div class="card"><h3>Text <small>txt and anything else</small></h3><p>Plain text in a fixed-width font, in whatever encoding the file uses.</p></div>
+    <div class="card"><h3>Video and audio <small>mp4 mov m4a mp3 wav flac ogg</small></h3><p>Apple's standard player controls. Space plays and pauses.</p></div>
+    <div class="card"><h3>Word <small>docx doc rtf</small></h3><p>The document on a white page, with its fonts, styles, tables and pictures.</p></div>
+    <div class="card"><h3>Text and code <small>txt js tcl adp and more</small></h3><p>Plain text in a fixed-width font, in whatever encoding the file uses.</p></div>
   </div>
 </div></section>
 
@@ -269,10 +270,27 @@ table.speed td.b{color:var(--ink);font-weight:650}
   </div>
 </div></section>
 
+<section><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">Crop and arrows</p>
+    <h2>Point at what matters</h2>
+    <p>Drag on a picture to choose an area, and <b>Crop</b> (<kbd>⌘K</kbd>) saves just that part next to the original. Turn on <b>Arrow</b> (<kbd>⇧⌘A</kbd>), drag to draw an arrow, then type to label it. <b>Save</b> (<kbd>⌘S</kbd>) writes a copy with the arrows on it.</p>
+    <ul class="ticks">
+      <li><b>Arrows that stand out:</b> each arrow's colour is chosen to show up against the picture and to differ from the other arrows. Arrows curve gently and are slightly see-through.</li>
+      <li><b>Labels on the line:</b> the text follows the arrow's curve, shrinking or wrapping to fit.</li>
+      <li><b>Change it later:</b> drag an arrow's ends, even off the edge of the picture. Reopen a saved copy and its arrows are still editable.</li>
+      <li><b>Ready for AI:</b> the saved file says in plain words what was cropped and where each arrow points, with its label and the original's path. The new file's path is copied, ready to paste into a chat.</li>
+    </ul>
+  </div>
+  <div>
+    <a class="shot" href="assets/blink/arrows.avif"><img src="assets/blink/arrows-1200.avif" srcset="assets/blink/arrows-600.avif 600w, assets/blink/arrows-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="A photo with three curved, labelled arrows pointing at the boat, the setting sun and its reflection" loading="lazy"></a>
+  </div>
+</div></section>
+
 <section class="alt"><div class="wrap split">
   <div class="txt">
     <p class="kicker">GPS routes</p>
-    <h2>Where the walk went</h2>
+    <h2>Where the hike went</h2>
     <p>A GPX file opens as a map, zoomed to fit the route. Start and end are flagged, and named waypoints are pinned. Along the bottom: the route's name, distance, total climb and time taken.</p>
     <ul class="ticks">
       <li><b>Map</b> is OpenStreetMap; <b>Topo</b> is OpenTopoMap, with contour lines and hill shading.</li>
@@ -280,7 +298,7 @@ table.speed td.b{color:var(--ink);font-weight:650}
     </ul>
   </div>
   <div>
-    <a class="shot" href="assets/blink/gpx_topo.avif"><img src="assets/blink/gpx_topo-1200.avif" srcset="assets/blink/gpx_topo-600.avif 600w, assets/blink/gpx_topo-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="A walk round a reservoir on the topographic map, with waypoints and the route summary" loading="lazy"></a>
+    <a class="shot" href="assets/blink/gpx_topo.avif"><img src="assets/blink/gpx_topo-1200.avif" srcset="assets/blink/gpx_topo-600.avif 600w, assets/blink/gpx_topo-1200.avif 1200w" sizes="(max-width:900px) calc(100vw - 40px), 600px" width="1200" height="720" alt="The Bear Mountain Loop hike on the topographic map, with contours, waypoints and the route summary" loading="lazy"></a>
   </div>
 </div></section>
 
@@ -355,7 +373,12 @@ table.speed td.b{color:var(--ink);font-weight:650}
       <tr><td><kbd>⌘−</kbd></td><td>Zoom out</td></tr>
       <tr><td><kbd>⌘0</kbd></td><td>Zoom to fit</td></tr>
       <tr><td><kbd>⌘1</kbd></td><td>Actual size</td></tr>
+      <tr><td><kbd>⌘E</kbd></td><td>Edit the file in its editing app</td></tr>
+      <tr><td><kbd>⌘K</kbd></td><td>Crop a picture to the area you dragged</td></tr>
+      <tr><td><kbd>⇧⌘A</kbd></td><td>Draw arrows on a picture; type to label one</td></tr>
+      <tr><td><kbd>⌘S</kbd></td><td>Save a copy of the picture with its arrows</td></tr>
       <tr><td><kbd>⌘O</kbd></td><td>Open a file</td></tr>
+      <tr><td><kbd>⌘Q</kbd></td><td>Close all Blink windows. Blink keeps waiting in the menu bar; to really quit, use Quit in the eye icon's menu.</td></tr>
       <tr><td><kbd>⇧⌘R</kbd></td><td>Show the file in Finder</td></tr>
       <tr><td><kbd>⌃⌘F</kbd></td><td>Full screen</td></tr>
       <tr><td><kbd>Space</kbd></td><td>Play or pause (video and audio)</td></tr>
@@ -364,8 +387,8 @@ table.speed td.b{color:var(--ink);font-weight:650}
   <div>
     <p class="kicker">Good to know</p>
     <h2>What it doesn't do</h2>
-    <p>Blink only shows files. It doesn't edit, mark up, rotate, crop, export or print; use Preview for those. <b>File ▸ Open in Preview</b> hands the file over.</p>
-    <p>Excel files show cell values, not colours, charts or formatting. Other Office files (Word, PowerPoint, Numbers) open in Apple's Quick Look view. To make Blink the default for a kind of file, use Finder's <b>Get Info ▸ Open with ▸ Change All</b>.</p>
+    <p>Apart from cropping and arrows on pictures, Blink only shows files. It doesn't retouch, rotate, export or print. Instead, every window has an <b>Edit in …</b> button (<kbd>⌘E</kbd>) that hands the file to the app you edit it in: Photoshop for pictures, Final Cut Pro for video, Audition for sound, Excel for spreadsheets, Word for documents, Illustrator for PDF, MapOut for GPS routes, MacDown for Markdown and Sublime Text for text and email. If that app isn't installed, the button doesn't appear. The choices are one table in <code>Editor.swift</code>, so they're easy to change.</p>
+    <p>Excel files show cell values, not colours, charts or formatting. PowerPoint, Numbers, Pages and Keynote files open in Apple's Quick Look view. To make Blink the default for a kind of file, use Finder's <b>Get Info ▸ Open with ▸ Change All</b>.</p>
     <div class="pills"><span>One window per file</span><span>Menu-bar icon</span><span>Opens at login</span><span>Offline except maps and images you ask for</span></div>
   </div>
 </div></section>
